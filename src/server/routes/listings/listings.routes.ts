@@ -6,10 +6,11 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     const { ethAddress, ethPrice, inscriptionId } = req.body;
     const account = await prisma.account.findUnique({ where: { ethAddress } });
-    console.log(account);
     if (!account) {
       return res.status(400).json({ error: "Account not found" });
     }
+
+    // TODO: get the inscription number, pkpPublicKey, and taprootAddress from the inscriptionId
 
     const listing = await prisma.listing.create({
       data: {
@@ -28,67 +29,70 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/getListing/:listingId", async (req: Request, res: Response) => {
-  try {
-    const { listingId } = req.params;
-    const listing = await prisma.listing.findUnique({
-      where: { id: listingId },
-    });
-
-    if (!listing) {
-      return res.status(404).json({ error: "Listing not found" });
-    }
-
-    res.status(200).json(listing);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
-  }
-});
-
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const { address } = req.query;
+    const { address, id } = req.query;
 
-    const listings = await prisma.listing.findMany({
-      where: address
-        ? { account: { ethAddress: address as string }, cancelledDate: null }
-        : undefined,
-      include: {
-        account: true,
-      },
-    });
+    let listings;
 
+    if (address) {
+      listings = await prisma.listing.findMany({
+        where: {
+          account: {
+            ethAddress: address as string,
+          },
+        },
+      });
+    } else if (id) {
+      listings = await prisma.listing.findMany({
+        where: {
+          id: id as string,
+        },
+      });
+    } else {
+      listings = await prisma.listing.findMany({
+        where: {
+          cancelledDate: null,
+          sellDate: null,
+        },
+      });
+    }
     res.status(200).json(listings);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
 });
 
-router.post(
-  "/cancelListing/:listingId",
-  async (req: Request, res: Response) => {
-    try {
-      const { listingId } = req.params;
-      const listing = await prisma.listing.findUnique({
-        where: { id: listingId },
-      });
+router.put("/:listingId", async (req: Request, res: Response) => {
+  const { listingId } = req.params;
+  const { signature } = req.body;
 
-      if (!listing) {
-        return res.status(404).json({ error: "Listing not found" });
-      }
+  try {
+    let updatedListing;
 
-      const updatedListing = await prisma.listing.update({
+    if (signature) {
+      // If signature is provided, mark the listing as cancelled
+      // TODO: CHECK SIGNATURE
+      updatedListing = await prisma.listing.update({
         where: { id: listingId },
         data: {
           cancelledDate: new Date(),
         },
       });
-
-      res.status(200).json(updatedListing);
-    } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
+    } else {
+      // If signature is not provided, mark the listing as sold
+      updatedListing = await prisma.listing.update({
+        where: { id: listingId },
+        data: {
+          sellDate: new Date(),
+        },
+      });
     }
+
+    res.status(200).json(updatedListing);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
   }
-);
+});
 
 export default router;
