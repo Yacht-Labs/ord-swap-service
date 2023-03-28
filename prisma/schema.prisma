@@ -8,7 +8,22 @@ generator client {
 }
 
 model Account {
-  id         Int      @id @default(autoincrement())
-  ethAddress String
-  createdAt  DateTime @default(now())
+  id         String    @id @default(uuid())
+  ethAddress String    @unique
+  createdAt  DateTime  @default(now())
+  listings   Listing[]
+}
+
+model Listing {
+  id                String    @id @default(uuid())
+  inscriptionId     String
+  inscriptionNumber String
+  listingAccountId  String
+  account           Account   @relation(fields: [listingAccountId], references: [id])
+  ethPrice          String
+  pkpPublicKey      String
+  taprootAddress    String
+  createdAt         DateTime  @default(now())
+  sellDate          DateTime?
+  cancelledDate     DateTime?
 }

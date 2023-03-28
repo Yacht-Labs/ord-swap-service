@@ -1,13 +1,25 @@
 // src/routes/accounts.routes.ts
 
 import { Router, Request, Response } from "express";
-import prisma from "../../db/prisma";
+import prisma from "../../../db/prisma";
 
 const router = Router();
 
-router.post("/accounts", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const { ethAddress } = req.body;
+
+    const existingAccount = await prisma.account.findFirst({
+      where: {
+        ethAddress,
+      },
+    });
+
+    if (existingAccount) {
+      return res.status(409).json({
+        message: "An account with this Ethereum address already exists.",
+      });
+    }
 
     const account = await prisma.account.create({
       data: {

@@ -11,6 +11,7 @@ module.exports = {
     es2021: true,
   },
   rules: {
+    "consistent-return": "off",
     "prettier/prettier": "error",
     "no-console": "warn",
     "import/prefer-default-export": "off",

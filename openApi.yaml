@@ -6,6 +6,83 @@ info:
 servers:
   - url: http://localhost:3000
 paths:
+  /listings/{listingId}:
+    put:
+      summary: Cancel a listing by ID
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - signature
+              properties:
+                signature:
+                  type: string
+      responses:
+        200:
+          description: Listing cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+
+  /listings:
+    post:
+      summary: Create a new listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ethAddress
+                - ethPrice
+                - inscriptionId
+              properties:
+                ethAddress:
+                  type: string
+                ethPrice:
+                  type: string
+                inscriptionId:
+                  type: string
+      responses:
+        201:
+          description: Listing created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+    get:
+      summary: Get listings with optional query parameters
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Listings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Listing"
   /accounts:
     post:
       summary: Create a new account
@@ -37,6 +114,98 @@ paths:
                 properties:
                   error:
                     type: string
+  /createListing:
+    post:
+      summary: Create a new listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ethAddress
+                - ethPrice
+                - inscriptionId
+              properties:
+                ethAddress:
+                  type: string
+                ethPrice:
+                  type: string
+                inscriptionId:
+                  type: string
+      responses:
+        201:
+          description: Listing created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+
+  /getListing/{listingId}:
+    get:
+      summary: Get a listing by ID
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Listing retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+
+  /cancelListing/{listingId}:
+    post:
+      summary: Cancel a listing by ID
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - signature
+              properties:
+                signature:
+                  type: string
+      responses:
+        200:
+          description: Listing cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+
+  /getListings:
+    get:
+      summary: Get listings with optional query parameter
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Listings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Listing"
+
 components:
   schemas:
     Account:
@@ -52,3 +221,29 @@ components:
           type: string
           format: date-time
           readOnly: true
+    Listing:
+      type: object
+      properties:
+        id:
+          type: string
+        inscriptionId:
+          type: string
+        inscriptionNumber:
+          type: string
+        listingAccountId:
+          type: string
+        ethPrice:
+          type: string
+        pkpPublicKey:
+          type: string
+        taprootAddress:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        sellDate:
+          type: string
+          format: date-time
+        cancelledDate:
+          type: string
+          format: date-time

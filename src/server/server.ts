@@ -10,23 +10,13 @@ import YAML from "yamljs";
 import { setupSwagger } from "./swagger";
 
 // Routes
-import IndexRoutes from "./routes/index.routes";
-import AccountsRoutes from "./routes/accounts/accounts.routs";
+import AccountsRoutes from "./routes/accounts/accounts.routes";
+import ListingsRoutes from "./routes/listings/listings.routes";
 
 // Load environment variables from .env file
 dotenv.config();
 
-const port = process.env.PORT || 3000;
-
-// Define your custom error type
-class CustomError extends Error {
-  status: number;
-
-  constructor(status: number, message: string) {
-    super(message);
-    this.status = status;
-  }
-}
+const defaultPort = process.env.PORT || 3000;
 
 // Initialize express app
 const app = express();
@@ -39,20 +29,20 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const apiSpecPath = path.join(__dirname, "..", "openapi.yaml");
+const apiSpecPath = path.join(__dirname, "../../openApi.yaml");
 const swaggerDoc = YAML.load(apiSpecPath);
-
 app.use(
   OpenApiValidator.middleware({
     apiSpec: swaggerDoc,
     validateRequests: true,
     validateResponses: false,
+    ignorePaths: /\/docs.*/,
   })
 );
 
 // Use routes
-app.use("/", IndexRoutes);
 app.use("/accounts", AccountsRoutes);
+app.use("/listings", ListingsRoutes);
 setupSwagger(app);
 
 // Error handling middleware
@@ -72,12 +62,9 @@ app.use(
 
 // Get port from environment or default to 3000
 
-const startServer = (callback?: () => void) => {
-  return app.listen(port, () => {
+const startServer = (port?: number) => {
+  return app.listen(port || 3000, () => {
     console.log(`Server is running on port ${port}`);
-    if (callback) {
-      callback();
-    }
   });
 };
 
