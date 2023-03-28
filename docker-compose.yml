@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: ord-swap-db
+    restart: always
+    environment:
+      POSTGRES_USER: ord_swap_user
+      POSTGRES_PASSWORD: ord_swap_password
+      POSTGRES_DB: ord_swap
+    ports:
+      - "5432:5432"
+    volumes:
+      - ord-swap-data:/var/lib/postgresql/data
+
+volumes:
+  ord-swap-data:
