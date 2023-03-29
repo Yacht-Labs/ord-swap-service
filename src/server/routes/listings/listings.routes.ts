@@ -5,9 +5,13 @@ const router = Router();
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { ethAddress, ethPrice, inscriptionId } = req.body;
-    const account = await prisma.account.findUnique({ where: { ethAddress } });
+    let account = await prisma.account.findUnique({ where: { ethAddress } });
     if (!account) {
-      return res.status(400).json({ error: "Account not found" });
+      account = await prisma.account.create({
+        data: {
+          ethAddress,
+        },
+      });
     }
 
     // TODO: get the inscription number, pkpPublicKey, and taprootAddress from the inscriptionId

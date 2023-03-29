@@ -11,6 +11,8 @@ module.exports = {
     es2021: true,
   },
   rules: {
+    "no-restricted-syntax": "off",
+    "no-plusplus": "off",
     "consistent-return": "off",
     "prettier/prettier": "error",
     "no-console": "warn",
@@ -29,6 +31,15 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ["**/*.test.**"],
+      rules: {
+        "no-console": "off",
+        "@typescript-eslint/no-empty-function": "off",
+      },
+    },
+  ],
   settings: {
     "import/resolver": {
       node: {

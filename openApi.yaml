@@ -140,23 +140,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Listing"
 
-  /getListing/{listingId}:
-    get:
-      summary: Get a listing by ID
-      parameters:
-        - name: listingId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Listing retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Listing"
-
   /cancelListing/{listingId}:
     post:
       summary: Cancel a listing by ID
@@ -184,25 +167,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Listing"
-
-  /getListings:
-    get:
-      summary: Get listings with optional query parameter
-      parameters:
-        - name: address
-          in: query
-          required: false
-          schema:
-            type: string
-      responses:
-        200:
-          description: Listings retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Listing"
 
 components:
   schemas:

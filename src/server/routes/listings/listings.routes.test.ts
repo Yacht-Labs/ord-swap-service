@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import request from "supertest";
 import { Listing } from "@prisma/client";
 import { prismaMock } from "../../../db/prisma.singleton";
-import { getRandomEthereumAddress } from "../../util/eth";
+import { getRandomEthereumAddress } from "../../../util/eth";
 import { startServer } from "../../server"; // Import your server start function
 // Import your prisma instance
 let server: any;
@@ -15,16 +16,32 @@ afterEach(async () => {
 });
 
 describe("POST /listings", () => {
+  let validData: any;
+
+  beforeEach(() => {
+    validData = {
+      ethAddress: getRandomEthereumAddress(),
+      ethPrice: Math.floor(Math.random() * 1000000 + 1).toString(),
+      inscriptionId: Math.floor(Math.random() * 1000000 + 1).toString(),
+    };
+  });
+
   afterAll(() => {
     jest.clearAllMocks();
   });
 
-  test("should fail to create a listing without an account attached", async () => {
-    // mock the prisma.account.findUnique() method
+  test("should create an account if it doesn't exist", async () => {
     prismaMock.account.findUnique.mockResolvedValue(null);
+    prismaMock.account.create.mockResolvedValue({
+      id: "1",
+      ethAddress: validData.ethAddress,
+      createdAt: new Date(),
+    });
+    prismaMock.listing.create.mockResolvedValue({} as Listing);
+    const res = await request(server).post("/listings").send(validData);
 
-    const res = await request(server).post("/listings").send({});
-    expect(res.status).toBe(400);
+    expect(prismaMock.account.create).toBeCalledTimes(1);
+    expect(res.status).toBe(201);
   });
 
   test("should fail to create a listing with invalid data", async () => {
@@ -94,12 +111,6 @@ describe("POST /listings", () => {
       id: "1",
       ethAddress: getRandomEthereumAddress(),
       createdAt: new Date(),
-    };
-
-    const validData = {
-      ethAddress: getRandomEthereumAddress(),
-      ethPrice: Math.floor(Math.random() * 1000000 + 1).toString(),
-      inscriptionId: Math.floor(Math.random() * 1000000 + 1).toString(),
     };
 
     // mock the prisma.account.findUnique() method

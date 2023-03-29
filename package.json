@@ -11,7 +11,8 @@
     "test": "npx jest",
     "format": "prettier --write 'src/**/*.ts'",
     "lint": "eslint 'src/**/*.ts'",
-    "lint:fix": "eslint --fix 'src/**/*.ts'"
+    "lint:fix": "eslint --fix 'src/**/*.ts'",
+    "seed": "ts-node prisma/seed/seed.ts"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
@@ -20,6 +21,7 @@
     "@types/jest": "^29.5.0",
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.15.10",
+    "@types/node-fetch": "^2.6.2",
     "@types/supertest": "^2.0.12",
     "@types/swagger-ui-express": "^4.1.3",
     "@types/yamljs": "^0.2.31",
@@ -45,10 +47,12 @@
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
     "express": "^4.18.2",
     "express-openapi-validator": "^5.0.3",
     "helmet": "^6.0.1",
     "morgan": "^1.10.0",
+    "node-fetch": "^2.6.6",
     "swagger-ui-express": "^4.6.2",
     "yamljs": "^0.3.0"
   }

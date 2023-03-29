@@ -70,6 +70,16 @@ Automatically fix issues with ESLint: yarn lint:fix
 Run tests: yarn test
 These scripts help enforce code standards and run tests for the project.
 
+## Testing
+
+To run our tests, you will need to have bitcoin core installed as well as the ord wallet implementation.
+
+For instructions on installing bitcoin core as well as the `bitcoind` and `bitcoin-cli` commands, see here: https://github.com/bitcoin/bitcoin/tree/master/doc#building
+
+For instructions on installing the ord wallet, please consult the ord documentation: https://github.com/casey/ord#installation
+
+Make sure that bitcoind, bitcoin-cli and ord are in your PATH
+
 ## Troubleshooting
 
 If you encounter any issues, try running the following command to recreate the PostgreSQL Docker container:

@@ -63,8 +63,9 @@ app.use(
 // Get port from environment or default to 3000
 
 const startServer = (port?: number) => {
-  return app.listen(port || 3000, () => {
-    console.log(`Server is running on port ${port}`);
+  const runningPort = port === 0 ? 0 : defaultPort;
+  return app.listen(runningPort, () => {
+    console.log(`Server is running on port ${runningPort}`);
   });
 };
 
