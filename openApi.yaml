@@ -209,3 +209,6 @@ components:
         cancelledDate:
           type: string
           format: date-time
+        confirmedAt:
+          type: string
+          format: date-time

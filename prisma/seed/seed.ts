@@ -1,4 +1,4 @@
-import { Account, Listing, Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { ethers } from "ethers";
 import crypto from "crypto";
 import fetch from "node-fetch";
@@ -37,10 +37,15 @@ type ApiResponse = {
   results: Inscription[];
 };
 
+function getRandomDateInPast(days: number) {
+  const now = new Date();
+  const msInPast = Math.random() * days * 24 * 60 * 60 * 1000;
+  return new Date(now.getTime() - msInPast);
+}
+
 async function fetchInscriptions(limit = 50) {
   try {
     const url = `${API_ENDPOINT}?limit=${limit}`;
-    console.log(url);
     const response = await fetch(url);
     if (response.ok) {
       const data = (await response.json()) as ApiResponse;
@@ -86,6 +91,9 @@ async function seedAndReset() {
         });
       }
 
+      const shouldAddConfirmedAt = Math.random() < 0.7;
+      const confirmedAt = shouldAddConfirmedAt ? getRandomDateInPast(10) : null;
+
       return prisma.listing.create({
         data: {
           inscriptionId: inscription.id,
@@ -96,6 +104,7 @@ async function seedAndReset() {
           ),
           pkpPublicKey: ethers.Wallet.createRandom().publicKey, // Replace with a valid uncompressed ethereum public key
           taprootAddress: `bc1p${crypto.randomBytes(30).toString("hex")}`, // This is not a valid taproot address but a placeholder. Use a library to generate a valid taproot address., // Replace with a valid bitcoin taproot address
+          confirmedAt,
         },
       });
     });

@@ -24,7 +24,7 @@ async function startBitcoindRegtest() {
 async function stopBitcoindRegtest() {
   await execAsync("bitcoin-cli -regtest stop").catch((err) => {});
 }
-
+// bcrt1p7sxhjcrcjygy7de40t3mjw0g0alyx07jpxx5hhx0g0w32m553ssqcjemt4
 describe("Bitcoin regtest server", () => {
   beforeAll(async () => {
     await startBitcoindRegtest();
@@ -65,3 +65,25 @@ describe("Bitcoin regtest server", () => {
     }
   });
 });
+
+// to send money to the ord address
+// make sure you have the fallback fee set on the bitcoind
+// index the btc testnet blockchain
+// create a bitcoin address on the bitcoin-cli
+// create an ord wallet with the ord cli
+// load the bitcoin wallet in the bitcoin-cli
+// generate 101 transactions
+// get a receiving address from ord wallet
+// run this command: bitcoin-cli -regtest -rpcwallet=send_to_ord sendtoaddress bcrt1p7sxhjcrcjygy7de40t3mjw0g0alyx07jpxx5hhx0g0w32m553ssqcjemt4 1 "" "" true true
+// generate a block: bitcoin-cli -regtest -rpcwallet=send_to_ord -generate 1
+// check the balance of the ord wallet
+// send more than one transaction so that it has a cardinal
+// inscribe: ord --regtest wallet inscribe --fee-rate 30 YachtLogo.JPG
+
+// make sure you reindex chain state: bitcoind -regtest -daemon -fallbackfee=0.0002 -txindex=1
+
+// create a new taproot wallet: bitcoin-cli -regtest createwallet "my_taproot_wallet2" false
+// bitcoin-cli -regtest -rpcwallet=my_taproot_wallet2 -named getnewaddress label=generic-p2tr address_type=bech32m
+
+// generate a new block
+// at this point we need to use the ordinal utils to try and send an inscription

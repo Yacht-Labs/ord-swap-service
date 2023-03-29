@@ -50,6 +50,8 @@ npx prisma migrate dev --name init
 
 This command will create a migration to apply the Prisma schema (defined in prisma/schema.prisma) to your PostgreSQL database. It will also generate the Prisma Client, which you can use in your Node.js TypeScript server to interact with the database.
 
+Now run `yarn db:seed` to seed the database
+
 5. Start the development server.
 
 ```bash

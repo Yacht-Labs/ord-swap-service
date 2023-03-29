@@ -12,7 +12,7 @@
     "format": "prettier --write 'src/**/*.ts'",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint --fix 'src/**/*.ts'",
-    "seed": "ts-node prisma/seed/seed.ts"
+    "db:seed": "ts-node prisma/seed/seed.ts"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",
