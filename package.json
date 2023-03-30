@@ -44,9 +44,12 @@
   },
   "dependencies": {
     "@bitauth/libauth": "^1.19.1",
+    "@metamask/eth-sig-util": "^5.0.2",
+    "@noble/secp256k1": "1.5.3",
+    "@parity/schnorrkel-js": "^0.1.5",
     "@prisma/client": "^4.11.0",
+    "ascii85": "^1.0.2",
     "bcrypto": "^5.4.0",
-    "bech32": "^2.0.0",
     "bip-schnorr": "^0.6.7",
     "bip32": "^4.0.0",
     "bitcoin-ts": "^1.15.2",
@@ -55,15 +58,19 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "ecpair": "^2.1.0",
+    "eth-sig-util": "^3.0.1",
     "ethers": "^5.7.2",
     "express": "^4.18.2",
     "express-openapi-validator": "^5.0.3",
     "helmet": "^6.0.1",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.6",
+    "schnorrkel-js": "^0.1.0",
     "secp256k1": "^5.0.0",
     "swagger-ui-express": "^4.6.2",
     "tiny-secp256k1": "^2.2.1",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
     "yamljs": "^0.3.0"
   }
 }
