@@ -1,30 +1,67 @@
 /* eslint-disable no-promise-executor-return */
 import { exec } from "child_process";
 import { promisify } from "util";
+import fs from "fs";
+import path from "path";
 
 const execAsync = promisify(exec);
+
+const DATA_DIR_NAME = `data-${Math.random().toString().slice(3)}`;
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const createTempDataDir = (dirName: string) => {
+  const confDir = path.resolve("./src/btc");
+  const tempDataDir = path.join(confDir, dirName);
+  if (!fs.existsSync(tempDataDir)) {
+    fs.mkdirSync(tempDataDir);
+  }
+  return tempDataDir;
+};
+
+const removeTempDataDir = (dirName: string) => {
+  const confDir = path.resolve("./src/btc");
+  const tempDataDir = path.join(confDir, dirName);
+  if (fs.existsSync(tempDataDir)) {
+    fs.rmdirSync(tempDataDir, { recursive: true });
+  }
+};
+
+let tempDataDir: string;
+function getBaseCommand() {
+  return `bitcoin-cli -regtest -rpccookiefile=${`${tempDataDir}/regtest/.cookie`}`;
+}
+
 async function startBitcoindRegtest() {
+  removeTempDataDir(DATA_DIR_NAME);
+  tempDataDir = createTempDataDir(DATA_DIR_NAME);
+
   await execAsync("bitcoin-cli -regtest stop").catch((err) => {});
+  await execAsync("killall bitcoind").catch((err) => {});
   await sleep(1000);
-  await execAsync("bitcoind -regtest -daemon -fallbackfee=0.0002");
+
+  await execAsync(
+    `bitcoind -regtest -daemon -fallbackfee=0.0002 -txindex=1 -datadir=${tempDataDir}`
+  );
+
   await sleep(4000);
   try {
-    await execAsync("bitcoin-cli -regtest loadwallet test_wallet");
+    await execAsync(`${getBaseCommand()} loadwallet test_wallet`);
   } catch (err) {
-    await execAsync("bitcoin-cli -regtest createwallet test_wallet");
+    await execAsync(`${getBaseCommand()} createwallet test_wallet`);
   }
-  await execAsync("bitcoin-cli -chain=regtest -generate 101");
+  await execAsync(`${getBaseCommand()} -generate 101`);
 }
 
 async function stopBitcoindRegtest() {
-  await execAsync("bitcoin-cli -regtest stop").catch((err) => {});
+  await execAsync(`${getBaseCommand()} stop`).catch((err) => {});
+  await execAsync("killall bitcoind").catch((err) => {});
+  await sleep(1000);
+  removeTempDataDir(DATA_DIR_NAME);
 }
-// bcrt1p7sxhjcrcjygy7de40t3mjw0g0alyx07jpxx5hhx0g0w32m553ssqcjemt4
+
 describe("Bitcoin regtest server", () => {
   beforeAll(async () => {
     await startBitcoindRegtest();
@@ -38,32 +75,40 @@ describe("Bitcoin regtest server", () => {
     try {
       // Get a new address
       const { stdout: addressStdout } = await execAsync(
-        "bitcoin-cli -regtest getnewaddress"
+        `${getBaseCommand()} getnewaddress`
       );
       const recipientAddress = addressStdout.trim();
-
       // Send a transaction
       const amount = 0.1;
       const { stdout: sendTxStdout } = await execAsync(
-        `bitcoin-cli -regtest sendtoaddress ${recipientAddress} ${amount}`
+        `${getBaseCommand()} sendtoaddress ${recipientAddress} ${amount}`
       );
       const txid = sendTxStdout.trim();
-
       // Generate a block to confirm the transaction
-      await execAsync("bitcoin-cli -regtest -generate 1");
-
+      await execAsync(`${getBaseCommand()} -generate 1`);
       // Verify the transaction
       const { stdout: txStdout } = await execAsync(
-        `bitcoin-cli -regtest gettransaction ${txid}`
+        `${getBaseCommand()} gettransaction ${txid}`
       );
       const transaction = JSON.parse(txStdout);
-
       expect(transaction.confirmations).toBeGreaterThan(0);
     } catch (error) {
       console.error("Error:", error);
       throw error;
     }
   });
+});
+
+describe("Ordinals", () => {
+  beforeAll(async () => {
+    await startBitcoindRegtest();
+  }, 10000);
+
+  afterAll(async () => {
+    await stopBitcoindRegtest();
+  });
+
+  it("Can verify that an address owns an ordinal", async () => {});
 });
 
 // to send money to the ord address
