@@ -1,10 +1,13 @@
 import { Router, Request, Response } from "express";
+import { serialize, Transaction } from "@ethersproject/transactions";
+import { ethers } from "ethers";
+import { LitService } from "../../services/LitService";
 import prisma from "../../../db/prisma";
 
 const router = Router();
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { ethAddress, ethPrice, inscriptionId } = req.body;
+    const { ethAddress, ethPrice, inscriptionId, inscriptionNumber } = req.body;
     let account = await prisma.account.findUnique({ where: { ethAddress } });
     if (!account) {
       account = await prisma.account.create({
@@ -16,14 +19,19 @@ router.post("/", async (req: Request, res: Response) => {
 
     // TODO: get the inscription number, pkpPublicKey, and taprootAddress from the inscriptionId
 
+    const litService = new LitService({ btcTestNet: false });
+
+    const pkp = await litService.mintPkp();
+    const btcAddress = litService.generateBtcAddress(pkp.publicKey);
+
     const listing = await prisma.listing.create({
       data: {
         ethPrice,
         inscriptionId,
-        inscriptionNumber: "placeholder", // You can replace this with the actual logic to generate the inscription number
+        inscriptionNumber,
         listingAccountId: account.id,
-        pkpPublicKey: "placeholder", // You can replace this with the actual logic to generate the PKP public key
-        taprootAddress: "placeholder", // You can replace this with the actual logic to generate the taproot address
+        pkpPublicKey: pkp.publicKey,
+        taprootAddress: btcAddress,
       },
     });
 
@@ -37,7 +45,7 @@ router.get("/", async (req: Request, res: Response) => {
   try {
     const { address, id } = req.query;
 
-    let listings;
+    let listings: any[];
 
     if (address) {
       listings = await prisma.listing.findMany({
@@ -67,10 +75,10 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:listingId", async (req: Request, res: Response) => {
-  const { listingId } = req.params;
-  const { signature } = req.body;
-
+router.put("/", async (req: Request, res: Response) => {
+  // const { listingId } = req.params;
+  const { signature, pkpPublicKey, encryptionPubKey, isBuy, listingId } =
+    req.body;
   try {
     let updatedListing;
 
@@ -83,6 +91,40 @@ router.put("/:listingId", async (req: Request, res: Response) => {
           cancelledDate: new Date(),
         },
       });
+    } else if (isBuy) {
+      const code = await LitService.loadJsFile(
+        "src/lit/action/ordinalSwapAction.js"
+      );
+      const litService = new LitService({ btcTestNet: false });
+      const authSig = await litService.generateAuthSig();
+      const result = await litService.runLitAction({
+        pkpPublicKey,
+        code,
+        authSig,
+        ethPrice: 88,
+        pkpEthAddress: "0xc653a200b2a5D3c0cD93a1BB3A47c61C54bFff36",
+        pkpBtcAddress: "placeholder",
+        btcAddress: "placeholder",
+        ethPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
+      });
+      const signedTx = serialize(
+        result.response,
+        result.signatures.ethPayoutSignature.signature
+      );
+      const provider = new ethers.providers.JsonRpcProvider(
+        "https://polygon-mumbai.g.alchemy.com/v2/i4MQfC5uRVeQQZBK6IVZQQjsOdhx668n"
+      );
+
+      const tx = await provider.sendTransaction(signedTx);
+      const receipt = await tx.wait(1);
+      console.log("result.response", result.response);
+      console.log(
+        "result.signatures.ethPayoutSignature.signature",
+        result.signatures.ethPayoutSignature.signature
+      );
+      console.log("signedTx", signedTx);
+      console.log("result", result);
+      console.log("receipt", receipt);
     } else {
       // If signature is not provided, mark the listing as sold
       updatedListing = await prisma.listing.update({
