@@ -12,7 +12,8 @@
     "format": "prettier --write 'src/**/*.ts'",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint --fix 'src/**/*.ts'",
-    "db:seed": "ts-node prisma/seed/seed.ts"
+    "db:seed": "ts-node prisma/seed/seed.ts",
+    "build:litAction": "npx tsc src/lit/btc/OrdinalService/HiroOrdinalService.ts --outDir src/lit/btc/javascript --target ESNext --moduleResolution Node --esModuleInterop --module CommonJS --declaration false --removeComments false --skipLibCheck --sourceMap && npx tsc src/lit/btc/UtxoService/UtxoService.ts --outDir src/lit/btc/javascript --target ESNext --moduleResolution Node --esModuleInterop --module CommonJS --declaration false --removeComments false --skipLibCheck --sourceMap"
   },
   "devDependencies": {
     "@types/compression": "^1.7.2",

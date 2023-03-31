@@ -24,24 +24,53 @@ export type InscriptionResponse = {
 };
 
 export class HiroOrdinalService {
+  private inscriptionIdOrNumber: string;
+
   private baseUrl = "https://api.hiro.so";
 
-  private utxoService = new UtxoService();
+  public utxoService = new UtxoService();
 
   private inscriptionPath = "/ordinals/v1/inscription";
 
-  public getInscriptionDetails = async (idOrNumber: string) => {
+  constructor(inscriptionIdOrNumber: string) {
+    this.inscriptionIdOrNumber = inscriptionIdOrNumber;
+  }
+
+  public getInscriptionDetails = async () => {
     const inscriptionRegex = /^[a-fA-F0-9]{64}i[0-9]+$/;
     const numberRegex = /^[0-9]+$/;
 
-    if (!inscriptionRegex.test(idOrNumber) && !numberRegex.test(idOrNumber)) {
-      throw new Error("Invalid idOrNumber");
+    if (
+      !inscriptionRegex.test(this.inscriptionIdOrNumber) &&
+      !numberRegex.test(this.inscriptionIdOrNumber)
+    ) {
+      throw new Error(
+        `Invalid Inscription idOrNumber: ${this.inscriptionIdOrNumber}`
+      );
     }
     try {
       const response = await fetch(
-        `${this.baseUrl}${this.inscriptionPath}/${idOrNumber}`
+        `${this.baseUrl}${this.inscriptionPath}/${this.inscriptionIdOrNumber}`
       );
       const inscriptionResponse = await response.json();
+
+      if (
+        inscriptionResponse.error ||
+        inscriptionResponse.status !== "success"
+      ) {
+        throw new Error(inscriptionResponse.error);
+      }
+
+      // check some properties of the inscription to make sure its real
+      if (
+        !inscriptionResponse.id ||
+        !inscriptionResponse.number ||
+        !inscriptionResponse.address ||
+        !inscriptionResponse.location
+      ) {
+        throw new Error("Invalid Inscription Response");
+      }
+
       return inscriptionResponse as InscriptionResponse;
     } catch (err) {
       throw new Error(
@@ -50,20 +79,9 @@ export class HiroOrdinalService {
     }
   };
 
-  public verifyInscriptionOwnership = async (
-    idOrNumber: string,
-    address: string
-  ) => {
-    const inscriptionResponse = await this.getInscriptionDetails(idOrNumber);
-    return inscriptionResponse.address === address;
-  };
-
-  public getInputs = async (idOrNumber: string, address: string) => {
-    const inscription = await this.getInscriptionDetails(idOrNumber);
-    const ownsInscription = await this.verifyInscriptionOwnership(
-      idOrNumber,
-      address
-    );
+  public getInputs = async (address: string) => {
+    const inscription = await this.getInscriptionDetails();
+    const ownsInscription = inscription.address === address;
 
     // check that the address owns the inscription
     if (!ownsInscription) {

@@ -37,6 +37,7 @@ module.exports = {
       rules: {
         "no-console": "off",
         "@typescript-eslint/no-empty-function": "off",
+        "lines-between-class-members": "off",
       },
     },
   ],
