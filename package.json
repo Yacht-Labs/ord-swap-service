@@ -48,6 +48,7 @@
     "@noble/secp256k1": "1.5.3",
     "@parity/schnorrkel-js": "^0.1.5",
     "@prisma/client": "^4.11.0",
+    "@unisat/ord-utils": "^0.2.4",
     "ascii85": "^1.0.2",
     "bcrypto": "^5.4.0",
     "bip-schnorr": "^0.6.7",
