@@ -75,7 +75,6 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.put("/", async (req: Request, res: Response) => {
-  // const { listingId } = req.params;
   const { signature, pkpPublicKey, encryptionPubKey, isBuy, listingId } =
     req.body;
   try {

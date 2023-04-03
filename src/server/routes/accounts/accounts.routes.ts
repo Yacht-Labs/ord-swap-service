@@ -33,4 +33,26 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+router.put("/", async (req: Request, res: Response) => {
+  const { btcPayoutAddress, ethAddress } = req.body;
+  if (!btcPayoutAddress || !ethAddress) {
+    return res.status(400).json({
+      message: "btcPayoutAddress and ethAddress are required.",
+    });
+  }
+  try {
+    const account = await prisma.account.update({
+      where: {
+        ethAddress,
+      },
+      data: {
+        btcPayoutAddress,
+      },
+    });
+    res.status(200).json(account);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
 export default router;

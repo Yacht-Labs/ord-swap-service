@@ -100,7 +100,7 @@ async function seedAndReset() {
       if (!account) {
         account = await prisma.account.create({
           data: {
-            ethAddress: inscription.address,
+            ethAddress: ethers.Wallet.createRandom().address,
           },
         });
       }
