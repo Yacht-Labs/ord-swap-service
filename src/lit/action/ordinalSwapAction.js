@@ -52,6 +52,35 @@ const createUnsignedTransaction = (
   return transaction;
 };
 
+async function signEthPayoutTx() {
+  const unsignedTx = createUnsignedTransaction(
+    pkpEthAddress,
+    ethPayoutAddress,
+    "0.1",
+    0,
+    "10",
+    "100"
+  );
+
+  Lit.Actions.setResponse({
+    response: JSON.stringify(unsignedTx),
+  });
+
+  await LitActions.signEcdsa({
+    toSign: hashTransaction(unsignedTx),
+    publicKey: pkpPublicKey,
+    sigName: "ethPayoutSignature",
+  });
+}
+
+async function createTaprootSeedSig() {
+  await LitActions.signEcdsa({
+    toSign: "TaprootSeedSigner",
+    publicKey: pkpPublicKey,
+    sigName: "taprootSig",
+  });
+}
+
 function findWinnerAndLosersByBlock(transfers, minAmount) {
   let winner = null;
   const losers = [];
@@ -117,30 +146,9 @@ async function getAssetTransfers(address) {
 }
 
 async function main() {
-  const address = Lit.Auth.authSigAddress;
-  const transfers = await getAssetTransfers(pkpEthAddress);
-  const returnPayload = {
-    pepas: `Lit Action is running ${address}`,
-    ethPrice,
-  };
+  const executorAddress = Lit.Auth.authSigAddress;
 
-  const unsignedTx = createUnsignedTransaction(
-    pkpEthAddress,
-    ethPayoutAddress,
-    "0.1",
-    0,
-    "10",
-    "100"
-  );
-
-  Lit.Actions.setResponse({
-    response: JSON.stringify(unsignedTx),
-  });
-
-  await LitActions.signEcdsa({
-    toSign: hashTransaction(unsignedTx),
-    publicKey: pkpPublicKey,
-    sigName: "ethPayoutSignature",
-  });
+  await createTaprootSeedSig();
+  await signEthPayoutTx();
 }
 main();
