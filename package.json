@@ -14,6 +14,7 @@
     "lint:fix": "eslint --fix 'src/**/*.ts'",
     "db:seed": "ts-node prisma/seed/seed.ts",
     "db:dropLocal": "ts-node prisma/seed/dropLocalDb.ts",
+    "postinstall": "typechain --target ethers-v5 --out-dir typechain-types/contracts './src/abis/*.json'",
     "build:litAction": "npx tsc src/lit/btc/OrdinalService/HiroOrdinalService.ts --outDir src/lit/btc/javascript --target ESNext --moduleResolution Node --esModuleInterop --module CommonJS --declaration false --removeComments false --skipLibCheck --sourceMap && npx tsc src/lit/btc/UtxoService/UtxoService.ts --outDir src/lit/btc/javascript --target ESNext --moduleResolution Node --esModuleInterop --module CommonJS --declaration false --removeComments false --skipLibCheck --sourceMap"
   },
   "devDependencies": {
@@ -47,10 +48,15 @@
   },
   "dependencies": {
     "@bitauth/libauth": "^1.19.1",
+    "@lit-protocol/lit-node-client-nodejs": "^2.1.96",
+    "@lit-protocol/sdk-nodejs": "^1.1.249",
+    "@lit-protocol/types": "^2.1.96",
     "@metamask/eth-sig-util": "^5.0.2",
     "@noble/secp256k1": "1.5.3",
     "@parity/schnorrkel-js": "^0.1.5",
     "@prisma/client": "^4.11.0",
+    "@typechain/ethers-v5": "^10.2.0",
+    "alchemy-sdk": "^2.6.2",
     "@unisat/ord-utils": "^0.2.4",
     "ascii85": "^1.0.2",
     "bcrypto": "^5.4.0",
@@ -58,6 +64,7 @@
     "bip32": "^4.0.0",
     "bitcoin-ts": "^1.15.2",
     "bitcoinjs-lib": "^6.1.0",
+    "bs58": "^5.0.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -67,15 +74,18 @@
     "express": "^4.18.2",
     "express-openapi-validator": "^5.0.3",
     "helmet": "^6.0.1",
+    "ipfs-only-hash": "^4.0.0",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.2",
     "node-fetch": "^2.6.6",
     "schnorrkel-js": "^0.1.0",
     "secp256k1": "^5.0.0",
+    "siwe": "^1.1.6",
     "swagger-ui-express": "^4.6.2",
     "tiny-secp256k1": "^2.2.1",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
+    "typechain": "^8.1.1",
     "yamljs": "^0.3.0"
   }
 }
