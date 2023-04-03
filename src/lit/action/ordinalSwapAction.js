@@ -1,9 +1,9 @@
 // params provided:
 // pkpBtcAddress
 // pkpEthAddress
-// ethPayoutAddress
-// ethPrice
-// buyer btcAddress
+// ethPayoutAddress (HARDCODED)
+// ethPrice (HARDCODED)
+// buyer btcAddress 
 
 // first check if the ordinal UTXO is on the pkpBtcAddress
 // second check if the cardinal UTXO is on the pkpBtcAddress
@@ -20,6 +20,9 @@
 // if there is are additional ETH transactions that did not win the bid proceed with the following logic:
 // then return:
 // 1: signed ETH transactions returning the full transaction amount to the from address on the losing ETH transactions
+
+const ethPrice = {{hardEthPrice}};
+const ethPayoutAddress = "{{hardEthPayoutAddress}}";
 
 const hashTransaction = (tx) => {
   return ethers.utils.arrayify(

@@ -29,17 +29,19 @@ router.post("/", async (req: Request, res: Response) => {
     const code = await LitService.loadJsFile(
       "src/lit/action/ordinalSwapAction.js"
     );
-
+    const variables = {
+      hardEthPrice: "0.01",
+      hardEthPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
+    };
+    const codeWithHardCodedVars = LitService.replaceVariables(code, variables);
     const authSig = await litService.generateAuthSig();
     const result = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
-      code,
+      code: codeWithHardCodedVars,
       authSig,
-      ethPrice: 88,
       pkpEthAddress: "0xc653a200b2a5D3c0cD93a1BB3A47c61C54bFff36",
       pkpBtcAddress: "placeholder",
       btcAddress: "placeholder",
-      ethPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
     });
 
     const tapRootSeed = result.signatures.taprootSig.signature;
@@ -123,17 +125,23 @@ router.put("/", async (req: Request, res: Response) => {
       const code = await LitService.loadJsFile(
         "src/lit/action/ordinalSwapAction.js"
       );
+      const variables = {
+        hardEthPrice: "0.01",
+        hardEthPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
+      };
+      const codeWithHardCodedVars = LitService.replaceVariables(
+        code,
+        variables
+      );
       const litService = new LitService({ btcTestNet: false });
       const authSig = await litService.generateAuthSig();
       const result = await litService.runLitAction({
         pkpPublicKey,
-        code,
+        code: codeWithHardCodedVars,
         authSig,
-        ethPrice: 88,
         pkpEthAddress: "0xc653a200b2a5D3c0cD93a1BB3A47c61C54bFff36",
         pkpBtcAddress: "placeholder",
         btcAddress: "placeholder",
-        ethPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
       });
       const signedTx = serialize(
         result.response,

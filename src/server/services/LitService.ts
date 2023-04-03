@@ -174,26 +174,41 @@ export class LitService {
     });
   }
 
+  /* 
+  example usage: 
+  const variables = {
+    hardEthPrice: "42069",
+    hardEthPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
+  };
+  replaceVariables(code, variables);
+  */
+  static replaceVariables(content: string, variables: any) {
+    let result = content;
+    // eslint-disable-next-line guard-for-in
+    for (const key in variables) {
+      const placeholder = `{{${key}}}`;
+      const value = variables[key];
+      result = result.split(placeholder).join(value);
+    }
+    return result;
+  }
+
   async runLitAction({
     pkpPublicKey,
     ipfsCID,
     code,
     authSig,
-    ethPrice,
     pkpEthAddress,
     pkpBtcAddress,
     btcAddress,
-    ethPayoutAddress,
   }: {
     pkpPublicKey: string;
     ipfsCID?: string;
     code?: string;
     authSig?: any;
-    ethPrice: number;
     pkpEthAddress: string;
     pkpBtcAddress: string;
     btcAddress: string;
-    ethPayoutAddress: string;
   }) {
     try {
       await this.litClient.connect();
@@ -205,11 +220,9 @@ export class LitService {
           pkpAddress: ethers.utils.computeAddress(pkpPublicKey),
           pkpPublicKey,
           authSig: authSig || (await this.generateAuthSig()),
-          ethPrice,
           pkpEthAddress,
           pkpBtcAddress,
           btcAddress,
-          ethPayoutAddress,
         },
       });
       return response;
