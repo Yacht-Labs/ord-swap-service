@@ -37,6 +37,20 @@ type ApiResponse = {
   results: Inscription[];
 };
 
+function generateRandomAddress() {
+  const addressLength = 34; // P2PKH addresses are 34 characters long
+  const addressCharset =
+    "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; // Base58 character set (excluding confusing characters)
+
+  let address = "";
+  for (let i = 0; i < addressLength; i++) {
+    const randomCharIndex = Math.floor(Math.random() * addressCharset.length);
+    address += addressCharset[randomCharIndex];
+  }
+
+  return address;
+}
+
 function getRandomDateInPast(days: number) {
   const now = new Date();
   const msInPast = Math.random() * days * 24 * 60 * 60 * 1000;
@@ -102,8 +116,8 @@ async function seedAndReset() {
           ethPrice: (Math.random() * 1000 + 0.01).toFixed(
             Math.floor(Math.random() * 5)
           ),
-          pkpPublicKey: ethers.Wallet.createRandom().publicKey, // Replace with a valid uncompressed ethereum public key
-          taprootAddress: `bc1p${crypto.randomBytes(30).toString("hex")}`, // This is not a valid taproot address but a placeholder. Use a library to generate a valid taproot address., // Replace with a valid bitcoin taproot address
+          pkpPublicKey: ethers.Wallet.createRandom().publicKey,
+          bitcoinAddress: generateRandomAddress(), // This is not a valid btc address but a placeholder. Use a library to generate a valid taproot address., // Replace with a valid bitcoin taproot address
           confirmedAt,
         },
       });
