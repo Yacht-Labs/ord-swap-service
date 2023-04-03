@@ -13,6 +13,7 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint --fix 'src/**/*.ts'",
     "db:seed": "ts-node prisma/seed/seed.ts",
+    "db:dropLocal": "ts-node prisma/seed/dropLocalDb.ts",
     "build:litAction": "npx tsc src/lit/btc/OrdinalService/HiroOrdinalService.ts --outDir src/lit/btc/javascript --target ESNext --moduleResolution Node --esModuleInterop --module CommonJS --declaration false --removeComments false --skipLibCheck --sourceMap && npx tsc src/lit/btc/UtxoService/UtxoService.ts --outDir src/lit/btc/javascript --target ESNext --moduleResolution Node --esModuleInterop --module CommonJS --declaration false --removeComments false --skipLibCheck --sourceMap"
   },
   "devDependencies": {
@@ -67,6 +68,7 @@
     "express-openapi-validator": "^5.0.3",
     "helmet": "^6.0.1",
     "morgan": "^1.10.0",
+    "node-cron": "^3.0.2",
     "node-fetch": "^2.6.6",
     "schnorrkel-js": "^0.1.0",
     "secp256k1": "^5.0.0",

@@ -1,11 +1,21 @@
 import { Router, Request, Response } from "express";
+import { Listing } from "@prisma/client";
 import prisma from "../../../db/prisma";
 
 const router = Router();
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { ethAddress, ethPrice, inscriptionId } = req.body;
-    let account = await prisma.account.findUnique({ where: { ethAddress } });
+    const {
+      ethPrice,
+      inscriptionId,
+      inscriptionNumber,
+      ethAddress,
+      pkpPublicKey,
+      bitcoinAddress,
+    }: Listing & { ethAddress: string } = req.body;
+    let account = await prisma.account.findUnique({
+      where: { ethAddress },
+    });
     if (!account) {
       account = await prisma.account.create({
         data: {
@@ -20,10 +30,10 @@ router.post("/", async (req: Request, res: Response) => {
       data: {
         ethPrice,
         inscriptionId,
-        inscriptionNumber: "placeholder", // You can replace this with the actual logic to generate the inscription number
+        inscriptionNumber, // You can replace this with the actual logic to generate the inscription number
         listingAccountId: account.id,
-        pkpPublicKey: "placeholder", // You can replace this with the actual logic to generate the PKP public key
-        taprootAddress: "placeholder", // You can replace this with the actual logic to generate the taproot address
+        pkpPublicKey, // You can replace this with the actual logic to generate the PKP public key
+        bitcoinAddress, // You can replace this with the actual logic to generate the taproot address
       },
     });
 
