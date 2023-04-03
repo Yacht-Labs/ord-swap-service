@@ -1,8 +1,7 @@
 import { Router, Request, Response } from "express";
-import { Listing } from "@prisma/client";
-import { serialize, Transaction } from "@ethersproject/transactions";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { serialize } from "@ethersproject/transactions";
 import { ethers } from "ethers";
-import * as ethSigUtil from "@metamask/eth-sig-util";
 import { LitService } from "../../services/LitService";
 import TaprootWallet from "../../../btc/TaprootWallet";
 import prisma from "../../../db/prisma";
@@ -20,39 +19,10 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
-    // TODO: get the inscription number, pkpPublicKey, and taprootAddress from the inscriptionId
-
-    const litService = new LitService({ btcTestNet: false });
-
+    const litService = new LitService();
     const pkp = await litService.mintPkp();
-    // const btcAddress = litService.generateBtcAddress(pkp.publicKey);
+    const bitcoinAddress = litService.generateBtcAddress(pkp.publicKey);
 
-    const code = await LitService.loadJsFile(
-      "src/lit/action/ordinalSwapAction.js"
-    );
-
-    const authSig = await litService.generateAuthSig();
-    const result = await litService.runLitAction({
-      pkpPublicKey: pkp.publicKey,
-      code,
-      authSig,
-      ethPrice: 88,
-      pkpEthAddress: "0xc653a200b2a5D3c0cD93a1BB3A47c61C54bFff36",
-      pkpBtcAddress: "placeholder",
-      btcAddress: "placeholder",
-      ethPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
-    });
-
-    const tapRootSeed = result.signatures.taprootSig.signature;
-    const taprootWallet = new TaprootWallet();
-    const taprootChild = await taprootWallet.getTaprootKeyPairFromSignature(
-      tapRootSeed
-    );
-    const taprootAddress =
-      await TaprootWallet.getTaprootAddressFromTaprootChild(taprootChild);
-    if (!taprootAddress) {
-      throw new Error("Could not get taproot address");
-    }
     const listing = await prisma.listing.create({
       data: {
         ethPrice,
@@ -60,7 +30,7 @@ router.post("/", async (req: Request, res: Response) => {
         inscriptionNumber,
         listingAccountId: account.id,
         pkpPublicKey: pkp.publicKey,
-        bitcoinAddress: "placeholder", // TODO: FIX
+        bitcoinAddress,
       },
     });
 

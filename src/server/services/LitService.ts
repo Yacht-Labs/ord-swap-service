@@ -10,6 +10,9 @@ import { readMumbaiPrivateKeyEnv, readMumbaiRpcUrlEnv } from "../../util/env";
 import { PKPNFT } from "../../../typechain-types/contracts/PKPNFT";
 import { generateAuthSig } from "../../util/lit";
 
+interface Params {
+  btcTestNet?: boolean;
+}
 export class LitService {
   private litClient: any;
 
@@ -19,11 +22,10 @@ export class LitService {
 
   private btcTestNet: boolean;
 
-  constructor({ btcTestNet = false }) {
-    const privateKey = readMumbaiPrivateKeyEnv();
+  constructor({ btcTestNet = false }: Params = {}) {
     this.btcTestNet = btcTestNet;
     this.signer = new ethers.Wallet(
-      privateKey,
+      readMumbaiPrivateKeyEnv(),
       new ethers.providers.JsonRpcProvider(readMumbaiRpcUrlEnv())
     );
     this.litClient = new LitJsSdk.LitNodeClientNodeJs({
@@ -100,7 +102,7 @@ export class LitService {
   }
 
   /**
-   * Mints a PKP NFT on the Polygon Mumbai network using the provided signer
+   * Mints a PKP NFT on the Polygon Mumbai network using the signer
    * @returns {Promise<{tokenId: string; publicKey: string; address: string}>} tokenId, publicKey, and address of the minted NFT
    * @throws Error if signer not set
    * @throws Error if signer provider not set
@@ -113,10 +115,10 @@ export class LitService {
     address: string;
   }> {
     if (!this.signer) {
-      throw new Error("Signer not set");
+      throw new Error("Lit Service signer not set");
     }
     if (!this.signer.provider) {
-      throw new Error("Signer provider not set, required to get gas info");
+      throw new Error("Lit Service provider not set, required to get gas info");
     }
     try {
       const feeData = await this.signer.provider.getFeeData();

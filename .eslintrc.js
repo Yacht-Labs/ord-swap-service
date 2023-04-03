@@ -11,6 +11,7 @@ module.exports = {
     es2021: true,
   },
   rules: {
+    "@typescript-eslint/no-explicit-any": "off",
     "no-restricted-syntax": "off",
     "no-plusplus": "off",
     "consistent-return": "off",

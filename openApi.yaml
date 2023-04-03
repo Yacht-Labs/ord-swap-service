@@ -19,6 +19,7 @@ paths:
                 - ethAddress
                 - ethPrice
                 - inscriptionId
+                - inscriptionNumber
               properties:
                 ethAddress:
                   type: string
@@ -26,6 +27,8 @@ paths:
                 ethPrice:
                   type: string
                 inscriptionId:
+                  type: string
+                inscriptionNumber:
                   type: string
       responses:
         201:
