@@ -91,7 +91,7 @@ router.put("/", async (req: Request, res: Response) => {
       });
     } else if (isBuy) {
       const code = await LitService.loadJsFile(
-        "src/lit/action/ordinalSwapAction.js"
+        "src/lit/action/javascript/PkpBtcSwap.bundle.js"
       );
       const variables = {
         hardEthPrice: "0.01",

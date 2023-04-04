@@ -1,6 +1,6 @@
-import { ListingService } from "src/server/services/ListingService";
-import { HiroInscriptionAPI } from "src/api/inscription/HiroInscriptionAPI";
-import { BlockchainInfoUtxoApi } from "src/api/utxo/BlockchainInfoApi";
+import { ListingService } from "../../server/services/ListingService";
+import { HiroInscriptionAPI } from "../../api/inscription/HiroInscriptionAPI";
+import { BlockchainInfoUtxoApi } from "../../api/utxo/BlockchainInfoApi";
 
 const inscriptionAPI = new HiroInscriptionAPI();
 const utxoAPI = new BlockchainInfoUtxoApi();
