@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import path from "path";
 import * as OpenApiValidator from "express-openapi-validator";
 import YAML from "yamljs";
-import { setupSwagger } from "./swagger";
+import { setupSwagger } from "./openAPI/swagger";
 
 // Routes
 import AccountsRoutes from "./routes/accounts/accounts.routes";
@@ -29,7 +29,7 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const apiSpecPath = path.join(__dirname, "../../openApi.yaml");
+const apiSpecPath = path.join(__dirname, "./openAPI/specification.yaml");
 const swaggerDoc = YAML.load(apiSpecPath);
 app.use(
   OpenApiValidator.middleware({
@@ -71,9 +71,3 @@ const startServer = (port?: number) => {
 
 export default app;
 export { startServer };
-
-/*
-I will need a route to create an account that contains a parameter ethAddress and saves the ethAddress to a new account.
-
-I would like to automatically generate documentation using Swagger and the OpenAPI specification.  Please generate the openAPI specification for this endpoint and add the ability to start a swagger documentation server.  If possible, please have the code for the routes auto generated based on the open API specification
-*/

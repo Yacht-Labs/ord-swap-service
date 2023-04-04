@@ -1,7 +1,7 @@
 import { Inscription } from "src/models/Inscription";
 import { BaseAPI } from "../base/BaseApi";
 
-export abstract class BaseInscriptionAPI extends BaseAPI {
+export abstract class InscriptionAPI extends BaseAPI {
   public isValidInscriptionNumber(inscriptionNumber: string): boolean {
     return /^[0-9]+$/.test(inscriptionNumber);
   }
@@ -10,7 +10,7 @@ export abstract class BaseInscriptionAPI extends BaseAPI {
     return /^[a-fA-F0-9]{64}i[0-9]+$/.test(inscriptionId);
   }
 
-  public abstract getInscriptionDetails(
+  public abstract getInscription(
     inscriptionIdOrNumber: string
   ): Promise<Inscription>;
 

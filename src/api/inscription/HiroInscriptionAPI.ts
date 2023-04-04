@@ -1,7 +1,7 @@
 import { Inscription } from "src/models/Inscription";
-import { BaseInscriptionAPI } from "./InscriptionAPI";
+import { InscriptionAPI } from "./InscriptionAPI";
 
-type InscriptionResponse = {
+export type HiroInscriptionResponse = {
   id: string;
   number: number;
   address: string;
@@ -24,13 +24,13 @@ type InscriptionResponse = {
   timestamp: number;
 };
 
-export class HiroInscriptionAPI extends BaseInscriptionAPI {
+export class HiroInscriptionAPI extends InscriptionAPI {
   protected baseURL: string;
   constructor() {
     super();
     this.baseURL = "https://api.hiro.so";
   }
-  public getInscriptionDetails = async (
+  public getInscription = async (
     inscriptionIdOrNumber: string
   ): Promise<Inscription> => {
     try {
@@ -51,7 +51,7 @@ export class HiroInscriptionAPI extends BaseInscriptionAPI {
   };
 
   public normalizeInscriptionResponse(
-    response: InscriptionResponse
+    response: HiroInscriptionResponse
   ): Inscription {
     const { id, number, address, location, output, value, offset } = response;
     return { id, number, address, location, output, value, offset };

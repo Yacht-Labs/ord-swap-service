@@ -1190,9 +1190,9 @@
   integrity sha512-mmIwWi9/d4R4HuU0wM/1VG2eQoFXwzvs/rk1IYkf9y/nVHPYCMDz7nRofDS/xHMlP41fHMu0tP61v46rnt68xA==
 
 "@lit-protocol/sdk-nodejs@^1.1.249":
-  version "1.1.249"
-  resolved "https://registry.yarnpkg.com/@lit-protocol/sdk-nodejs/-/sdk-nodejs-1.1.249.tgz#2665e3e6b419a0fe7c967b339f3d5766425b3463"
-  integrity sha512-G7QtThZoz20/AWiddbStIm77+t0wycNZJtAfVG1LVyRUQYDsSj5l3synB65MBU06fiZg1clyodUK9k5dPd8KOw==
+  version "1.1.250"
+  resolved "https://registry.yarnpkg.com/@lit-protocol/sdk-nodejs/-/sdk-nodejs-1.1.250.tgz#fa5977d4b4de7cd8b941ea7b1a8a5ff9e37fdbfc"
+  integrity sha512-xBI0pKYVKaM91ZN1lvX/l3D7Hdusm/qvx5h1pLyQ+L+OP+y7fkVVOILSj16NOGShIuVhF815J8qST90YxhEJYg==
   dependencies:
     "@ethersproject/bytes" "^5.5.0"
     "@ethersproject/contracts" "^5.2.0"
@@ -2128,9 +2128,9 @@ ajv@^8.0.0, ajv@^8.11.2:
     uri-js "^4.2.2"
 
 alchemy-sdk@^2.6.2:
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/alchemy-sdk/-/alchemy-sdk-2.6.2.tgz#ef0fc5aaa035c2fe3aa1a015a7c3433c7f8bdabb"
-  integrity sha512-wJhoessaINiysxECTsJNQ7maj37wQA0Pj6gZcTa0R3t3mXljQ5BeC61E5jnmnIdY1g/kM8zT+6jdaBliHxBGqA==
+  version "2.6.3"
+  resolved "https://registry.yarnpkg.com/alchemy-sdk/-/alchemy-sdk-2.6.3.tgz#686d73144677bccf40cf271aefc91a36027db2eb"
+  integrity sha512-s45MeutLxYuVcgbxzLL5L0ikQQj7wfAzC4iKqlDFKU4IyVgVBi7iT5kQtDb1LWT6kTvZKdpBWHiKPBdPpE3IVg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-provider" "^5.7.0"
@@ -2742,9 +2742,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001449:
-  version "1.0.30001473"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001473.tgz#3859898b3cab65fc8905bb923df36ad35058153c"
-  integrity sha512-ewDad7+D2vlyy+E4UJuVfiBsU69IL+8oVmTuZnH5Q6CIUbxNfI50uVpRHbUPDD6SUaN2o0Lh4DhTrvLG/Tn1yg==
+  version "1.0.30001474"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001474.tgz#13b6fe301a831fe666cce8ca4ef89352334133d5"
+  integrity sha512-iaIZ8gVrWfemh5DG3T9/YqarVZoYf0r188IjaGwx68j4Pf0SGY6CQkmJUIE+NZHkkecQGohzXmBGEwWDr9aM3Q==
 
 case@^1.6.3:
   version "1.6.3"
@@ -3262,9 +3262,9 @@ electron-fetch@^1.7.2:
     encoding "^0.1.13"
 
 electron-to-chromium@^1.4.284:
-  version "1.4.348"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.348.tgz#f49379dc212d79f39112dd026f53e371279e433d"
-  integrity sha512-gM7TdwuG3amns/1rlgxMbeeyNoBFPa+4Uu0c7FeROWh4qWmvSOnvcslKmWy51ggLKZ2n/F/4i2HJ+PVNxH9uCQ==
+  version "1.4.349"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.349.tgz#c65a4378cea805accfe6f585730ce2a3afe07f1d"
+  integrity sha512-34LBfVDiL6byWorSmQOPwq4gD5wpN8Mhh5yPGQr67FbcxsfUS0BDJP9y6RykSgeWVUfSkN/2dChywnsrmKVyUg==
 
 elliptic@6.5.4, elliptic@^6.5.2, elliptic@^6.5.4:
   version "6.5.4"
