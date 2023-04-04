@@ -111,47 +111,8 @@ router.put("/", async (req: Request, res: Response) => {
         pkpBtcAddress: "placeholder",
         btcAddress: "placeholder",
       });
-      const signedTx = serialize(
-        result.response,
-        result.signatures.ethPayoutSignature.signature
-      );
-      const provider = new ethers.providers.JsonRpcProvider(
-        "https://polygon-mumbai.g.alchemy.com/v2/i4MQfC5uRVeQQZBK6IVZQQjsOdhx668n"
-      );
-      const taprootWallet = new TaprootWallet();
-      const tapRootSeed = result.signatures.taprootSig.signature;
-      const taprootChild = await taprootWallet.getTaprootKeyPairFromSignature(
-        tapRootSeed
-      );
-      const { privateKey } = taprootChild;
-      if (privateKey === undefined)
-        throw new Error("Taproot address is undefined");
-      const hexPrivateKey = privateKey.toString("hex");
-      const encryptedPrivateKey = TaprootWallet.encryptMessageWithPubkey(
-        hexPrivateKey,
-        encryptionPubKey
-      );
-      updatedListing = encryptedPrivateKey;
-      // const tx = await provider.sendTransaction(signedTx);
-      // const receipt = await tx.wait(1);
-      // console.log("result.response", result.response);
-      // console.log(
-      //   "result.signatures.ethPayoutSignature.signature",
-      //   result.signatures.ethPayoutSignature.signature
-      // );
-      // console.log("signedTx", signedTx);
-      // console.log("result", result);
-      // console.log("receipt", receipt);
-    } else {
-      // If signature is not provided, mark the listing as sold
-      updatedListing = await prisma.listing.update({
-        where: { id: listingId },
-        data: {
-          sellDate: new Date(),
-        },
-      });
+      console.log(result);
     }
-
     res.status(200).json(updatedListing);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
