@@ -6,6 +6,7 @@
   "author": "a-straus <straus@yachtlabs.io>",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "start:dev": "nodemon src/server/start.ts",
     "start": "ts-node src/server/start.ts",
     "test": "npx jest",

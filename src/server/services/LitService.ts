@@ -15,11 +15,8 @@ interface Params {
 }
 export class LitService {
   private litClient: any;
-
   private pkpContract: PKPNFT;
-
   private signer: ethers.Wallet;
-
   private btcTestNet: boolean;
 
   constructor({ btcTestNet = false }: Params = {}) {

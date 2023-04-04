@@ -2,17 +2,18 @@ import { ListingService } from "src/server/services/ListingService";
 import { HiroInscriptionAPI } from "src/api/inscription/HiroInscriptionAPI";
 import { BlockchainInfoUtxoApi } from "src/api/utxo/BlockchainInfoApi";
 
-const INSCRIPTION_ID = "";
-const PKP_BTC_ADDRESS = "";
 const inscriptionAPI = new HiroInscriptionAPI();
 const utxoAPI = new BlockchainInfoUtxoApi();
 const listingService = new ListingService(inscriptionAPI, utxoAPI);
 
-(async () => {
+export async function checkInscriptionStatus(
+  pkpBtcAddress: string,
+  inscriptionId: string
+) {
   const { listingIsConfirmed, utxos, inscription } =
     await listingService.confirmListing({
-      inscriptionId: PKP_BTC_ADDRESS,
-      pkpBtcAddress: PKP_BTC_ADDRESS,
+      inscriptionId,
+      pkpBtcAddress,
     });
   if (!listingIsConfirmed) {
     throw new Error(
@@ -25,9 +26,10 @@ const listingService = new ListingService(inscriptionAPI, utxoAPI);
   const [ordinalUtxo] = utxos.filter(
     (u) => u.id === inscriptionTxId && u.vout.toString() === inscriptionVout
   );
-  const cardinalUtxo = utxos.filter(
+  const [cardinalUtxo] = utxos.filter(
     (u) => u.txid !== ordinalUtxo.txid || u.vout !== ordinalUtxo.vout
   );
 
-  // create a transaction for signature that has the ordinalUtxo as first input followed by cardinalUtxo.  First output goes to buyer BTC address
-})();
+  return { ordinalUtxo, cardinalUtxo };
+  // have another function that builds the transaction
+}
