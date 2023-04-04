@@ -1,6 +1,6 @@
-/* eslint-disable no-promise-executor-return */
-
-import BigNumber from "bignumber.js";
+import { networks, Network } from "bitcoinjs-lib";
+import { BigNumber } from "ethers";
+import { readBtcNetworkEnv } from "./env";
 
 /* eslint-disable no-param-reassign */
 export function reverseBuffer(buffer: Buffer): Buffer {
@@ -20,7 +20,14 @@ export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function amountToSatoshis(val: any) {
-  const num = new BigNumber(val);
-  return Number(num.multipliedBy(100000000).toFixed(8));
+export function getBtcNetwork(): Network {
+  const network = readBtcNetworkEnv();
+  switch (network) {
+    case "testnet":
+      return networks.testnet;
+    case "regtest":
+      return networks.regtest;
+    default:
+      return networks.bitcoin;
+  }
 }

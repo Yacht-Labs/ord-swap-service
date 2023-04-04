@@ -213,6 +213,6 @@ components:
         cancelledDate:
           type: string
           format: date-time
-        confirmedAt:
+        confirmedDate:
           type: string
           format: date-time

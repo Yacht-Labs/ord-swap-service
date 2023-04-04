@@ -35,3 +35,7 @@ export function readMumbaiPrivateKeyEnv(): string {
 export function readMumbaiRpcUrlEnv(): string {
   return readStringEnv("MUMBAI_RPC_URL");
 }
+
+export function readBtcNetworkEnv(): string {
+  return readStringEnv("BTC_NETWORK");
+}

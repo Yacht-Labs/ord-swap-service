@@ -1,15 +1,12 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE "Account" (
+    "id" TEXT NOT NULL,
+    "ethAddress" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "btcPayoutAddress" TEXT,
 
-  - The primary key for the `Account` table will be changed. If it partially fails, the table could be left without primary key constraint.
-
-*/
--- AlterTable
-ALTER TABLE "Account" DROP CONSTRAINT "Account_pkey",
-ALTER COLUMN "id" DROP DEFAULT,
-ALTER COLUMN "id" SET DATA TYPE TEXT,
-ADD CONSTRAINT "Account_pkey" PRIMARY KEY ("id");
-DROP SEQUENCE "Account_id_seq";
+    CONSTRAINT "Account_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Listing" (
@@ -19,13 +16,17 @@ CREATE TABLE "Listing" (
     "listingAccountId" TEXT NOT NULL,
     "ethPrice" TEXT NOT NULL,
     "pkpPublicKey" TEXT NOT NULL,
-    "taprootAddress" TEXT NOT NULL,
+    "pkpBtcAddress" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "confirmedDate" TIMESTAMP(3),
     "sellDate" TIMESTAMP(3),
     "cancelledDate" TIMESTAMP(3),
 
     CONSTRAINT "Listing_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Account_ethAddress_key" ON "Account"("ethAddress");
 
 -- AddForeignKey
 ALTER TABLE "Listing" ADD CONSTRAINT "Listing_listingAccountId_fkey" FOREIGN KEY ("listingAccountId") REFERENCES "Account"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

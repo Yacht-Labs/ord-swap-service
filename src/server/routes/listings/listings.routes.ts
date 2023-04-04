@@ -3,7 +3,7 @@ import { Router, Request, Response } from "express";
 import { serialize } from "@ethersproject/transactions";
 import { ethers } from "ethers";
 import { LitService } from "../../services/LitService";
-import TaprootWallet from "../../../btc/TaprootWallet";
+import TaprootWallet from "../../../bitcoin/TapRootWallet/TaprootWallet";
 import prisma from "../../../db/prisma";
 
 const router = Router();
@@ -21,7 +21,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     const litService = new LitService();
     const pkp = await litService.mintPkp();
-    const bitcoinAddress = litService.generateBtcAddress(pkp.publicKey);
+    const pkpBtcAddress = litService.generateBtcAddress(pkp.publicKey);
 
     const listing = await prisma.listing.create({
       data: {
@@ -30,7 +30,7 @@ router.post("/", async (req: Request, res: Response) => {
         inscriptionNumber,
         listingAccountId: account.id,
         pkpPublicKey: pkp.publicKey,
-        bitcoinAddress,
+        pkpBtcAddress,
       },
     });
 

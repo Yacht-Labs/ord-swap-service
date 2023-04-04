@@ -106,7 +106,9 @@ async function seedAndReset() {
       }
 
       const shouldAddConfirmedAt = Math.random() < 0.7;
-      const confirmedAt = shouldAddConfirmedAt ? getRandomDateInPast(10) : null;
+      const confirmedDate = shouldAddConfirmedAt
+        ? getRandomDateInPast(10)
+        : null;
 
       return prisma.listing.create({
         data: {
@@ -117,8 +119,8 @@ async function seedAndReset() {
             Math.floor(Math.random() * 5)
           ),
           pkpPublicKey: ethers.Wallet.createRandom().publicKey,
-          bitcoinAddress: generateRandomAddress(), // This is not a valid btc address but a placeholder. Use a library to generate a valid taproot address., // Replace with a valid bitcoin taproot address
-          confirmedAt,
+          pkpBtcAddress: generateRandomAddress(), // This is not a valid btc address but a placeholder. Use a library to generate a valid taproot address., // Replace with a valid bitcoin taproot address
+          confirmedDate,
         },
       });
     });
