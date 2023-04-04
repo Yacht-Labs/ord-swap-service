@@ -3,7 +3,7 @@
 // pkpEthAddress
 // ethPayoutAddress (HARDCODED)
 // ethPrice (HARDCODED)
-// buyer btcAddress 
+// buyer btcAddress
 
 // first check if the ordinal UTXO is on the pkpBtcAddress
 // second check if the cardinal UTXO is on the pkpBtcAddress
@@ -32,13 +32,43 @@ const hashTransaction = (tx) => {
   );
 };
 
+async function getCurrentGasPrices(chainId) {
+  let url;
+  switch (chainId) {
+    case 137:
+      url = "https://gasstation-mainnet.matic.network/v2";
+      break;
+    case 80001:
+      url = "https://gasstation-mumbai.matic.today/v2";
+      break;
+    default:
+      throw new Error("Unsupported chain ID");
+  }
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return {
+      maxPriorityFeePerGas: data.fast.maxPriorityFee,
+      maxFeePerGas: data.fast.maxFee,
+    };
+  } catch (error) {
+    console.error(`Error fetching gas prices: ${error}`);
+    return {
+      maxPriorityFeePerGas: "10",
+      maxFeePerGas: "100",
+    };
+  }
+}
+
 const createUnsignedTransaction = (
   fromAddress,
   toAddress,
   value,
   nonce,
   maxPriorityFeePerGas,
-  maxFeePerGas
+  maxFeePerGas,
+  chainId
 ) => {
   const transaction = {
     from: fromAddress,
@@ -49,20 +79,22 @@ const createUnsignedTransaction = (
     maxFeePerGas: ethers.utils.parseUnits(maxFeePerGas, "gwei"),
     gasLimit: ethers.BigNumber.from("21000"), // Gas limit for a simple Ether transfer
     type: 2, // EIP-1559 transaction
-    chainId: 80001, // Polygon Mumbai testnet
+    chainId,
   };
 
   return transaction;
 };
 
 async function signEthPayoutTx() {
+  const gasPrices = await getCurrentGasPrices(80001);
   const unsignedTx = createUnsignedTransaction(
     pkpEthAddress,
     ethPayoutAddress,
     "0.1",
     0,
-    "10",
-    "100"
+    gasPrices.maxPriorityFeePerGas,
+    gasPrices.maxFeePerGas,
+    80001
   );
 
   Lit.Actions.setResponse({
@@ -150,7 +182,6 @@ async function getAssetTransfers(address) {
 
 async function main() {
   const executorAddress = Lit.Auth.authSigAddress;
-
   await createTaprootSeedSig();
   await signEthPayoutTx();
 }
