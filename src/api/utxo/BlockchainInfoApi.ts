@@ -7,6 +7,7 @@ type BlockchainInfoUtxoResponse = {
 };
 
 type BlockchainInfoUtxo = {
+  tx_hash_big_endian: string;
   tx_hash: string;
   tx_index: number;
   tx_output_n: number;
@@ -39,8 +40,7 @@ export class BlockchainInfoUtxoApi extends UtxoAPI {
 
   public normalizeUtxoResponse(output: BlockchainInfoUtxo): Utxo {
     return {
-      id: `${output.tx_hash}:${output.tx_output_n}`,
-      txid: output.tx_hash,
+      txid: output.tx_hash_big_endian,
       vout: output.tx_output_n,
       scriptPubKey: output.script,
       amount: output.value,

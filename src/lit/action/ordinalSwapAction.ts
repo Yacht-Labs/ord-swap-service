@@ -7,7 +7,7 @@
 // buyer btcAddress
 // Run it with an authsig
 
-import { UnsignedTransaction } from "ethers";
+import { UnsignedTransaction, ethers } from "ethers";
 
 // first check if the ordinal UTXO is on the pkpBtcAddress
 // second check if the cardinal UTXO is on the pkpBtcAddress
@@ -81,8 +81,8 @@ export async function getCurrentGasPrices(chainId: number): Promise<{
     const response = await fetch(url);
     const data = (await response.json()) as GasProviderApiResponse;
     return {
-      maxPriorityFeePerGas: data.fast.maxPriorityFee.toString(),
-      maxFeePerGas: data.fast.maxFee.toString(),
+      maxPriorityFeePerGas: data.fast.maxPriorityFee.toString().slice(0, 6),
+      maxFeePerGas: data.fast.maxFee.toString().slice(0, 6),
     };
   } catch (error) {
     console.log(`Error fetching gas prices: ${error}`);
@@ -96,7 +96,7 @@ export async function getCurrentGasPrices(chainId: number): Promise<{
 const createUnsignedTransaction = (
   fromAddress: string,
   toAddress: string,
-  value: string,
+  value: ethers.BigNumber,
   nonce: number,
   maxPriorityFeePerGas: string,
   maxFeePerGas: string,
@@ -105,7 +105,7 @@ const createUnsignedTransaction = (
   const transaction = {
     from: fromAddress,
     to: toAddress,
-    value: ethers.utils.parseEther(value),
+    value: value,
     nonce,
     maxPriorityFeePerGas: ethers.utils.parseUnits(maxPriorityFeePerGas, "gwei"),
     maxFeePerGas: ethers.utils.parseUnits(maxFeePerGas, "gwei"),
@@ -123,7 +123,9 @@ export function findWinnersByTransaction(
 ): { winningTransfer: Transfer | null; losingTransfers: Transfer[] } {
   let winner: Transfer | null = null;
   const losingTransfers: Transfer[] = [];
-  const listingPrice = ethers.BigNumber.from(minAmount);
+  const listingPrice = ethers.BigNumber.from(
+    ethers.utils.parseEther(minAmount)
+  );
 
   for (const transfer of transfers) {
     const blockNum = parseInt(transfer.blockNum, 16);
@@ -156,17 +158,31 @@ interface ApiResponse {
   jsonrpc: string;
   id: number;
   result: {
-    transfers: Transfer[];
+    transfers: TransferResponse[];
   };
 }
 
-interface Transfer {
+interface TransferResponse {
   blockNum: string;
   uniqueId: string;
   hash: string;
   from: string;
   to: string;
-  value: string;
+  value: number;
+  erc721TokenId?: string;
+  erc1155Metadata?: null;
+  tokenId?: string;
+  asset: string;
+  category: string;
+  rawContract: RawContract;
+}
+export interface Transfer {
+  blockNum: string;
+  uniqueId: string;
+  hash: string;
+  from: string;
+  to: string;
+  value: ethers.BigNumber;
   erc721TokenId?: string;
   erc1155Metadata?: null;
   tokenId?: string;
@@ -228,7 +244,10 @@ export async function getInboundEthTransactions(pkpEthAddress: string) {
       }
     );
     const data = (await response.json()) as ApiResponse;
-    return data.result.transfers;
+    return data.result.transfers.map((t) => ({
+      ...t,
+      value: ethers.BigNumber.from(ethers.utils.parseEther(t.value.toString())),
+    }));
   } catch (err) {
     throw new Error(`Error getting eth transfers to pkpEthAddres: ${err}`);
   }

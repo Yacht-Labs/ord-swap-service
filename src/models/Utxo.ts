@@ -1,5 +1,4 @@
 export type Utxo = {
-  id: string;
   txid: string;
   vout: number;
   address: string;

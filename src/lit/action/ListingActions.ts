@@ -24,7 +24,7 @@ export async function checkInscriptionStatus(
     inscription.location.split(":");
 
   const [ordinalUtxo] = utxos.filter(
-    (u) => u.id === inscriptionTxId && u.vout.toString() === inscriptionVout
+    (u) => u.txid === inscriptionTxId && u.vout.toString() === inscriptionVout
   );
   const [cardinalUtxo] = utxos.filter(
     (u) => u.txid !== ordinalUtxo.txid || u.vout !== ordinalUtxo.vout
