@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "global.d.ts"],
+  "include": ["src/**/*", "global.d.ts", "development.ts"],
   "exclude": [
     "node_modules",
     "build",

@@ -2,18 +2,18 @@
 
 declare global {
   const ethers: typeof import("ethers");
-  interface Action {
-    setResponse: (options: { response: string }) => void;
-  }
 
   const pkpBtcAddress: string;
   const pkpEthAddress: string;
   const pkpPublicKey: string;
   const btcPayoutAddress: string;
+  interface Action {
+    setResponse: (options: { response: string }) => void;
+  }
 
   interface LitActions {
     signEcdsa: (options: {
-      toSign: UInt8Array;
+      toSign: Uint8Array;
       publicKey: string;
       sigName: string;
     }) => void;
