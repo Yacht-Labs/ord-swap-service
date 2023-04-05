@@ -1,8 +1,8 @@
 import { ListingService } from "../../server/services/ListingService";
-import { HiroInscriptionAPI } from "../../api/inscription/HiroInscriptionAPI";
 import { BlockchainInfoUtxoApi } from "../../api/utxo/BlockchainInfoApi";
+import { OrdXyzInscriptionAPI } from "../../api/inscription/OrdXyzInscriptionAPI";
 
-const inscriptionAPI = new HiroInscriptionAPI();
+const inscriptionAPI = new OrdXyzInscriptionAPI();
 const utxoAPI = new BlockchainInfoUtxoApi();
 const listingService = new ListingService(inscriptionAPI, utxoAPI);
 
