@@ -34,13 +34,13 @@ export class HiroInscriptionAPI extends InscriptionAPI {
     inscriptionIdOrNumber: string
   ): Promise<Inscription> => {
     try {
-      if (!this.isValidInscriptionId(inscriptionIdOrNumber)) {
-        throw new Error(`Invalid inscription id: ${inscriptionIdOrNumber}`);
-      }
-      if (!this.isValidInscriptionNumber(inscriptionIdOrNumber)) {
-        throw new Error(`Invalid inscription number: ${inscriptionIdOrNumber}`);
-      }
-      const URL = `/inscriptions/${inscriptionIdOrNumber}`;
+      // if (!this.isValidInscriptionId(inscriptionIdOrNumber)) {
+      //   throw new Error(`Invalid inscription id: ${inscriptionIdOrNumber}`);
+      // }
+      // if (!this.isValidInscriptionNumber(inscriptionIdOrNumber)) {
+      //   throw new Error(`Invalid inscription number: ${inscriptionIdOrNumber}`);
+      // }
+      const URL = `/ordinals/v1/inscriptions/${inscriptionIdOrNumber}`;
       const inscription = (await this.fetchData(URL)) as Inscription;
       return inscription;
     } catch (err) {

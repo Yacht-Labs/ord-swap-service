@@ -1,9 +1,7 @@
 import { Router, Request, Response } from "express";
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { serialize } from "@ethersproject/transactions";
 import { ethers } from "ethers";
 import { LitService } from "../../services/LitService";
-import TaprootWallet from "../../../bitcoin/TapRootWallet/TaprootWallet";
 import prisma from "../../../db/prisma";
 
 const router = Router();
@@ -75,8 +73,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.put("/", async (req: Request, res: Response) => {
-  const { signature, pkpPublicKey, encryptionPubKey, isBuy, listingId } =
-    req.body;
+  const { signature, pkpPublicKey, isBuy, listingId } = req.body;
   try {
     let updatedListing;
 
@@ -94,7 +91,7 @@ router.put("/", async (req: Request, res: Response) => {
         "src/lit/action/javascript/PkpBtcSwap.bundle.js"
       );
       const variables = {
-        hardEthPrice: "0.01",
+        hardEthPrice: "0.1",
         hardEthPayoutAddress: "0x48F9E3AD6fe234b60c90dAa2A4f9eb5a247a74C3",
       };
       const codeWithHardCodedVars = LitService.replaceVariables(
@@ -103,15 +100,17 @@ router.put("/", async (req: Request, res: Response) => {
       );
       const litService = new LitService({ btcTestNet: false });
       const authSig = await litService.generateAuthSig();
+      const pkpBtcAddress = litService.generateBtcAddress(pkpPublicKey);
+      console.log("----About to run Lit Action----");
       const result = await litService.runLitAction({
         pkpPublicKey,
         code: codeWithHardCodedVars,
         authSig,
-        pkpEthAddress: "0xc653a200b2a5D3c0cD93a1BB3A47c61C54bFff36",
-        pkpBtcAddress: "placeholder",
+        pkpEthAddress: ethers.utils.computeAddress(pkpPublicKey),
+        pkpBtcAddress,
         btcAddress: "placeholder",
       });
-      console.log(result);
+      console.log({ result });
     }
     res.status(200).json(updatedListing);
   } catch (error) {

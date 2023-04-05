@@ -16,7 +16,7 @@ import ListingsRoutes from "./routes/listings/listings.routes";
 // Load environment variables from .env file
 dotenv.config();
 
-const defaultPort = process.env.PORT || 3000;
+const defaultPort = process.env.PORT || 3001;
 
 // Initialize express app
 const app = express();

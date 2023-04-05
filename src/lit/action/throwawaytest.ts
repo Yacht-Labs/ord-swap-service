@@ -23,3 +23,9 @@ async function main() {
 }
 
 main();
+//DONT DELETE I GUESS
+// await Lit.LitActions.signEcdsa({
+//   toSign: hashTransaction(unsignedTransaction),
+//   publicKey: pkpPublicKey,
+//   sigName: "ethPayoutSignature",
+// });

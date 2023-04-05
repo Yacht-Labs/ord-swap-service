@@ -25,6 +25,7 @@ export class ListingService {
       const inscription = await this.inscriptionAPI.getInscription(
         listing.inscriptionId
       );
+
       if (inscription.address !== listing.pkpBtcAddress) {
         throw new Error(
           "Seller needs to send their inscription to the PKP Address"

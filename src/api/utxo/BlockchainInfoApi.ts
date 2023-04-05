@@ -1,6 +1,11 @@
 import { UtxoAPI } from "./UtxoAPI";
 import { Utxo } from "src/models/Utxo";
 
+type BlockchainInfoUtxoResponse = {
+  notice: string;
+  unspent_outputs: BlockchainInfoUtxo[];
+};
+
 type BlockchainInfoUtxo = {
   tx_hash: string;
   tx_index: number;
@@ -19,9 +24,11 @@ export class BlockchainInfoUtxoApi extends UtxoAPI {
   }
   public getUtxosByAddress = async (address: string, confirmations = 0) => {
     try {
-      const URL = `${this.baseURL}/unspent?active=${address}&confirmations=${confirmations}&cors=true`;
-      const utxos = (await this.fetchData(URL)) as BlockchainInfoUtxo[];
-      return utxos.map((utxo) => ({
+      const URL = `/unspent?active=${address}&confirmations=${confirmations}&cors=true`;
+      const response = (await this.fetchData(
+        URL
+      )) as BlockchainInfoUtxoResponse;
+      return response.unspent_outputs.map((utxo) => ({
         ...this.normalizeUtxoResponse(utxo),
         address,
       }));

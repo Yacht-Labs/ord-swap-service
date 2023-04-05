@@ -36,10 +36,6 @@ import { UnsignedTransaction } from "ethers";
 
 // and we dont have an authsig so don't send inscription to buyer
 
-const ethPrice = "{{hardEthPrice}}".slice(1, -1);
-const ethPayoutAddress = "{{hardEthPayoutAddress}}";
-
-const pkpEthAddress = "";
 export const hashTransaction = (tx: UnsignedTransaction) => {
   return ethers.utils.arrayify(
     ethers.utils.keccak256(
@@ -120,37 +116,6 @@ const createUnsignedTransaction = (
 
   return transaction;
 };
-
-async function signEthPayoutTx() {
-  const gasPrices = await getCurrentGasPrices(80001);
-  const unsignedTx = createUnsignedTransaction(
-    pkpEthAddress,
-    ethPayoutAddress,
-    "0.1",
-    0,
-    gasPrices.maxPriorityFeePerGas,
-    gasPrices.maxFeePerGas,
-    80001
-  );
-
-  Lit.Actions.setResponse({
-    response: JSON.stringify(unsignedTx),
-  });
-
-  await Lit.LitActions.signEcdsa({
-    toSign: hashTransaction(unsignedTx),
-    publicKey: pkpPublicKey,
-    sigName: "ethPayoutSignature",
-  });
-}
-
-async function createTaprootSeedSig() {
-  await Lit.LitActions.signEcdsa({
-    toSign: "TaprootSeedSigner",
-    publicKey: pkpPublicKey,
-    sigName: "taprootSig",
-  });
-}
 
 export function findWinnersByTransaction(
   transfers: Transfer[],
@@ -268,10 +233,3 @@ export async function getInboundEthTransactions(pkpEthAddress: string) {
     throw new Error(`Error getting eth transfers to pkpEthAddres: ${err}`);
   }
 }
-
-async function main() {
-  const executorAddress = Lit.Auth.authSigAddress;
-  await createTaprootSeedSig();
-  await signEthPayoutTx();
-}
-main();
