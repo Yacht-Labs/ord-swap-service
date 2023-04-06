@@ -3,6 +3,7 @@ const path = require("path");
 
 module.exports = {
   mode: "production",
+  target: "node",
   entry: "./src/lit/action/PkpBtcSwapEth.ts",
   output: {
     filename: "PkpBtcSwap.bundle.js",
@@ -18,6 +19,21 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+            plugins: ["@babel/plugin-transform-modules-commonjs"],
+          },
+        },
+      },
     ],
+  },
+  experiments: {
+    asyncWebAssembly: true,
+    syncWebAssembly: true,
   },
 };

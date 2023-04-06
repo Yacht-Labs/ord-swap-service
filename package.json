@@ -19,6 +19,8 @@
     "build:litAction": "npx webpack"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.21.2",
+    "@babel/preset-env": "^7.21.4",
     "@types/compression": "^1.7.2",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
