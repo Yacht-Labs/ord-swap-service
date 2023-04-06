@@ -52,25 +52,25 @@ export async function go() {
       });
     }
   }
-  let maxPriorityFeePerGas, maxFeePerGas;
-  if (winningTransfer || losingTransfers) {
-    ({ maxPriorityFeePerGas, maxFeePerGas } = await getCurrentGasPrices(80001));
-  }
-  if (winningTransfer) {
-    const unsignedTransaction = mapTransferToTransaction(
-      winningTransfer,
-      ethPayoutAddress,
-      0,
-      maxPriorityFeePerGas as string,
-      maxFeePerGas as string,
-      80001
-    );
-    // Lit.Actions.setResponse({
-    //   response: JSON.stringify(unsignedTransaction),
-    // });
-  }
-  if (losingTransfers) {
-  }
+  // let maxPriorityFeePerGas, maxFeePerGas;
+  // if (winningTransfer || losingTransfers) {
+  //   ({ maxPriorityFeePerGas, maxFeePerGas } = await getCurrentGasPrices(80001));
+  // }
+  // if (winningTransfer) {
+  //   const unsignedTransaction = mapTransferToTransaction(
+  //     winningTransfer,
+  //     ethPayoutAddress,
+  //     0,
+  //     maxPriorityFeePerGas as string,
+  //     maxFeePerGas as string,
+  //     80001
+  //   );
+  //   // Lit.Actions.setResponse({
+  //   //   response: JSON.stringify(unsignedTransaction),
+  //   // });
+  // }
+  // if (losingTransfers) {
+  // }
 }
 
 go();
