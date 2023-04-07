@@ -3,16 +3,25 @@ const path = require("path");
 var webpack = require("webpack");
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: "./src/lit/action/PkpBtcSwapEth.ts",
   output: {
     filename: "PkpBtcSwap.bundle.js",
     path: path.resolve(__dirname, "src/lit/action/javascript"),
     publicPath: "",
+    // module: true,
+    chunkFormat: "module",
   },
   resolve: {
     extensions: [".ts", ".js"],
-    fallback: { stream: false, buffer: require.resolve("buffer/") },
+    fallback: {
+      stream: require.resolve("stream-browserify"),
+      buffer: require.resolve("buffer/"),
+      crypto: require.resolve("crypto-browserify"),
+      buffer: require.resolve("buffer"),
+      events: require.resolve("events"),
+      util: require.resolve("util"),
+    },
   },
   module: {
     rules: [
@@ -28,8 +37,4 @@ module.exports = {
       Buffer: ["buffer", "Buffer"],
     }),
   ],
-  experiments: {
-    asyncWebAssembly: true,
-    syncWebAssembly: true,
-  },
 };

@@ -15,6 +15,13 @@ const fakeLit: {
     setResponse: (options: { response: string }) => {
       console.log("Fake setResponse called with:", options);
     },
+    signEcdsa: (options: {
+      toSign: Uint8Array;
+      publicKey: string;
+      sigName: string;
+    }) => {
+      console.log("Fake signEcdsa called with:", options);
+    },
   },
   Auth: {
     authSigAddress: "0x9d55d24aa6186d4a61fa3befedbe4dd5dc0dc171",

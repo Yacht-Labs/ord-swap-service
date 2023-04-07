@@ -8,7 +8,12 @@ declare global {
   const pkpPublicKey: string;
   const btcPayoutAddress: string;
   interface Action {
-    setResponse: (options: { response: string }) => void;
+    setResponse: (options: { response: any }) => void;
+    signEcdsa: (options: {
+      toSign: Uint8Array;
+      publicKey: string;
+      sigName: string;
+    }) => void;
   }
 
   interface LitActions {

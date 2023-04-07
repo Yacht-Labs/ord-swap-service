@@ -1,6 +1,6 @@
 import { Utxo } from "../../models/Utxo";
 import * as bitcoin from "bitcoinjs-lib";
-import * as ecc from "tiny-secp256k1";
+import ecc from "@bitcoinerlab/secp256k1";
 import { reverseBuffer } from "../../util/btc";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 export class TransactionService {
@@ -46,6 +46,6 @@ export class TransactionService {
       toOutputScript(ordinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
-    return { hashForSig0, hashForSig1 };
+    return { hashForSig0, hashForSig1, transaction };
   }
 }
