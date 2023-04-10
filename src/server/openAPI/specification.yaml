@@ -88,7 +88,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Listing"
-  /listing/confirm:
+
+  /listings/confirm:
     put:
       summary: Confirm a listing
       requestBody:
@@ -97,6 +98,8 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - "listingId"
               properties:
                 listingId:
                   type: string
@@ -118,7 +121,7 @@ paths:
         "500":
           description: Internal server error
 
-  /listing/withdraw:
+  /listings/withdraw:
     post:
       summary: Withdraw an Ordinal to a Bitcoin Address
       requestBody:
@@ -127,11 +130,15 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - "listingId"
+                - "authSig"
+                - "btcWithdrawalAddress"
               properties:
                 listingId:
                   type: string
                 authSig:
-                  type: object
+                  $ref: "#/components/schemas/AuthSignature"
                 btcWithdrawalAddress:
                   type: string
       responses:
@@ -247,6 +254,7 @@ components:
           readOnly: true
         btcPayoutAddress:
           type: string
+
     Listing:
       type: object
       properties:
@@ -276,3 +284,15 @@ components:
         confirmedDate:
           type: string
           format: date-time
+
+    AuthSignature:
+      type: object
+      properties:
+        sig:
+          type: string
+        derivedVia:
+          type: string
+        signedMessage:
+          type: string
+        address:
+          type: string

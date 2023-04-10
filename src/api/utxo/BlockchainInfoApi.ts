@@ -29,6 +29,9 @@ export class BlockchainInfoUtxoApi extends UtxoAPI {
       const response = (await this.fetchData(
         URL
       )) as BlockchainInfoUtxoResponse;
+      if (!response.unspent_outputs) {
+        throw new Error(`No Utxos Found for the address ${address}`);
+      }
       return response.unspent_outputs.map((utxo) => ({
         ...this.normalizeUtxoResponse(utxo),
         address,

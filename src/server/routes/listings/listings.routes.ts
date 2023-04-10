@@ -5,6 +5,10 @@ import * as bitcoin from "bitcoinjs-lib";
 import { LitService } from "../../services/LitService";
 import prisma from "../../../db/prisma";
 import * as ecc from "tiny-secp256k1";
+import { AuthSignature } from "src/types";
+import { ListingService } from "src/server/services/ListingService";
+import { OrdXyzInscriptionAPI } from "src/api/inscription/OrdXyzInscriptionAPI";
+import { BlockchainInfoUtxoApi } from "src/api/utxo/BlockchainInfoApi";
 
 const router = Router();
 router.post("/", async (req: Request, res: Response) => {
@@ -37,6 +41,33 @@ router.post("/", async (req: Request, res: Response) => {
     res.status(201).json(listing);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+router.post("/withdraw", async (req: Request, res: Response) => {
+  const {
+    listingId,
+    authSig,
+    btcWithdrawalAddress,
+  }: {
+    listingId: string;
+    authSig: AuthSignature;
+    btcWithdrawalAddress: string;
+  } = req.body;
+  res.status(200).send("Working Endpoint");
+});
+
+router.put("/confirm", async (req: Request, res: Response) => {
+  const { listingId } = req.body;
+  const listingService = new ListingService(
+    new OrdXyzInscriptionAPI(),
+    new BlockchainInfoUtxoApi()
+  );
+  try {
+    await listingService.confirmListing(listingId);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send((err as Error).message);
   }
 });
 
