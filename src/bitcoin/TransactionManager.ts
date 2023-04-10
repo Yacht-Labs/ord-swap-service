@@ -3,7 +3,7 @@ import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
 import { padHexString, reverseBuffer } from "../util/btc";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
-import { SignatureData } from "src/types";
+import { SignatureData } from "../types";
 export class BtcTransactionManager {
   private FEE_RATE = 30;
   constructor() {
