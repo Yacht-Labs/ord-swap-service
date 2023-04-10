@@ -1,7 +1,7 @@
 // if (process.env.NODE_ENV === "true") {
 //   require("../../../development");
 // }
-import { TransactionService } from "../../bitcoin/TransactionService/TransactionService";
+import { TransactionService } from "../../bitcoin/TransactionManager";
 import { checkInscriptionStatus } from "./ListingActions";
 import {
   findWinnersByTransaction,

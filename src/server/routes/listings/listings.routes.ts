@@ -4,8 +4,6 @@ import { ethers } from "ethers";
 import * as bitcoin from "bitcoinjs-lib";
 import { LitService } from "../../services/LitService";
 import prisma from "../../../db/prisma";
-import { TransactionService } from "src/bitcoin/TransactionService/TransactionService";
-import { checkInscriptionStatus } from "src/lit/action/ListingActions";
 import * as ecc from "tiny-secp256k1";
 
 const router = Router();

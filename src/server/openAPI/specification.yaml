@@ -88,6 +88,66 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Listing"
+  /listing/confirm:
+    put:
+      summary: Confirm a listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listingId:
+                  type: string
+      responses:
+        "200":
+          description: Listing confirmed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
+  /listing/withdraw:
+    post:
+      summary: Withdraw an Ordinal to a Bitcoin Address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listingId:
+                  type: string
+                authSig:
+                  type: object
+                btcWithdrawalAddress:
+                  type: string
+      responses:
+        "200":
+          description: Listing withdrawn successfully
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
   /accounts:
     post:
       summary: Create a new account

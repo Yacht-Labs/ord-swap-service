@@ -1,7 +1,7 @@
-import { Utxo } from "../../types/models";
+import { Utxo } from "../types/models";
 import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
-import { reverseBuffer } from "../../util/btc";
+import { reverseBuffer } from "../util/btc";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 export class TransactionService {
   private FEE_RATE = 30;
