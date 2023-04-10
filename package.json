@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && yarn build:litAction",
-    "start:dev": "nodemon src/server/start.ts",
+    "start:dev": "NODE_ENV=dev nodemon src/server/start.ts",
     "start:prod": "npx prisma migrate deploy && node ./dist/src/server/start.js",
     "test": "npx jest",
     "format": "prettier --write 'src/**/*.ts'",

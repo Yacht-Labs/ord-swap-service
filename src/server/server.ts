@@ -29,7 +29,13 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const apiSpecPath = path.join(__dirname, "./openAPI/specification.yaml");
+const isDevelopment = process.env.NODE_ENV === "dev";
+const relativePath = isDevelopment
+  ? "./openAPI/specification.yaml"
+  : "../../../src/server/openAPI/specification.yaml";
+
+const apiSpecPath = path.join(__dirname, relativePath);
+
 const swaggerDoc = YAML.load(apiSpecPath);
 app.use(
   OpenApiValidator.middleware({
@@ -63,7 +69,7 @@ app.use(
 // Get port from environment or default to 3000
 
 const startServer = (port?: number) => {
-  const runningPort = port === 0 ? 0 : defaultPort;
+  const runningPort = port ? port : defaultPort;
   return app.listen(runningPort, () => {
     console.log(`Server is running on port ${runningPort}`);
   });
