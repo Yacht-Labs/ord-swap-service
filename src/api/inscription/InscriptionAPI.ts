@@ -1,4 +1,4 @@
-import { Inscription } from "src/models/Inscription";
+import { Inscription } from "../../types/models";
 import { BaseAPI } from "../base/BaseApi";
 
 export abstract class InscriptionAPI extends BaseAPI {

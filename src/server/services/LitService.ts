@@ -7,7 +7,7 @@ import fs from "fs";
 import pkpNftContract from "../../abis/PKPNFT.json";
 import { PKP_CONTRACT_ADDRESS_MUMBAI } from "../../constants/index";
 import { readMumbaiPrivateKeyEnv, readMumbaiRpcUrlEnv } from "../../util/env";
-import { PKPNFT } from "../../../typechain-types/contracts/PKPNFT";
+import { PKPNFT } from "../../types/typechain-types/contracts";
 import { generateAuthSig } from "../../util/lit";
 
 interface Params {

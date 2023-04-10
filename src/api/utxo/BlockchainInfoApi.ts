@@ -1,5 +1,5 @@
 import { UtxoAPI } from "./UtxoAPI";
-import { Utxo } from "src/models/Utxo";
+import { Utxo } from "../../types/models";
 
 type BlockchainInfoUtxoResponse = {
   notice: string;

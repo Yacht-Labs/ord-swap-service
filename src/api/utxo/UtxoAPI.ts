@@ -1,4 +1,4 @@
-import { Utxo } from "src/models/Utxo";
+import { Utxo } from "../../types/models";
 import { BaseAPI } from "../base/BaseApi";
 
 export abstract class UtxoAPI extends BaseAPI {

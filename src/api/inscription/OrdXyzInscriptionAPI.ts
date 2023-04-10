@@ -1,5 +1,5 @@
 import { InscriptionAPI } from "./InscriptionAPI";
-import { Inscription } from "../../models/Inscription";
+import { Inscription } from "../../types/models";
 
 type OrdXyxInscriptionResponse = {
   address: string;

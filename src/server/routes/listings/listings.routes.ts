@@ -76,6 +76,17 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+// /put/sendOrdinal?listingId=XYZ
+
+// /listing/cancel
+
+// listing/withdraw
+// body = listingId
+// sends Eth to eth withdrawal address
+
+// listing/withdraw/eth
+// authSig to prove identity + btcWithdrawalAddress
+
 router.put("/", async (req: Request, res: Response) => {
   const { signature, pkpPublicKey, isBuy, listingId } = req.body;
   try {
@@ -129,16 +140,19 @@ router.put("/", async (req: Request, res: Response) => {
         //   receivingAddress:
         //     "bc1pdj2gvzymxtmcrs5ypm3pya8vc3h4fkk2g9kmav0j6skgruez88rsjprd7j",
         // });
+        function padHexString(hexString: string) {
+          return hexString.length % 2 === 0 ? hexString : "0" + hexString;
+        }
         const transaction = bitcoin.Transaction.fromHex(result.response);
         const compressedPoint = ecc.pointCompress(
           Buffer.from(pkpPublicKey.replace("0x", ""), "hex"),
           true
         );
         const sig0 = Buffer.from(
-          result.signatures.hashForSig0.r + result.signatures.hashForSig0.s,
+          padHexString(result.signatures.hashForSig0.r) +
+            padHexString(result.signatures.hashForSig0.s),
           "hex"
         );
-
         const signedInput0 = bitcoin.script.compile([
           bitcoin.script.signature.encode(
             sig0,
@@ -149,7 +163,8 @@ router.put("/", async (req: Request, res: Response) => {
         transaction.setInputScript(0, signedInput0);
 
         const sig1 = Buffer.from(
-          result.signatures.hashForSig1.r + result.signatures.hashForSig1.s,
+          padHexString(result.signatures.hashForSig1.r) +
+            padHexString(result.signatures.hashForSig1.s),
           "hex"
         );
         const signedInput1 = bitcoin.script.compile([
@@ -160,6 +175,7 @@ router.put("/", async (req: Request, res: Response) => {
           Buffer.from(compressedPoint.buffer),
         ]);
         transaction.setInputScript(1, signedInput1);
+
         console.log(transaction.toHex());
         return transaction.toHex();
       } catch (err) {

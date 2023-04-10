@@ -1,4 +1,4 @@
-import { Inscription } from "src/models/Inscription";
+import { Inscription } from "../../types/models";
 import { InscriptionAPI } from "./InscriptionAPI";
 
 export type HiroInscriptionResponse = {

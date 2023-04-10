@@ -1,4 +1,4 @@
-import { Utxo } from "../../models/Utxo";
+import { Utxo } from "../../types/models";
 import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
 import { reverseBuffer } from "../../util/btc";
@@ -20,11 +20,11 @@ export class TransactionService {
     const transaction = new bitcoin.Transaction();
     transaction.addInput(
       reverseBuffer(Buffer.from(ordinalUtxo.txid, "hex")),
-      0
+      ordinalUtxo.vout
     );
     transaction.addInput(
       reverseBuffer(Buffer.from(cardinalUtxo.txid, "hex")),
-      1
+      cardinalUtxo.vout
     );
     const outputScript = toOutputScript(receivingAddress);
     transaction.addOutput(outputScript, ordinalUtxo.amount);
@@ -32,18 +32,15 @@ export class TransactionService {
     // each p2pkh have under 150 bytes size
     // 12 bytes fixed size
     // total 43*2 + 150*2 + 12 = 400 bytes
-    transaction.addOutput(
-      outputScript,
-      cardinalUtxo.amount + ordinalUtxo.amount - 20000
-    );
+    transaction.addOutput(outputScript, cardinalUtxo.amount - 20000);
     const hashForSig0 = transaction.hashForSignature(
       0,
       toOutputScript(ordinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
     const hashForSig1 = transaction.hashForSignature(
-      0,
-      toOutputScript(ordinalUtxo.address),
+      1,
+      toOutputScript(cardinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
     return { hashForSig0, hashForSig1, transaction };
