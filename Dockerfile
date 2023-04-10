@@ -1,8 +1,9 @@
-FROM node:18
+FROM node:lts
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm ci
+RUN yarn install --frozen-lockfile
+RUN npx prisma generate
+RUN yarn build
 COPY . .
 EXPOSE 3000
-RUN npx prisma generate
-CMD ["npm", "run", "start:migrate:prod"]
+CMD ["npm", "run", "start:prod"]
