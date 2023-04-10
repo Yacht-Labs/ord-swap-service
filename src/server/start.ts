@@ -1,3 +1,3 @@
 import { startServer } from "./server";
 
-startServer(3001);
+startServer(3000);
