@@ -4,6 +4,7 @@ import Hash from "ipfs-only-hash";
 import * as bitcoin from "bitcoinjs-lib";
 import * as ecc from "tiny-secp256k1";
 import fs from "fs";
+import path from "path";
 import pkpNftContract from "../../abis/PKPNFT.json";
 import { PKP_CONTRACT_ADDRESS_MUMBAI } from "../../constants/index";
 import { readMumbaiPrivateKeyEnv, readMumbaiRpcUrlEnv } from "../../util/env";
@@ -161,7 +162,17 @@ export class LitService {
     return generateAuthSig(this.signer, chainId, uri, version);
   }
 
-  static async loadJsFile(filePath: string): Promise<string> {
+  static async loadJsFile(fileName: string): Promise<string> {
+    const filePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "lit",
+      "action",
+      "javascript",
+      `${fileName}.bundle.js`
+    );
+
     return new Promise((resolve, reject) => {
       fs.readFile(filePath, "utf8", (err, data) => {
         if (err) {
@@ -199,7 +210,7 @@ export class LitService {
     authSig,
     pkpEthAddress,
     pkpBtcAddress,
-    btcAddress,
+    btcPayoutAddress,
   }: {
     pkpPublicKey: string;
     ipfsCID?: string;
@@ -207,7 +218,7 @@ export class LitService {
     authSig?: any;
     pkpEthAddress: string;
     pkpBtcAddress: string;
-    btcAddress: string;
+    btcPayoutAddress: string;
   }) {
     try {
       await this.litClient.connect();
@@ -221,7 +232,7 @@ export class LitService {
           authSig: authSig || (await this.generateAuthSig()),
           pkpEthAddress,
           pkpBtcAddress,
-          btcAddress,
+          btcPayoutAddress,
         },
       });
       return response;

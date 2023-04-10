@@ -13,7 +13,7 @@ export async function generateAuthSig(
   signer: ethers.Signer,
   chainId = 1,
   uri = "https://localhost/login",
-  version = "1",
+  version = "1"
 ): Promise<LitAuthSig> {
   const siweMessage = new SiweMessage({
     domain: "localhost",

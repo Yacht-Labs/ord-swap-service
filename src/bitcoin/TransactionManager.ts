@@ -1,13 +1,15 @@
 import { Utxo } from "../types/models";
 import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
-import { reverseBuffer } from "../util/btc";
+import { padHexString, reverseBuffer } from "../util/btc";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
-export class TransactionService {
+import { SignatureData } from "src/types";
+export class BtcTransactionManager {
   private FEE_RATE = 30;
   constructor() {
     bitcoin.initEccLib(ecc);
   }
+
   public prepareInscriptionTransaction({
     ordinalUtxo,
     cardinalUtxo,
@@ -33,16 +35,49 @@ export class TransactionService {
     // 12 bytes fixed size
     // total 43*2 + 150*2 + 12 = 400 bytes
     transaction.addOutput(outputScript, cardinalUtxo.amount - 20000);
-    const hashForSig0 = transaction.hashForSignature(
+    const hashForInput0 = transaction.hashForSignature(
       0,
       toOutputScript(ordinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
-    const hashForSig1 = transaction.hashForSignature(
+    const hashForInput1 = transaction.hashForSignature(
       1,
       toOutputScript(cardinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
-    return { hashForSig0, hashForSig1, transaction };
+    return { hashForInput0, hashForInput1, transaction };
+  }
+
+  private addSignatureToTxInput(
+    transaction: bitcoin.Transaction,
+    signature: SignatureData,
+    compressedPoint: Uint8Array,
+    input: number
+  ) {
+    const sig = Buffer.from(
+      padHexString(signature.r) + padHexString(signature.s),
+      "hex"
+    );
+    const signedInput = bitcoin.script.compile([
+      bitcoin.script.signature.encode(sig, bitcoin.Transaction.SIGHASH_ALL),
+      Buffer.from(compressedPoint.buffer),
+    ]);
+    transaction.setInputScript(input, signedInput);
+  }
+
+  public builtLitBtcTransaction(
+    transactionHex: string,
+    hashForInput0: SignatureData,
+    hashForInput1: SignatureData,
+    pkpPublicKey: string
+  ): string {
+    const transaction = bitcoin.Transaction.fromHex(transactionHex);
+    const compressedPoint = ecc.pointCompress(
+      Buffer.from(pkpPublicKey.replace("0x", ""), "hex"),
+      true
+    );
+    this.addSignatureToTxInput(transaction, hashForInput0, compressedPoint, 0);
+    this.addSignatureToTxInput(transaction, hashForInput1, compressedPoint, 1);
+    return transaction.toHex();
   }
 }

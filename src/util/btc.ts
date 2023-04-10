@@ -31,3 +31,7 @@ export function getBtcNetwork(): Network {
       return networks.bitcoin;
   }
 }
+
+export function padHexString(hexString: string) {
+  return hexString.length % 2 === 0 ? hexString : "0" + hexString;
+}

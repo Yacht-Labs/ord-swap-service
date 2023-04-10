@@ -109,7 +109,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Listing"
+                type: object
+                properties:
+                  listingIsConfirmed:
+                    type: boolean
+                    description: Indicates if the listing is confirmed or not
+                required:
+                  - listingIsConfirmed
         "400":
           description: Bad request
         "401":
@@ -133,13 +139,13 @@ paths:
               required:
                 - "listingId"
                 - "authSig"
-                - "btcWithdrawalAddress"
+                - "btcPayoutAddress"
               properties:
                 listingId:
                   type: string
                 authSig:
                   $ref: "#/components/schemas/AuthSignature"
-                btcWithdrawalAddress:
+                btcPayoutAddress:
                   type: string
       responses:
         "200":
