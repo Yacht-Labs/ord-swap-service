@@ -1,4 +1,4 @@
-FROM node:lts
+FROM node:alpine
 WORKDIR /usr/src/app
 COPY package*.json ./
 COPY ./src/abis/*.json ./src/abis/
