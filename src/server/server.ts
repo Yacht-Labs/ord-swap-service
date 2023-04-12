@@ -49,6 +49,9 @@ app.use(
 // Use routes
 app.use("/accounts", AccountsRoutes);
 app.use("/listings", ListingsRoutes);
+app.use("/", (req, res, next) => {
+  res.sendStatus(200);
+});
 setupSwagger(app);
 
 // Error handling middleware

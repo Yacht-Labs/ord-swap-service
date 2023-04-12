@@ -194,7 +194,6 @@ export class LitService {
   */
   static replaceVariables(content: string, variables: any) {
     let result = content;
-    // eslint-disable-next-line guard-for-in
     for (const key in variables) {
       const placeholder = `{{${key}}}`;
       const value = variables[key];
