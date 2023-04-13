@@ -1,3 +1,8 @@
+export function checkEnvVar(name: string): boolean {
+  const value = process.env[name];
+  return value !== undefined;
+}
+
 export function readStringEnv(name: string): string {
   const value = process.env[name];
   if (value === undefined) {
@@ -24,6 +29,10 @@ export function readBooleanEnv(name: string): boolean {
     return false;
   }
   throw new Error(`Environment variable ${name} is not a boolean`);
+}
+
+export function readPortNumber(): number {
+  return readNumberEnv("PORT");
 }
 
 // function to read env var MUMBAI_PRIVATE_KEY

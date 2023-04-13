@@ -1,4 +1,4 @@
-import { LitService } from "../../server/services/LitService";
+import { LitService } from "../../../server/services/LitService";
 
 async function main() {
   function replaceVariables(content: string, variables: any) {

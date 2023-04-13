@@ -9,7 +9,7 @@ import {
   getInboundEthTransactions,
   mapTransferToTransaction,
   hashTransaction,
-} from "./ordinalSwapAction";
+} from "./test/ordinalSwapAction";
 // const ethPrice = "0.1";
 // const inscriptionId =
 //   "3f22c588f0b509ed9f53f340e5d9fb1ae288db4830a7d48d9fd28d7f5f1e105ei0";
