@@ -5,11 +5,11 @@ import * as bitcoin from "bitcoinjs-lib";
 import * as ecc from "tiny-secp256k1";
 import fs from "fs";
 import path from "path";
-import pkpNftContract from "../../abis/PKPNFT.json";
-import { PKP_CONTRACT_ADDRESS_MUMBAI } from "../../constants/index";
-import { readMumbaiPrivateKeyEnv, readMumbaiRpcUrlEnv } from "../../util/env";
-import { PKPNFT } from "../../types/typechain-types/contracts";
-import { generateAuthSig } from "../../util/lit";
+import pkpNftContract from "../abis/PKPNFT.json";
+import { PKP_CONTRACT_ADDRESS_MUMBAI } from "../constants/index";
+import { readMumbaiPrivateKeyEnv, readMumbaiRpcUrlEnv } from "../util/env";
+import { PKPNFT } from "../types/typechain-types/contracts";
+import { generateAuthSig } from "../util/lit";
 
 interface Params {
   btcTestNet?: boolean;

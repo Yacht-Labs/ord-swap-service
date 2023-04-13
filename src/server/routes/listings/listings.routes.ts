@@ -1,13 +1,13 @@
 import { Router, Request, Response } from "express";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ethers } from "ethers";
-import { LitService } from "../../services/LitService";
+import { LitService } from "../../../services/LitService";
 import prisma from "../../../db/prisma";
 import { LitActionResponse } from "../../../types";
-import { ListingService } from "../../../server/services/ListingService";
+import { ListingService } from "../../../services/ListingService";
 import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
 import { BlockchainInfoUtxoApi } from "../../../api/utxo/BlockchainInfoApi";
-import { BtcTransactionManager } from "../../../bitcoin/TransactionManager";
+import { BtcTransactionManager } from "../../../lit/bitcoin/BtcTransactionManager";
 
 const router = Router();
 router.post("/", async (req: Request, res: Response) => {

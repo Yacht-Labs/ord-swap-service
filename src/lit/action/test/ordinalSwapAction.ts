@@ -234,7 +234,7 @@ export async function getInboundEthTransactions(pkpEthAddress: string) {
     };
 
     const response = await fetch(
-      "https://polygon-mumbai.g.alchemy.com/v2/Agko3FEsqf1Kez7aSFPZViQnUd8sI3rJ",
+      "https://eth-mainnet.g.alchemy.com/v2/IsjpCEWp_VbW4G8ZYWjNrLrWFZDBuPZ1",
       {
         method: "POST",
         headers: {

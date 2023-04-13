@@ -1,8 +1,9 @@
-// if (process.env.NODE_ENV === "true") {
-//   require("../../../development");
-// }
-import { BtcTransactionManager } from "../../bitcoin/TransactionManager";
-import { checkInscriptionStatus } from "./ListingActions";
+import { InscriptionManager } from "./../../services/InscriptionService";
+if (process.env.NODE_ENV === "dev") {
+  require("../../../development");
+}
+import { BlockchainInfoUtxoApi } from "src/api/utxo/BlockchainInfoApi";
+import { BtcTransactionManager } from "../bitcoin/BtcTransactionManager";
 import {
   findWinnersByTransaction,
   getCurrentGasPrices,
@@ -10,6 +11,8 @@ import {
   mapTransferToTransaction,
   hashTransaction,
 } from "./test/ordinalSwapAction";
+import { OrdXyzInscriptionAPI } from "src/api/inscription/OrdXyzInscriptionAPI";
+import { ListingService } from "src/services/ListingService";
 // const ethPrice = "0.1";
 // const inscriptionId =
 //   "3f22c588f0b509ed9f53f340e5d9fb1ae288db4830a7d48d9fd28d7f5f1e105ei0";
@@ -23,17 +26,25 @@ const ethPayoutAddress = "{{ethPayoutAddress}}";
 
 export async function go() {
   try {
-    const { ordinalUtxo, cardinalUtxo } = await checkInscriptionStatus(
-      pkpBtcAddress,
-      inscriptionId
-    );
+    const utxoAPI = new BlockchainInfoUtxoApi();
+    const inscriptionAPI = new OrdXyzInscriptionAPI();
+    const listingService = new ListingService(inscriptionAPI, utxoAPI);
+    const inscriptionManager = new InscriptionManager(listingService);
+    const { ordinalUtxo, cardinalUtxo } =
+      await inscriptionManager.checkInscriptionStatus(
+        pkpBtcAddress,
+        inscriptionId
+      );
+
     const inboundEthTransactions = await getInboundEthTransactions(
       pkpEthAddress
     );
+
     const { winningTransfer, losingTransfers } = findWinnersByTransaction(
       inboundEthTransactions,
       ethPrice
     );
+
     const executorAddress = Lit.Auth.authSigAddress;
     if (executorAddress === winningTransfer?.from) {
       if (ordinalUtxo && cardinalUtxo && btcPayoutAddress) {

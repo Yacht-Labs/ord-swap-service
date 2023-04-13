@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ListingService } from "../services/ListingService";
+import { ListingService } from "../../services/ListingService";
 import { UtxoAPI } from "../../api/utxo/UtxoAPI";
 import { InscriptionAPI } from "../../api/inscription/InscriptionAPI";
 
