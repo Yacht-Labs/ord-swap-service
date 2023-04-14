@@ -87,6 +87,7 @@
     "tiny-secp256k1": "^2.2.1",
     "typechain": "^8.1.1",
     "webpack-cli": "^5.0.1",
+    "winston": "^3.8.2",
     "yamljs": "^0.3.0"
   }
 }

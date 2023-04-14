@@ -124,16 +124,24 @@ export class LitService {
         value: ethers.BigNumber.from("1"),
         gasPrice: ethers.BigNumber.from("1000000"),
       });
-      const minedMintPkpTx = await mintPkpTx.wait(2);
-      const pkpTokenId = ethers.BigNumber.from(
-        minedMintPkpTx.logs[1].topics[3]
-      ).toString();
-      const publicKey = await this.getPubKeyByPKPTokenId(pkpTokenId);
-      return {
-        tokenId: pkpTokenId,
-        publicKey,
-        address: ethers.utils.computeAddress(publicKey),
-      };
+      const minedMintPkpTx = await mintPkpTx.wait();
+      const pkpMintedEventTopic = ethers.utils.id("PKPMinted(uint256,bytes)");
+      const eventLog = minedMintPkpTx.logs.find(
+        (log) => log.topics[0] === pkpMintedEventTopic
+      );
+      if (eventLog) {
+        const pkpTokenId = ethers.BigNumber.from(eventLog.topics[1]);
+        const publicKey = await this.getPubKeyByPKPTokenId(
+          pkpTokenId.toString()
+        );
+        return {
+          tokenId: pkpTokenId.toString(),
+          publicKey,
+          address: ethers.utils.computeAddress(publicKey),
+        };
+      } else {
+        throw new Error("PKP minted event not found");
+      }
     } catch (err) {
       throw new Error(`Error minting PKP: ${err}`);
     }
