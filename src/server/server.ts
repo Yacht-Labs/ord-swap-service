@@ -49,10 +49,10 @@ app.use(
 // Use routes
 app.use("/accounts", AccountsRoutes);
 app.use("/listings", ListingsRoutes);
+setupSwagger(app);
 app.use("/", (req, res, next) => {
   res.sendStatus(200);
 });
-setupSwagger(app);
 
 // Error handling middleware
 app.use(

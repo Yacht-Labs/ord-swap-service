@@ -62,7 +62,27 @@ type GasProviderApiResponse = {
   blockNumber: number;
 };
 
-export async function getCurrentGasPrices(chainId: number): Promise<{
+export async function getCurrentGasPricesMainnet() {
+  try {
+    const provider = new ethers.providers.JsonRpcBatchProvider(
+      "https://eth-mainnet.g.alchemy.com/v2/IsjpCEWp_VbW4G8ZYWjNrLrWFZDBuPZ1"
+    );
+    const { maxPriorityFeePerGas, maxFeePerGas } = await provider.getFeeData();
+    if (!maxFeePerGas || !maxPriorityFeePerGas) {
+      throw new Error("Provider error fetching gas prices");
+    }
+    return {
+      maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+      maxFeePerGas: maxFeePerGas.toString(),
+    };
+  } catch (err) {
+    throw new Error(
+      `Error getting mainnet gas data: ${(err as Error).message}`
+    );
+  }
+}
+
+export async function getCurrentGasPricesForPolygon(chainId: number): Promise<{
   maxPriorityFeePerGas: string;
   maxFeePerGas: string;
 }> {

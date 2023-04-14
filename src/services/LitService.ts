@@ -6,8 +6,8 @@ import * as ecc from "tiny-secp256k1";
 import fs from "fs";
 import path from "path";
 import pkpNftContract from "../abis/PKPNFT.json";
-import { PKP_CONTRACT_ADDRESS_MUMBAI } from "../constants/index";
-import { readMumbaiPrivateKeyEnv, readMumbaiRpcUrlEnv } from "../util/env";
+import { PKP_CONTRACT_ADDRESS_LIT } from "../constants/index";
+import { readPKPPrivateKey, readLitRpcURL } from "../util/env";
 import { PKPNFT } from "../types/typechain-types/contracts";
 import { generateAuthSig } from "../util/lit";
 
@@ -23,8 +23,8 @@ export class LitService {
   constructor({ btcTestNet = false }: Params = {}) {
     this.btcTestNet = btcTestNet;
     this.signer = new ethers.Wallet(
-      readMumbaiPrivateKeyEnv(),
-      new ethers.providers.JsonRpcProvider(readMumbaiRpcUrlEnv())
+      readPKPPrivateKey(),
+      new ethers.providers.JsonRpcProvider(readLitRpcURL())
     );
     this.litClient = new LitJsSdk.LitNodeClientNodeJs({
       alertWhenUnauthorized: false,
@@ -32,7 +32,7 @@ export class LitService {
       debug: false,
     });
     this.pkpContract = new ethers.Contract(
-      PKP_CONTRACT_ADDRESS_MUMBAI,
+      PKP_CONTRACT_ADDRESS_LIT,
       pkpNftContract.abi,
       this.signer
     ) as PKPNFT;
@@ -119,10 +119,10 @@ export class LitService {
       throw new Error("Lit Service provider not set, required to get gas info");
     }
     try {
-      const feeData = await this.signer.provider.getFeeData();
+      // const feeData = await this.signer.provider.getFeeData();
       const mintPkpTx = await this.pkpContract.mintNext(2, {
-        value: 1e14,
-        maxFeePerGas: feeData.maxFeePerGas as ethers.BigNumber,
+        value: ethers.BigNumber.from("1"),
+        gasPrice: ethers.BigNumber.from("1000000"),
       });
       const minedMintPkpTx = await mintPkpTx.wait(2);
       const pkpTokenId = ethers.BigNumber.from(
@@ -165,7 +165,6 @@ export class LitService {
   static async loadJsFile(fileName: string): Promise<string> {
     const filePath = path.join(
       __dirname,
-      "..",
       "..",
       "lit",
       "action",

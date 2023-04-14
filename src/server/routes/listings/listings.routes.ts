@@ -63,9 +63,20 @@ router.put("/confirm", async (req: Request, res: Response) => {
     new BlockchainInfoUtxoApi()
   );
   try {
-    const { listingIsConfirmed } = await listingService.confirmListing(
-      listingId
-    );
+    const listing = await prisma.listing.findUniqueOrThrow({
+      where: {
+        id: listingId,
+      },
+    });
+    const { listingIsConfirmed } = await listingService.confirmListing(listing);
+    await prisma.listing.update({
+      where: {
+        id: listingId,
+      },
+      data: {
+        confirmedDate: new Date(),
+      },
+    });
     res.status(200).json({ listingIsConfirmed });
   } catch (err) {
     console.error(err);
@@ -108,7 +119,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.put("/", async (req: Request, res: Response) => {
-  const { pkpPublicKey, isBuy, listingId } = req.body;
+  const { isBuy, listingId } = req.body;
   try {
     if (isBuy) {
       const listing = await prisma.listing.findUnique({
@@ -124,41 +135,43 @@ router.put("/", async (req: Request, res: Response) => {
         },
       });
       if (!listing) {
-        res
+        return res
           .status(404)
           .json({ error: `No listing found in DB with id: ${listingId}` });
       }
-      const code = await LitService.loadJsFile("PkpBtcSwap");
-      const variables = {
-        hardEthPrice: listing?.ethPrice,
-        hardEthPayoutAddress: listing?.account.ethAddress,
-      };
-      const codeWithHardCodedVars = LitService.replaceVariables(
-        code,
-        variables
-      );
+      const code = await LitService.loadJsFile("test");
+      // const variables = {
+      //   ethPrice: listing.ethPrice,
+      //   ethPayoutAddress: listing.account.ethAddress,
+      //   inscriptionId: listing.inscriptionId,
+      // };
+      // const codeWithHardCodedVars = LitService.replaceVariables(
+      //   code,
+      //   variables
+      // );
+
       const litService = new LitService({ btcTestNet: false });
       const authSig = await litService.generateAuthSig();
-      const pkpBtcAddress = litService.generateBtcAddress(pkpPublicKey);
+      const pkpBtcAddress = litService.generateBtcAddress(listing.pkpPublicKey);
       const { response, signatures } = (await litService.runLitAction({
-        pkpPublicKey,
-        code: codeWithHardCodedVars,
+        pkpPublicKey: listing.pkpPublicKey,
+        code,
         authSig,
-        pkpEthAddress: ethers.utils.computeAddress(pkpPublicKey),
+        pkpEthAddress: ethers.utils.computeAddress(listing.pkpPublicKey),
         pkpBtcAddress,
         btcPayoutAddress: "placeholder",
       })) as LitActionResponse;
-      if (response.error) {
-        res.status(500).send(response.error);
+      if (response?.error) {
+        return res.status(500).send(response.error);
       }
-      if (response.btcTransactionHex) {
+      if (response?.btcTransactionHex) {
         try {
           const btcTxManager = new BtcTransactionManager();
           const transactionHex = btcTxManager.builtLitBtcTransaction(
             response.btcTransactionHex,
             signatures.hashForInput0,
             signatures.hashForInput1,
-            pkpPublicKey
+            listing.pkpPublicKey
           );
           return res.status(200).json({ btcTransactionHex: transactionHex });
         } catch (err) {
@@ -170,6 +183,7 @@ router.put("/", async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
+  res.status(500).json({ error: "Unknown Error with Lit Action" });
 });
 
 export default router;

@@ -35,9 +35,13 @@ export function readPortNumber(): number {
   return readNumberEnv("PORT");
 }
 
+export function readLitRpcURL(): string {
+  return readStringEnv("LIT_RPC_PROVIDER_URL");
+}
+
 // function to read env var MUMBAI_PRIVATE_KEY
-export function readMumbaiPrivateKeyEnv(): string {
-  return readStringEnv("MUMBAI_PRIVATE_KEY");
+export function readPKPPrivateKey(): string {
+  return readStringEnv("PKP_GENERATOR_PRIVATE_KEY");
 }
 
 // function to read env var MUMBAI_RPC_URL

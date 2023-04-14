@@ -10,7 +10,11 @@
       "args": ["${workspaceFolder}/src/server/start.ts"],
       "outputCapture": "std",
       "sourceMaps": true,
-      "protocol": "inspector"
+      "protocol": "inspector",
+      "env": {
+        "PORT": "3001",
+        "NODE_ENV": "dev"
+      }
     },
     {
       "type": "node",
@@ -27,16 +31,20 @@
       "type": "node",
       "request": "launch",
       "name": "Debug LitAction",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**/*.js"
+      ],
       "runtimeArgs": ["-r", "ts-node/register"],
       "args": ["${workspaceFolder}/src/lit/action/PkpBtcSwapEth.ts"],
       "outputCapture": "std",
       "sourceMaps": true,
+      "smartStep": true,
       "protocol": "inspector",
       "env": {
         "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
         "TS_NODE_FILES": "true",
-        "NODE_ENV": "true"
+        "NODE_ENV": "dev"
       }
     }
   ]
