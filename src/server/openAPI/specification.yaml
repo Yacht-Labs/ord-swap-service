@@ -243,6 +243,29 @@ paths:
                 properties:
                   error:
                     type: string
+    get:
+      summary: Get an account by Ethereum address
+      parameters:
+        - in: query
+          name: address
+          schema:
+            type: string
+          description: Ethereum address to filter accounts
+          required: true
+      responses:
+        "200":
+          description: The account corresponding to the provided Ethereum address
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
 components:
   schemas:
     Account:
@@ -276,7 +299,7 @@ components:
           type: string
         pkpPublicKey:
           type: string
-        taprootAddress:
+        pkpBtcAddress:
           type: string
         createdAt:
           type: string

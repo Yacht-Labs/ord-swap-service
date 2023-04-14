@@ -55,4 +55,26 @@ router.put("/", async (req: Request, res: Response) => {
   }
 });
 
+// get route that takes address as a query parameter
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const { address } = req.query;
+    if (!address) {
+      return res.status(400).json({
+        error: "address is required.",
+      });
+    }
+
+    const account = await prisma.account.findUnique({
+      where: {
+        ethAddress: address as string,
+      },
+    });
+
+    res.status(200).json(account);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
 export default router;
