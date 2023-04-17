@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 prisma.$use(async (params, next) => {
   const { model, action } = params;
   const startTime = Date.now();
-
   try {
     const result = await next(params);
     const endTime = Date.now();
@@ -19,7 +18,6 @@ prisma.$use(async (params, next) => {
       action,
       duration,
     });
-
     return result;
   } catch (error) {
     logger.error(`Prisma query error: ${model}.${action}`, {

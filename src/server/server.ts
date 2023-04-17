@@ -95,16 +95,25 @@ app.use(
       });
       res.status(err.statusCode).json({ error: err.message });
     } else {
-      logger.error(`UnhandledError: ${err.message}`, {
-        errorType: err.constructor.name,
-        message: err.message,
-      });
-      res.status(500).json({ error: "An unexpected error occurred" });
+      // If it's not an AppError, pass the error to the next middleware
+      next(err);
     }
   }
 );
-
-// Get port from environment or default to 3000
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    logger.error(`UnhandledError: ${err.message}`, {
+      errorType: err.constructor.name,
+      message: err.message,
+    });
+    res.status(500).json({ error: "An unexpected error occurred" });
+  }
+);
 
 const startServer = (port?: number) => {
   const runningPort = port ? port : defaultPort;

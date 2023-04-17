@@ -1,79 +1,48 @@
 // src/routes/accounts.routes.ts
 
 import { Router, Request, Response } from "express";
-import prisma from "../../../db/prisma";
+import {
+  createAccount,
+  updateAccount,
+  getAccount,
+} from "../../../services/AccountsService";
+import { RequestError } from "../../../types/errors";
 
 const router = Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response, next) => {
   try {
     const { ethAddress } = req.body;
-
-    const existingAccount = await prisma.account.findFirst({
-      where: {
-        ethAddress,
-      },
-    });
-
-    if (existingAccount) {
-      return res.status(409).json({
-        message: "An account with this Ethereum address already exists.",
-      });
-    }
-
-    const account = await prisma.account.create({
-      data: {
-        ethAddress,
-      },
-    });
-
+    const account = await createAccount(ethAddress);
     res.status(201).json(account);
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    next(error);
   }
 });
 
-router.put("/", async (req: Request, res: Response) => {
+router.put("/", async (req: Request, res: Response, next) => {
   const { btcPayoutAddress, ethAddress } = req.body;
   if (!btcPayoutAddress || !ethAddress) {
-    return res.status(400).json({
-      message: "btcPayoutAddress and ethAddress are required.",
-    });
+    throw new RequestError("btcPayoutAddress and ethAddress are required.");
   }
   try {
-    const account = await prisma.account.update({
-      where: {
-        ethAddress,
-      },
-      data: {
-        btcPayoutAddress,
-      },
-    });
+    const account = await updateAccount(ethAddress, btcPayoutAddress);
     res.status(200).json(account);
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    next(error);
   }
 });
 
-// get route that takes address as a query parameter
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response, next) => {
   try {
     const { address } = req.query;
     if (!address) {
-      return res.status(400).json({
-        error: "address is required.",
-      });
+      throw new RequestError("address is required.");
     }
-
-    const account = await prisma.account.findUnique({
-      where: {
-        ethAddress: address as string,
-      },
-    });
-
+    const account = await getAccount(address as string);
     res.status(200).json(account);
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    next(error);
   }
 });
 
