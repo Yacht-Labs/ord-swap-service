@@ -67,7 +67,7 @@ app.use(
     apiSpec: swaggerDoc,
     validateRequests: true,
     validateResponses: false,
-    ignorePaths: /\/docs.*/,
+    ignorePaths: /\/docs.*|\/favicon.ico/,
   })
 );
 
@@ -107,11 +107,14 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    console.log("My Error: ", err);
     logger.error(`UnhandledError: ${err.message}`, {
       errorType: err.constructor.name,
       message: err.message,
     });
-    res.status(500).json({ error: "An unexpected error occurred" });
+    res
+      .status(500)
+      .json({ error: err.message || "An unexpected error occurred" });
   }
 );
 

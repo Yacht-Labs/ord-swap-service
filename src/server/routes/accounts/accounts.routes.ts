@@ -9,6 +9,18 @@ import {
 import { RequestError } from "../../../types/errors";
 
 const router = Router();
+router.get("/", async (req: Request, res: Response, next) => {
+  try {
+    const { address } = req.query;
+    if (!address) {
+      throw new RequestError("address is required.");
+    }
+    const account = await getAccount(address as string);
+    res.status(200).json(account);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.post("/", async (req: Request, res: Response, next) => {
   try {
@@ -27,19 +39,6 @@ router.put("/", async (req: Request, res: Response, next) => {
   }
   try {
     const account = await updateAccount(ethAddress, btcPayoutAddress);
-    res.status(200).json(account);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/", async (req: Request, res: Response, next) => {
-  try {
-    const { address } = req.query;
-    if (!address) {
-      throw new RequestError("address is required.");
-    }
-    const account = await getAccount(address as string);
     res.status(200).json(account);
   } catch (error) {
     next(error);
