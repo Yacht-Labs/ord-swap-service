@@ -7,9 +7,9 @@ import fs from "fs";
 import path from "path";
 import pkpNftContract from "../abis/PKPNFT.json";
 import { PKP_CONTRACT_ADDRESS_LIT } from "../constants/index";
-import { readPKPPrivateKey, readLitRpcURL } from "../util/env";
+import { readPKPPrivateKey, readLitRpcURL } from "../utils/env";
 import { PKPNFT } from "../types/typechain-types/contracts";
-import { generateAuthSig } from "../util/lit";
+import { generateAuthSig } from "../utils/lit";
 
 interface Params {
   btcTestNet?: boolean;

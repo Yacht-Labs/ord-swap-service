@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { PrismaClient } from "@prisma/client";
 import { DatabaseError } from "../types/errors";
-import logger from "../util/logger";
+import { logger } from "../utils/logger";
 
 const prisma = new PrismaClient();
 
