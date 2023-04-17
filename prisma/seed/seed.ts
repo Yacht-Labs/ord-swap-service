@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, ListingStatus } from "@prisma/client";
 import { ethers } from "ethers";
-import crypto from "crypto";
 import fetch from "node-fetch";
 
 const prisma = new PrismaClient();
 
 const API_ENDPOINT = "https://api.hiro.so/ordinals/v1/inscriptions"; // Replace with the correct API endpoint
+const NUM_INSCRIPTIONS = 60; // Replace with the desired number of inscriptions
 
 type Inscription = {
   id: string;
@@ -72,9 +72,26 @@ async function fetchInscriptions(limit = 50) {
   return [];
 }
 
+function getRandomStatus() {
+  const statuses = Object.values(ListingStatus);
+  const randomIndex = Math.floor(Math.random() * statuses.length);
+  return statuses[randomIndex];
+}
+
+async function getRandomAccountId() {
+  const randomAccount = await prisma.account.findFirst({
+    orderBy: {
+      createdAt: "desc", // or 'asc' if you prefer
+    },
+    skip: Math.floor(Math.random() * (await prisma.account.count())),
+  });
+
+  return randomAccount?.id;
+}
+
 async function seedAndReset() {
   // Fetch inscriptions from the API
-  const inscriptions = await fetchInscriptions(50);
+  const inscriptions = await fetchInscriptions(NUM_INSCRIPTIONS);
 
   if (inscriptions.length === 0) {
     console.log("No inscriptions fetched. Aborting database update.");
@@ -105,22 +122,40 @@ async function seedAndReset() {
         });
       }
 
-      const shouldAddConfirmedAt = Math.random() < 0.7;
-      const confirmedDate = shouldAddConfirmedAt
-        ? getRandomDateInPast(10)
-        : null;
+      const randomStatus = getRandomStatus();
 
+      const buyerAccountId =
+        randomStatus === ListingStatus.Sold ? await getRandomAccountId() : null;
+
+      const confirmedDate =
+        randomStatus === ListingStatus.Ready ||
+        randomStatus === ListingStatus.Sold ||
+        (randomStatus === ListingStatus.Cancelled && Math.random() < 0.5)
+          ? getRandomDateInPast(10)
+          : null;
+
+      const cancelledDate =
+        randomStatus === ListingStatus.Cancelled
+          ? getRandomDateInPast(10)
+          : null;
+
+      const sellDate =
+        randomStatus === ListingStatus.Sold ? getRandomDateInPast(10) : null;
       return prisma.listing.create({
         data: {
           inscriptionId: inscription.id,
           inscriptionNumber: inscription.number.toString(),
           listingAccountId: account.id,
-          ethPrice: (Math.random() * 1000 + 0.01).toFixed(
+          ethPrice: (Math.random() * 300 + 0.01).toFixed(
             Math.floor(Math.random() * 5)
           ),
           pkpPublicKey: ethers.Wallet.createRandom().publicKey,
           pkpBtcAddress: generateRandomAddress(), // This is not a valid btc address but a placeholder. Use a library to generate a valid taproot address., // Replace with a valid bitcoin taproot address
           confirmedDate,
+          cancelledDate,
+          sellDate,
+          status: randomStatus,
+          buyerAccountId,
         },
       });
     });

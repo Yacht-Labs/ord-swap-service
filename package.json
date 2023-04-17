@@ -17,7 +17,7 @@
     "db:dropLocal": "ts-node prisma/seed/dropLocalDb.ts",
     "postinstall": "typechain --target ethers-v5 --out-dir ./src/types/typechain-types/contracts './src/abis/*.json'",
     "build:litAction": "npx webpack",
-    "preenis": "yarn build:litAction && yarn start:dev"
+    "rayPreenis": "yarn build:litAction && yarn start:dev"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",

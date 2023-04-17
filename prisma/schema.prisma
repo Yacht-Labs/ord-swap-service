@@ -8,11 +8,21 @@ generator client {
 }
 
 model Account {
-  id         String    @id @default(uuid())
-  ethAddress String    @unique
-  createdAt  DateTime  @default(now())
+  id              String    @id @default(uuid())
+  ethAddress      String    @unique
+  createdAt       DateTime  @default(now())
   btcPayoutAddress String?
-  listings   Listing[]
+  listings        Listing[] @relation("ListingSellerAccount")
+  boughtListings  Listing[] @relation("ListingBuyerAccount")
+}
+
+enum ListingStatus {
+  NeedsCardinal
+  NeedsOrdinal
+  NeedsBoth
+  Ready
+  Sold
+  Cancelled
 }
 
 model Listing {
@@ -20,7 +30,7 @@ model Listing {
   inscriptionId     String
   inscriptionNumber String
   listingAccountId  String
-  account           Account   @relation(fields: [listingAccountId], references: [id])
+  account           Account   @relation(name: "ListingSellerAccount", fields: [listingAccountId], references: [id])
   ethPrice          String
   pkpPublicKey      String
   pkpBtcAddress     String
@@ -28,4 +38,7 @@ model Listing {
   confirmedDate     DateTime?
   sellDate          DateTime?
   cancelledDate     DateTime?
+  buyerAccountId    String?   // Add this field
+  buyerAccount      Account?  @relation(name: "ListingBuyerAccount", fields: [buyerAccountId], references: [id])
+  status            ListingStatus @default(NeedsCardinal)
 }
