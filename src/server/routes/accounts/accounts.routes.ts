@@ -5,16 +5,13 @@ import {
   createAccount,
   updateAccount,
   getAccount,
-} from "../../../services/AccountsService";
+} from "../../../services/accounts/AccountsService";
 import { RequestError } from "../../../types/errors";
 
 const router = Router();
 router.get("/", async (req: Request, res: Response, next) => {
   try {
     const { address } = req.query;
-    if (!address) {
-      throw new RequestError("address is required.");
-    }
     const account = await getAccount(address as string);
     res.status(200).json(account);
   } catch (error) {

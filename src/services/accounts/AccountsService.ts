@@ -1,7 +1,6 @@
-// src/services/accounts.service.ts
-
-import { NotFoundError, DatabaseError } from "../types/errors";
-import prisma from "../db/prisma";
+import { NotFoundError, DatabaseError } from "../../types/errors";
+import prisma from "../../db/prisma";
+import { Account } from "@prisma/client";
 
 export async function createAccount(ethAddress: string) {
   const existingAccount = await prisma.account.findFirst({
@@ -45,19 +44,21 @@ export async function updateAccount(
 }
 
 export async function getAccount(ethAddress: string) {
+  let account: Account | null;
   try {
-    const account = await prisma.account.findUnique({
+    account = await prisma.account.findUnique({
       where: {
         ethAddress,
       },
     });
-
-    if (!account) {
-      throw new NotFoundError("Account not found.");
-    }
-
-    return account;
-  } catch (error) {
-    throw new DatabaseError("Failed to get account.");
+  } catch (err) {
+    throw new DatabaseError(`Failed to get account: ${err}`);
   }
+  if (!account) {
+    throw new NotFoundError(
+      `Account not found with ethAddress: ${ethAddress}}`
+    );
+  }
+
+  return account;
 }

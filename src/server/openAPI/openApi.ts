@@ -18,4 +18,4 @@ export const openApiMiddleware = OpenApiValidator.middleware({
   ignorePaths: /\/docs.*|\/favicon.ico/,
 });
 
-export { setupSwagger } from "../openAPI/swagger";
+export { setupSwagger } from "./swagger";

@@ -1,7 +1,7 @@
 import { PrismaClient, ListingStatus } from "@prisma/client";
 import { ethers } from "ethers";
 import fetch from "node-fetch";
-
+import { getRandomDateInPast } from "../../src/utils/stubs";
 const prisma = new PrismaClient();
 
 const API_ENDPOINT = "https://api.hiro.so/ordinals/v1/inscriptions"; // Replace with the correct API endpoint
@@ -49,12 +49,6 @@ function generateRandomAddress() {
   }
 
   return address;
-}
-
-function getRandomDateInPast(days: number) {
-  const now = new Date();
-  const msInPast = Math.random() * days * 24 * 60 * 60 * 1000;
-  return new Date(now.getTime() - msInPast);
 }
 
 async function fetchInscriptions(limit = 50) {

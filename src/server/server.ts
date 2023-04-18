@@ -7,7 +7,8 @@ import AccountsRoutes from "./routes/accounts/accounts.routes";
 import ListingsRoutes from "./routes/listings/listings.routes";
 import { logger } from "../utils/logger";
 
-import { configureExpress, openApiMiddleware } from "./config";
+import { configureExpress } from "./config";
+import { openApiMiddleware } from "./openAPI/openApi";
 import {
   appErrorHandler,
   unhandledErrorHandler,

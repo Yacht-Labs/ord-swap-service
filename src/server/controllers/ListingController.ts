@@ -1,29 +1,25 @@
-import { Request, Response } from "express";
-import { ListingService } from "../../services/ListingService";
-import { UtxoAPI } from "../../api/utxo/UtxoAPI";
-import { InscriptionAPI } from "../../api/inscription/InscriptionAPI";
+import { Listing } from "@prisma/client";
+import prisma from "../../db/prisma";
 
 export class ListingController {
-  constructor(
-    private inscriptionAPI: InscriptionAPI,
-    private utxoAPI: UtxoAPI
-  ) {}
-
-  confirmListing = async (req: Request, res: Response) => {
-    const { listingId } = req.body;
-    const listingService = new ListingService(
-      this.inscriptionAPI,
-      this.utxoAPI
-    );
-
+  async getListingsByBuyer(accountId: string): Promise<Listing[]> {
     try {
-      const { listingIsConfirmed } = await listingService.confirmListing(
-        listingId
-      );
-      res.status(200).json({ listingIsConfirmed });
+      const listings = await prisma.listing.findMany({
+        where: { buyerAccountId: accountId },
+      });
+      return listings;
     } catch (err) {
-      console.error(err);
-      res.status(500).send((err as Error).message);
+      throw err;
     }
-  };
+  }
+  async getListingsBySeller(accountId: string): Promise<Listing[]> {
+    try {
+      const listings = await prisma.listing.findMany({
+        where: { listingAccountId: accountId },
+      });
+      return listings;
+    } catch (err) {
+      throw err;
+    }
+  }
 }

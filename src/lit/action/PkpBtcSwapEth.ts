@@ -12,7 +12,7 @@ import {
   getCurrentGasPricesMainnet,
 } from "./test/ordinalSwapAction";
 import { OrdXyzInscriptionAPI } from "../../api/inscription/OrdXyzInscriptionAPI";
-import { ListingService } from "../../services/ListingService";
+import { ListingService } from "../../services/listings/ListingService";
 
 // const ethPrice = "0.001";
 // const pkpEthAddress = "0x5342b85821849ef2F8b0fB4e7eFf27952F28b3f2";

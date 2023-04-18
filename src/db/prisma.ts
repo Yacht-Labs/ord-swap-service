@@ -25,7 +25,7 @@ prisma.$use(async (params, next) => {
       action,
       error,
     });
-    throw error;
+    throw new DatabaseError((error as Error).message);
   }
 });
 

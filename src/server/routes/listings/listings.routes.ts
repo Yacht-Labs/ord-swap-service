@@ -4,12 +4,29 @@ import { ethers } from "ethers";
 import { LitService } from "../../../services/LitService";
 import prisma from "../../../db/prisma";
 import { LitActionResponse } from "../../../types";
-import { ListingService } from "../../../services/ListingService";
+import { ListingService } from "../../../services/listings/ListingService";
 import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
 import { BlockchainInfoUtxoApi } from "../../../api/utxo/BlockchainInfoApi";
 import { BtcTransactionManager } from "../../../lit/bitcoin/BtcTransactionManager";
+import { ListingController } from "../../controllers/ListingController";
 
 const router = Router();
+const listingService = new ListingService(
+  new OrdXyzInscriptionAPI(),
+  new BlockchainInfoUtxoApi()
+);
+
+router.get("/seller/:accountId", async (req, res, next) => {
+  const listingController = new ListingController();
+  try {
+    const accountId = req.params.accountId;
+    const listings = await listingController.getListingsBySeller(accountId);
+    return res.status(200).json(listings);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { ethAddress, ethPrice, inscriptionId, inscriptionNumber } = req.body;
@@ -58,10 +75,6 @@ router.post("/withdraw", async (req: Request, res: Response) => {
 
 router.put("/confirm", async (req: Request, res: Response) => {
   const { listingId } = req.body;
-  const listingService = new ListingService(
-    new OrdXyzInscriptionAPI(),
-    new BlockchainInfoUtxoApi()
-  );
   try {
     const listing = await prisma.listing.findUniqueOrThrow({
       where: {
@@ -184,6 +197,17 @@ router.put("/", async (req: Request, res: Response) => {
     res.status(500).json({ error: (error as Error).message });
   }
   res.status(500).json({ error: "Unknown Error with Lit Action" });
+});
+
+router.get("/buyer/:accountId", async (req: Request, res: Response, next) => {
+  const listingController = new ListingController();
+  try {
+    const { accountId } = req.params;
+    const listings = await listingController.getListingsByBuyer(accountId);
+    return res.status(200).json(listings);
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

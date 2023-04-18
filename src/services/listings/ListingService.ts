@@ -1,7 +1,7 @@
 import { Listing } from "@prisma/client";
-import { InscriptionAPI } from "../api/inscription/InscriptionAPI";
-import { UtxoAPI } from "../api/utxo/UtxoAPI";
-
+import { InscriptionAPI } from "../../api/inscription/InscriptionAPI";
+import { UtxoAPI } from "../../api/utxo/UtxoAPI";
+import prisma from "../../db/prisma";
 type MinimalListing = Pick<Listing, "pkpBtcAddress" | "inscriptionId">;
 
 export class ListingService {
@@ -10,7 +10,18 @@ export class ListingService {
     private utxoAPI: UtxoAPI
   ) {}
 
-  public async confirmListing(listing: Listing | MinimalListing) {
+  static async getBoughtListings(accountId: string): Promise<Listing[] | null> {
+    try {
+      const listings = await prisma.listing.findMany({
+        where: { buyerAccountId: accountId },
+      });
+      return listings;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async confirmListing(listing: Listing | MinimalListing) {
     try {
       const utxos = await this.utxoAPI.getUtxosByAddress(
         listing.pkpBtcAddress,
