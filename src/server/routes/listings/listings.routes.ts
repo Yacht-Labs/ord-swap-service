@@ -61,15 +61,6 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 router.post("/withdraw", async (req: Request, res: Response) => {
-  // const {
-  //   listingId,
-  //   authSig,
-  //   btcPayoutAddress,
-  // }: {
-  //   listingId: string;
-  //   authSig: AuthSignature;
-  //   btcPayoutAddress: string;
-  // } = req.body;
   res.status(200).send("Working Endpoint");
 });
 
@@ -128,6 +119,17 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(200).json(listings);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+router.put("/buy", async (req: Request, res: Response, next) => {
+  const { listingId, accountId } = req.body;
+  const listingController = new ListingController();
+  try {
+    const listing = await listingController.buyListing(listingId, accountId);
+    res.status(200).json(listing);
+  } catch (err) {
+    next(err);
   }
 });
 

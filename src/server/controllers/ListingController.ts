@@ -12,12 +12,25 @@ export class ListingController {
       throw err;
     }
   }
+
   async getListingsBySeller(accountId: string): Promise<Listing[]> {
     try {
       const listings = await prisma.listing.findMany({
         where: { listingAccountId: accountId },
       });
       return listings;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async buyListing(listingId: string, accountId: string): Promise<Listing> {
+    try {
+      const listing = await prisma.listing.update({
+        where: { id: listingId },
+        data: { buyerAccountId: accountId },
+      });
+      return listing;
     } catch (err) {
       throw err;
     }

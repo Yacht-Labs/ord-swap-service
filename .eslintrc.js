@@ -4,7 +4,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
   ],
-  plugins: ["@typescript-eslint", "import"],
+  plugins: ["@typescript-eslint", "prettier", "import"],
   env: {
     node: true,
     es2021: true,
@@ -14,7 +14,7 @@ module.exports = {
     "no-restricted-syntax": "off",
     "no-plusplus": "off",
     "consistent-return": "off",
-    "prettier/prettier": "error",
+    "prettier/prettier": "off",
     "no-console": "warn",
     "import/prefer-default-export": "off",
     "import/extensions": [
