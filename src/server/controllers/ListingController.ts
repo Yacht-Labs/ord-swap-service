@@ -28,7 +28,7 @@ export class ListingController {
     try {
       const listing = await prisma.listing.update({
         where: { id: listingId },
-        data: { buyerAccountId: accountId },
+        data: { buyerAccountId: accountId, status: "Sold" },
       });
       return listing;
     } catch (err) {
