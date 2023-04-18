@@ -1,6 +1,6 @@
 import { Listing } from "@prisma/client";
 import { InscriptionAPI } from "../../api/inscription/InscriptionAPI";
-import { UtxoAPI } from "../../api/utxo/UtxoAPI";
+import { UtxoAPI } from "../../api/bitcoin/UtxoAPI";
 import prisma from "../../db/prisma";
 type MinimalListing = Pick<Listing, "pkpBtcAddress" | "inscriptionId">;
 

@@ -26,3 +26,15 @@ export class DatabaseError extends AppError {
     super(500, message);
   }
 }
+
+export class LitError extends AppError {
+  constructor(message = "Lit error") {
+    super(500, message);
+  }
+}
+
+export class ApiError extends AppError {
+  constructor(message = "API error") {
+    super(500, message);
+  }
+}

@@ -170,7 +170,10 @@ export class LitService {
     return generateAuthSig(this.signer, chainId, uri, version);
   }
 
-  static async loadJsFile(fileName: string): Promise<string> {
+  async loadActionCode(
+    fileName: string,
+    variables: Record<string, string>
+  ): Promise<string> {
     const filePath = path.join(
       __dirname,
       "..",
@@ -180,7 +183,7 @@ export class LitService {
       `${fileName}.bundle.js`
     );
 
-    return new Promise((resolve, reject) => {
+    const code = await new Promise<string>((resolve, reject) => {
       fs.readFile(filePath, "utf8", (err, data) => {
         if (err) {
           reject(err);
@@ -189,6 +192,8 @@ export class LitService {
         }
       });
     });
+
+    return this.replaceCodeVariables(code, variables);
   }
 
   /* 
@@ -199,7 +204,7 @@ export class LitService {
   };
   replaceVariables(code, variables);
   */
-  static replaceVariables(content: string, variables: any) {
+  private replaceCodeVariables(content: string, variables: any) {
     let result = content;
     for (const key in variables) {
       const placeholder = `{{${key}}}`;
@@ -224,7 +229,7 @@ export class LitService {
     authSig?: any;
     pkpEthAddress: string;
     pkpBtcAddress: string;
-    btcPayoutAddress: string;
+    btcPayoutAddress?: string;
   }) {
     try {
       await this.litClient.connect();

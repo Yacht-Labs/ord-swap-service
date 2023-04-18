@@ -90,7 +90,30 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Listing"
-
+  /listing/seller/withdraw:
+    get:
+      summary: Seller withdraws the purchase price of a listing
+      parameters:
+        - name: listingId
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[1-5][a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"
+          description: The listing ID to withdraw (must be a valid UUID)
+      responses:
+        "200":
+          description: Successfully processed the withdrawal request
+        "400":
+          description: Bad request (e.g., invalid listing ID)
+        "401":
+          description: Unauthorized (e.g., user not authenticated)
+        "403":
+          description: Forbidden (e.g., user not authorized to perform this action)
+        "404":
+          description: Listing not found
+        "500":
+          description: Internal server error
   /listings/confirm:
     put:
       summary: Confirm a listing

@@ -2,8 +2,8 @@ import { InscriptionManager } from "./../../services/InscriptionService";
 // if (process.env.NODE_ENV === "dev") {
 //   require("../../../development");
 // }
-import { BlockchainInfoUtxoApi } from "../../api/utxo/BlockchainInfoApi";
-import { BtcTransactionManager } from "../bitcoin/BtcTransactionManager";
+import { BlockchainInfoUtxoApi } from "../../api/bitcoin/utxo/BlockchainInfoApi";
+import { BtcTransactionService } from "../../services/bitcoin/BtcTransactionService";
 import {
   findWinnersByTransaction,
   getInboundEthTransactions,
@@ -51,7 +51,7 @@ export async function go() {
     const executorAddress = Lit.Auth.authSigAddress;
     if (executorAddress === winningTransfer?.from) {
       if (ordinalUtxo && cardinalUtxo && btcPayoutAddress) {
-        const btcTransactionManager = new BtcTransactionManager();
+        const btcTransactionManager = new BtcTransactionService();
         const { hashForInput0, hashForInput1, transaction } =
           btcTransactionManager.prepareInscriptionTransaction({
             ordinalUtxo,

@@ -1,5 +1,5 @@
-import { Utxo } from "../../types/models";
-import { BaseAPI } from "../base/BaseApi";
+import { Utxo } from "../../../types/models";
+import { BaseAPI } from "../../base//BaseApi";
 
 export abstract class UtxoAPI extends BaseAPI {
   public abstract getUtxosByAddress(

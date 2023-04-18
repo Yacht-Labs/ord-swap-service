@@ -1,3 +1,9 @@
+import { Listing, Account } from "@prisma/client";
+
+export type ListingWithAccount = Listing & {
+  account: Account;
+};
+
 export type Inscription = {
   id: string;
   number: number;

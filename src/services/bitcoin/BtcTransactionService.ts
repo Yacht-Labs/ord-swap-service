@@ -4,10 +4,14 @@ import ecc from "@bitcoinerlab/secp256k1";
 import { padHexString, reverseBuffer } from "../../utils/btc";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { SignatureData } from "../../types";
-export class BtcTransactionManager {
+import { CryptoApisBroadcaster } from "../../api/bitcoin/broadcaster/CryptoApisBroadcaster";
+import { BtcBroadcasterApi } from "../../api/bitcoin/broadcaster/BtcBroadcasterApi";
+export class BtcTransactionService {
   private FEE_RATE = 30;
+  private broadcasterApi: BtcBroadcasterApi;
   constructor() {
     bitcoin.initEccLib(ecc);
+    this.broadcasterApi = new CryptoApisBroadcaster();
   }
 
   public prepareInscriptionTransaction({
@@ -65,7 +69,7 @@ export class BtcTransactionManager {
     transaction.setInputScript(input, signedInput);
   }
 
-  public builtLitBtcTransaction(
+  public buildLitBtcTransaction(
     transactionHex: string,
     hashForInput0: SignatureData,
     hashForInput1: SignatureData,
@@ -79,5 +83,9 @@ export class BtcTransactionManager {
     this.addSignatureToTxInput(transaction, hashForInput0, compressedPoint, 0);
     this.addSignatureToTxInput(transaction, hashForInput1, compressedPoint, 1);
     return transaction.toHex();
+  }
+
+  public async broadcastTransaction(transactionHex: string) {
+    return this.broadcasterApi.broadcastTransaction(transactionHex);
   }
 }
