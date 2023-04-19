@@ -180,16 +180,16 @@ paths:
                   type: string
       responses:
         "200":
-          description: Listing Status
+          description: Listing
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  listingStatus:
-                    $ref: "#/components/schemas/ListingStatus"
+                  listing:
+                    $ref: "#/components/schemas/Listing"
                     required:
-                      - listingStatus
+                      - listing
         "400":
           description: Bad request
         "401":

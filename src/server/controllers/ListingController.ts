@@ -66,7 +66,7 @@ export class ListingController {
     }
   }
 
-  async confirmListing(listingId: string): Promise<ListingStatus> {
+  async confirmListing(listingId: string): Promise<Listing> {
     const listing = await prisma.listing.findUnique({
       where: {
         id: listingId,
@@ -81,15 +81,16 @@ export class ListingController {
       );
     }
     if (listing.status === "Ready") {
-      return ListingStatus.Ready;
+      return listing;
     }
     const listingStatus = await this.listingService.confirmListing(listing);
+    let updatedListing;
     if (listing.status !== listingStatus) {
-      await prisma.listing.update({
+      updatedListing = await prisma.listing.update({
         where: { id: listingId },
         data: { status: "Ready" },
       });
     }
-    return listingStatus;
+    return updatedListing || listing;
   }
 }

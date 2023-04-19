@@ -122,8 +122,8 @@ router.put("/confirm", async (req: Request, res: Response, next) => {
   const { listingId } = req.body;
   const listingController = new ListingController();
   try {
-    const listingStatus = await listingController.confirmListing(listingId);
-    res.status(200).json(listingStatus);
+    const listing = await listingController.confirmListing(listingId);
+    res.status(200).json({ listing });
   } catch (err) {
     next(err);
   }
