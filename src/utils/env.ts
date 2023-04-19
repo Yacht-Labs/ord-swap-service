@@ -31,6 +31,10 @@ export function readBooleanEnv(name: string): boolean {
   throw new Error(`Environment variable ${name} is not a boolean`);
 }
 
+export function readAlchemyKey(): string {
+  return readStringEnv("ALCHEMY_API_KEY");
+}
+
 export function readPortNumber(): number {
   return readNumberEnv("PORT");
 }

@@ -85,7 +85,7 @@ export class ListingController {
     }
     const listingStatus = await this.listingService.confirmListing(listing);
     let updatedListing;
-    if (listing.status !== listingStatus) {
+    if (listing.status !== listingStatus.status) {
       updatedListing = await prisma.listing.update({
         where: { id: listingId },
         data: { status: "Ready" },
