@@ -1,3 +1,5 @@
+import { ApiError } from "../../types/errors";
+
 export abstract class BaseAPI {
   protected abstract baseURL: string;
 
@@ -11,6 +13,6 @@ export abstract class BaseAPI {
   }
 
   protected handleError(err: unknown): void {
-    throw err;
+    throw new ApiError((err as Error).message);
   }
 }

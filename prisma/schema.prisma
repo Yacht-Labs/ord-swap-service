@@ -40,5 +40,5 @@ model Listing {
   cancelledDate     DateTime?
   buyerAccountId    String?   // Add this field
   buyerAccount      Account?  @relation(name: "ListingBuyerAccount", fields: [buyerAccountId], references: [id])
-  status            ListingStatus @default(NeedsCardinal)
+  status            ListingStatus @default(NeedsBoth)
 }
