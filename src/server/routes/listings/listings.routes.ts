@@ -3,7 +3,6 @@ import { Router, Request, Response } from "express";
 import { ethers } from "ethers";
 import { LitService } from "../../../services/LitService";
 import prisma from "../../../db/prisma";
-import { LitActionResponse } from "../../../types";
 import { ListingService } from "../../../services/listings/ListingService";
 import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
 import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoApi";
@@ -108,6 +107,39 @@ router.post("/buyer/withdraw", async (req, res, next) => {
   }
 });
 
+router.get("/buyer/:accountId", async (req: Request, res: Response, next) => {
+  const listingController = new ListingController();
+  try {
+    const { accountId } = req.params;
+    const listings = await listingController.getListingsByBuyer(accountId);
+    return res.status(200).json(listings);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/confirm", async (req: Request, res: Response, next) => {
+  const { listingId } = req.body;
+  const listingController = new ListingController();
+  try {
+    const listingStatus = await listingController.confirmListing(listingId);
+    res.status(200).json(listingStatus);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put("/buy", async (req: Request, res: Response, next) => {
+  const { listingId, accountId } = req.body;
+  const listingController = new ListingController();
+  try {
+    const listing = await listingController.buyListing(listingId, accountId);
+    res.status(200).json(listing);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { ethAddress, ethPrice, inscriptionId, inscriptionNumber } = req.body;
@@ -138,30 +170,6 @@ router.post("/", async (req: Request, res: Response) => {
     res.status(201).json(listing);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
-  }
-});
-
-router.put("/confirm", async (req: Request, res: Response) => {
-  const { listingId } = req.body;
-  try {
-    const listing = await prisma.listing.findUniqueOrThrow({
-      where: {
-        id: listingId,
-      },
-    });
-    const { listingIsConfirmed } = await listingService.confirmListing(listing);
-    await prisma.listing.update({
-      where: {
-        id: listingId,
-      },
-      data: {
-        confirmedDate: new Date(),
-      },
-    });
-    res.status(200).json({ listingIsConfirmed });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send((err as Error).message);
   }
 });
 
@@ -196,28 +204,6 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(200).json(listings);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
-  }
-});
-
-router.put("/buy", async (req: Request, res: Response, next) => {
-  const { listingId, accountId } = req.body;
-  const listingController = new ListingController();
-  try {
-    const listing = await listingController.buyListing(listingId, accountId);
-    res.status(200).json(listing);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.get("/buyer/:accountId", async (req: Request, res: Response, next) => {
-  const listingController = new ListingController();
-  try {
-    const { accountId } = req.params;
-    const listings = await listingController.getListingsByBuyer(accountId);
-    return res.status(200).json(listings);
-  } catch (err) {
-    next(err);
   }
 });
 

@@ -166,7 +166,7 @@ paths:
           description: Internal server error
   /listings/confirm:
     put:
-      summary: Confirm a listing
+      summary: Confirm a listing's status
       requestBody:
         required: true
         content:
@@ -180,17 +180,16 @@ paths:
                   type: string
       responses:
         "200":
-          description: Listing confirmed successfully
+          description: Listing Status
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  listingIsConfirmed:
-                    type: boolean
-                    description: Indicates if the listing is confirmed or not
-                required:
-                  - listingIsConfirmed
+                  listingStatus:
+                    $ref: "#/components/schemas/ListingStatus"
+                    required:
+                      - listingStatus
         "400":
           description: Bad request
         "401":
@@ -235,6 +234,7 @@ paths:
           description: Not found
         "500":
           description: Internal server error
+
   /listings/buyer/{accountId}:
     get:
       summary: Get listings by buyer account ID
@@ -533,3 +533,13 @@ components:
           type: string
         address:
           type: string
+
+    ListingStatus:
+      type: string
+      enum:
+        - NeedsCardinal
+        - NeedsOrdinal
+        - NeedsBoth
+        - Ready
+        - Sold
+        - Cancelled

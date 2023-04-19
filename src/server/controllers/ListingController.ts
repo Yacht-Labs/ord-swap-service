@@ -1,9 +1,18 @@
-import { Listing } from "@prisma/client";
+import { Listing, ListingStatus } from "@prisma/client";
 import prisma from "../../db/prisma";
-import { NotFoundError } from "../../types/errors";
+import { BusinessLogicError, NotFoundError } from "../../types/errors";
 import { ListingWithAccount } from "../../types/models";
+import { ListingService } from "../../services/listings/ListingService";
+import { OrdXyzInscriptionAPI } from "../../api/inscription/OrdXyzInscriptionAPI";
+import { BlockchainInfoUtxoApi } from "../../api/bitcoin/utxo/BlockchainInfoApi";
 
 export class ListingController {
+  listingService: ListingService;
+  constructor() {
+    const inscriptionApi = new OrdXyzInscriptionAPI();
+    const utxoApi = new BlockchainInfoUtxoApi();
+    this.listingService = new ListingService(inscriptionApi, utxoApi);
+  }
   async getListingById(listingId: string): Promise<ListingWithAccount> {
     // include account in the Listing type
     try {
@@ -55,5 +64,32 @@ export class ListingController {
     } catch (err) {
       throw err;
     }
+  }
+
+  async confirmListing(listingId: string): Promise<ListingStatus> {
+    const listing = await prisma.listing.findUnique({
+      where: {
+        id: listingId,
+      },
+    });
+    if (!listing) {
+      throw new NotFoundError(`Listing with id ${listingId} not found`);
+    }
+    if (listing.status === "Cancelled" || listing.status === "Sold") {
+      throw new BusinessLogicError(
+        `Listing with id ${listingId} already has status ${listing.status}}`
+      );
+    }
+    if (listing.status === "Ready") {
+      return ListingStatus.Ready;
+    }
+    const listingStatus = await this.listingService.confirmListing(listing);
+    if (listing.status !== listingStatus) {
+      await prisma.listing.update({
+        where: { id: listingId },
+        data: { status: "Ready" },
+      });
+    }
+    return listingStatus;
   }
 }

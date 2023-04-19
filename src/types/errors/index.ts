@@ -38,3 +38,15 @@ export class ApiError extends AppError {
     super(500, message);
   }
 }
+
+export class BusinessLogicError extends AppError {
+  constructor(message = "Business logic error") {
+    super(500, message);
+  }
+}
+
+export class UnknownError extends AppError {
+  constructor(message = "Unknown error") {
+    super(500, message);
+  }
+}

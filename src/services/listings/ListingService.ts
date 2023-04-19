@@ -1,7 +1,8 @@
-import { Listing } from "@prisma/client";
+import { Listing, ListingStatus } from "@prisma/client";
 import { InscriptionAPI } from "../../api/inscription/InscriptionAPI";
-import { UtxoAPI } from "../../api/bitcoin/UtxoAPI";
+import { UtxoAPI } from "../../api/bitcoin/utxo/UtxoAPI";
 import prisma from "../../db/prisma";
+import { BusinessLogicError } from "../../types/errors";
 type MinimalListing = Pick<Listing, "pkpBtcAddress" | "inscriptionId">;
 
 export class ListingService {
@@ -21,31 +22,25 @@ export class ListingService {
     }
   }
 
-  async confirmListing(listing: Listing | MinimalListing) {
-    try {
-      const utxos = await this.utxoAPI.getUtxosByAddress(
-        listing.pkpBtcAddress,
-        2
-      );
-      if (utxos.length === 0 || utxos.length === 1) {
-        throw new Error(
-          "Seller does not have two UTXOs in the PKP Bitcoin Address"
-        );
-      }
-
-      const inscription = await this.inscriptionAPI.getInscription(
-        listing.inscriptionId
-      );
-
-      if (inscription.address !== listing.pkpBtcAddress) {
-        throw new Error(
-          "Seller needs to send their inscription to the PKP Address"
-        );
-      }
-
-      return { listingIsConfirmed: true, utxos, inscription };
-    } catch (err) {
-      throw new Error(`Error confirming listing: ${(err as Error).message}`);
+  async confirmListing(
+    listing: Listing | MinimalListing
+  ): Promise<ListingStatus> {
+    const utxos = await this.utxoAPI.getUtxosByAddress(
+      listing.pkpBtcAddress,
+      2
+    );
+    if (utxos.length === 0) {
+      return ListingStatus.NeedsBoth;
     }
+    const inscription = await this.inscriptionAPI.getInscription(
+      listing.inscriptionId
+    );
+    if (inscription.address !== listing.pkpBtcAddress) {
+      return ListingStatus.NeedsOrdinal;
+    }
+    if (utxos.length === 1) {
+      return ListingStatus.NeedsCardinal;
+    }
+    return ListingStatus.Ready;
   }
 }
