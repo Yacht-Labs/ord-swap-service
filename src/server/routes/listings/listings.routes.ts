@@ -40,13 +40,54 @@ router.get("/seller/withdraw", async (req, res, next) => {
       ethPayoutAddress: listing.account.ethAddress,
       inscriptionId: listing.inscriptionId,
     });
-    const { response, signatures } = (await litService.runLitAction({
+    const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: listing.pkpPublicKey,
       code: litActionCode,
       authSig: litService.generateAuthSig(),
       pkpEthAddress: ethers.utils.computeAddress(listing.pkpPublicKey),
       pkpBtcAddress: listing.pkpBtcAddress,
-    })) as LitActionResponse;
+    });
+    if (response?.error) {
+      throw new LitError(response.error);
+    }
+    if (response?.btcTransactionHex) {
+      const signedTransactionHex = btcTxManager.buildLitBtcTransaction(
+        response.btcTransactionHex,
+        signatures.hashForInput0,
+        signatures.hashForInput1,
+        listing.pkpPublicKey
+      );
+      const txId = await btcTxManager.broadcastTransaction(
+        signedTransactionHex
+      );
+      return res.status(200).json({ txId });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/buyer/withdraw", async (req, res, next) => {
+  const { listingId } = req.query;
+  const { authSig, taprootAddress } = req.body;
+  const listingController = new ListingController();
+  const litService = new LitService();
+  const btcTxManager = new BtcTransactionService();
+  try {
+    const listing = await listingController.getListingById(listingId as string);
+    const litActionCode = await litService.loadActionCode("PkpBtcSwapEth", {
+      ethPrice: listing.ethPrice,
+      ethPayoutAddress: listing.account.ethAddress,
+      inscriptionId: listing.inscriptionId,
+    });
+    const { response, signatures } = await litService.runLitAction({
+      pkpPublicKey: listing.pkpPublicKey,
+      code: litActionCode,
+      authSig: authSig,
+      pkpEthAddress: ethers.utils.computeAddress(listing.pkpPublicKey),
+      pkpBtcAddress: listing.pkpBtcAddress,
+      btcPayoutAddress: taprootAddress,
+    });
     if (response?.error) {
       throw new LitError(response.error);
     }

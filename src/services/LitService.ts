@@ -10,6 +10,8 @@ import { PKP_CONTRACT_ADDRESS_LIT } from "../constants/index";
 import { readPKPPrivateKey, readLitRpcURL } from "../utils/env";
 import { PKPNFT } from "../types/typechain-types/contracts";
 import { generateAuthSig } from "../utils/lit";
+import { LitActionResponse } from "../types";
+import { LitError } from "../types/errors";
 
 interface Params {
   btcTestNet?: boolean;
@@ -230,7 +232,7 @@ export class LitService {
     pkpEthAddress: string;
     pkpBtcAddress: string;
     btcPayoutAddress?: string;
-  }) {
+  }): Promise<LitActionResponse> {
     try {
       await this.litClient.connect();
       const response = await this.litClient.executeJs({
@@ -246,9 +248,12 @@ export class LitService {
           btcPayoutAddress,
         },
       });
-      return response;
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+      return response as LitActionResponse;
     } catch (err) {
-      console.log(err);
+      throw new LitError(`Error running Lit Action: ${(err as Error).message}`);
     }
   }
 }
