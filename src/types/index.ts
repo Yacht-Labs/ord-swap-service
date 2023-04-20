@@ -26,6 +26,6 @@ export type LitActionResponse = {
   signatures: {
     hashForInput0: SignatureData;
     hashForInput1: SignatureData;
-    winningEthTransaction: SignatureData;
+    ethTransactionSignature: SignatureData;
   };
 };

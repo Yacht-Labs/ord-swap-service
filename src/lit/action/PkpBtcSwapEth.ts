@@ -92,11 +92,11 @@ export async function go() {
         await Lit.Actions.signEcdsa({
           toSign: hashTransaction(unsignedTransaction),
           publicKey: pkpPublicKey,
-          sigName: "winningEthTransactionSignature",
+          sigName: "ethTransactionSignature",
         });
         Lit.Actions.setResponse({
           response: JSON.stringify({
-            unsignedWinningEthTransaction: unsignedTransaction,
+            unsignedEthTransaction: unsignedTransaction,
           }),
         });
       }
