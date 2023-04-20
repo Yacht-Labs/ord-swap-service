@@ -31,6 +31,14 @@ export function readBooleanEnv(name: string): boolean {
   throw new Error(`Environment variable ${name} is not a boolean`);
 }
 
+export function readBitcoinNetwork() {
+  try {
+    return readStringEnv("BTC_NETWORK");
+  } catch (err) {
+    return "MAINNET";
+  }
+}
+
 export function readAlchemyKey(): string {
   return readStringEnv("ALCHEMY_API_KEY");
 }

@@ -7,23 +7,24 @@ import fs from "fs";
 import path from "path";
 import pkpNftContract from "../abis/PKPNFT.json";
 import { PKP_CONTRACT_ADDRESS_LIT } from "../constants/index";
-import { readPKPPrivateKey, readLitRpcURL } from "../utils/env";
+import {
+  readPKPPrivateKey,
+  readLitRpcURL,
+  readBitcoinNetwork,
+} from "../utils/env";
 import { PKPNFT } from "../types/typechain-types/contracts";
 import { generateAuthSig } from "../utils/lit";
 import { LitActionResponse } from "../types";
 import { LitError } from "../types/errors";
 
-interface Params {
-  btcTestNet?: boolean;
-}
 export class LitService {
   private litClient: any;
   private pkpContract: PKPNFT;
   private signer: ethers.Wallet;
   private btcTestNet: boolean;
 
-  constructor({ btcTestNet = false }: Params = {}) {
-    this.btcTestNet = btcTestNet;
+  constructor() {
+    this.btcTestNet = readBitcoinNetwork() === "TESTNET";
     this.signer = new ethers.Wallet(
       readPKPPrivateKey(),
       new ethers.providers.JsonRpcProvider(readLitRpcURL())
