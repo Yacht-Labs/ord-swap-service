@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
-var webpack = require("webpack");
-const { LIT_SWAP_FILE_NAME } = require("./src//constants");
+const webpack = require("webpack");
+const { LIT_SWAP_FILE_NAME } = require("./src/constants");
 
 module.exports = {
   mode: "production",
@@ -17,7 +17,6 @@ module.exports = {
     extensions: [".ts", ".js"],
     fallback: {
       stream: require.resolve("stream-browserify"),
-      buffer: require.resolve("buffer/"),
       crypto: require.resolve("crypto-browserify"),
       buffer: require.resolve("buffer"),
       events: require.resolve("events"),

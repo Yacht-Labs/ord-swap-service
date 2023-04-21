@@ -183,7 +183,7 @@ export class LitService {
       "lit",
       "action",
       "javascript",
-      `${fileName}.bundle.js`
+      `${fileName}.js`
     );
 
     const code = await new Promise<string>((resolve, reject) => {
