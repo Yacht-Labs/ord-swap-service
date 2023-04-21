@@ -15,7 +15,7 @@ type MempoolUtxo = {
   value: number;
 };
 
-export class MempoolSPaceAPI extends UtxoAPI {
+export class MempoolSpaceAPI extends UtxoAPI {
   protected baseURL: string;
   constructor() {
     super();

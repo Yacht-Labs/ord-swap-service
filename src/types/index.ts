@@ -9,6 +9,12 @@ export type AuthSignature = {
 
 export type LitUnsignedEthTransaction = UnsignedTransaction & { from: string };
 
+export type EthTransfer = {
+  blockNum: string;
+  from: string;
+  value: string;
+};
+
 export type SignatureData = {
   r: string;
   s: string;

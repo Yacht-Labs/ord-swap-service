@@ -39,6 +39,14 @@ export function readBitcoinNetwork() {
   }
 }
 
+export function readEthNetwork() {
+  try {
+    return readStringEnv("ETH_NETWORK");
+  } catch (err) {
+    return "MAINNET";
+  }
+}
+
 export function readAlchemyKey(): string {
   return readStringEnv("ALCHEMY_API_KEY");
 }

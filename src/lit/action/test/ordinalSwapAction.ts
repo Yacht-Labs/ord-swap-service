@@ -7,7 +7,10 @@
 // buyer btcAddress
 // Run it with an authsig
 
-import { UnsignedTransaction, ethers } from "ethers";
+import { BigNumber, UnsignedTransaction, ethers } from "ethers";
+import { readEthNetwork } from "../../../utils/env";
+import { ETH_GOERLI } from "../../../constants";
+import { EthTransfer } from "../../../types";
 
 // first check if the ordinal UTXO is on the pkpBtcAddress
 // second check if the cardinal UTXO is on the pkpBtcAddress
@@ -218,7 +221,7 @@ interface RawContract {
 }
 
 export function mapTransferToTransaction(
-  transfer: Transfer,
+  transfer: EthTransfer,
   to: string,
   nonce: number,
   maxPriorityFeePerGas: string,
@@ -229,7 +232,7 @@ export function mapTransferToTransaction(
   const unsignedTransaction = createUnsignedTransaction(
     from,
     to,
-    value,
+    BigNumber.from(value),
     nonce,
     maxPriorityFeePerGas,
     maxFeePerGas,
@@ -254,7 +257,11 @@ export async function getInboundEthTransactions(pkpEthAddress: string) {
     };
 
     const response = await fetch(
-      "https://eth-mainnet.g.alchemy.com/v2/IsjpCEWp_VbW4G8ZYWjNrLrWFZDBuPZ1",
+      `${
+        readEthNetwork() === ETH_GOERLI
+          ? "https://eth-goerli.g.alchemy.com/v2/WMADuqR-b2Yr2fWGK40lyt_BVXrlpsgW"
+          : "https://eth-mainnet.g.alchemy.com/v2/IsjpCEWp_VbW4G8ZYWjNrLrWFZDBuPZ1"
+      }`,
       {
         method: "POST",
         headers: {
@@ -264,6 +271,9 @@ export async function getInboundEthTransactions(pkpEthAddress: string) {
       }
     );
     const data = (await response.json()) as ApiResponse;
+    // blocknum
+    // value
+    // frp,
     return data.result.transfers.map((t) => ({
       ...t,
       value: ethers.BigNumber.from(ethers.utils.parseEther(t.value.toString())),

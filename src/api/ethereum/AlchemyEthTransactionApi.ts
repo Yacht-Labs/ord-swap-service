@@ -1,6 +1,9 @@
+import { ETH_GOERLI } from "../../constants";
 import { Transfer } from "../../lit/action/test/ordinalSwapAction";
-import { readAlchemyKey } from "../../utils/env";
-import { EthTransactionApi } from "./EthTransactionApi";
+import { EthTransfer } from "../../types";
+import { readEthNetwork } from "../../utils/env";
+import { EthereumAPI } from "./EthTransactionAPI";
+import { ethers } from "ethers";
 
 interface ApiResponse {
   jsonrpc: string;
@@ -10,41 +13,65 @@ interface ApiResponse {
   };
 }
 
-export class AlchemyEthTransactionApi extends EthTransactionApi {
+export class AlchemyEthTransactionAPI extends EthereumAPI {
   protected baseURL: string;
-  private payload = {
-    id: 1,
-    jsonrpc: "2.0",
-    method: "alchemy_getAssetTransfers",
-    params: {
-      fromBlock: "0x0",
-      toBlock: "latest",
-      toAddress: pkpEthAddress,
-      category: ["external"],
-      withMetadata: true,
-    },
-  };
 
   constructor() {
     super();
-    this.baseURL = `https://eth-mainnet.g.alchemy.com/v2/${readAlchemyKey}`;
+    this.baseURL =
+      readEthNetwork() === ETH_GOERLI
+        ? "https://eth-goerli.g.alchemy.com/v2/WMADuqR-b2Yr2fWGK40lyt_BVXrlpsgW"
+        : "https://eth-mainnet.g.alchemy.com/v2/IsjpCEWp_VbW4G8ZYWjNrLrWFZDBuPZ1";
   }
 
-  public async getInboundTransactions(address: string): Promise<Transfer[]> {
-    const response = await fetch(
-      "https://eth-mainnet.g.alchemy.com/v2/IsjpCEWp_VbW4G8ZYWjNrLrWFZDBuPZ1",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.payload),
-      }
+  async getInboundTransactions(pkpEthAddress: string) {
+    const payload = {
+      id: 1,
+      jsonrpc: "2.0",
+      method: "alchemy_getAssetTransfers",
+      params: {
+        fromBlock: "0x0",
+        toBlock: "latest",
+        toAddress: pkpEthAddress,
+        category: ["external"],
+        withMetadata: true,
+      },
+    };
+    try {
+      const response = (await this.postData("", payload)) as ApiResponse;
+      return this.normalizeEthTransferResponse(response.result.transfers);
+    } catch (err) {
+      throw new Error(`Error getting eth transfers to pkpEthAddres: ${err}`);
+    }
+  }
+
+  public normalizeEthTransferResponse(transfers: any[]): EthTransfer[] {
+    return transfers.map(
+      (t) =>
+        ({
+          blockNum: t.from,
+          from: t.from,
+          value: ethers.utils.parseEther(t.value.toString()).toString(),
+        } as EthTransfer)
     );
-    const data = (await response.json()) as ApiResponse;
-    return data.result.transfers.map((t) => ({
-      ...t,
-      value: ethers.BigNumber.from(ethers.utils.parseEther(t.value.toString())),
-    }));
+  }
+
+  public async getCurrentGasPrices() {
+    try {
+      const provider = new ethers.providers.JsonRpcBatchProvider(this.baseURL);
+      const { maxPriorityFeePerGas, maxFeePerGas } =
+        await provider.getFeeData();
+      if (!maxFeePerGas || !maxPriorityFeePerGas) {
+        throw new Error("Provider error fetching gas prices");
+      }
+      return {
+        maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+        maxFeePerGas: maxFeePerGas.toString(),
+      };
+    } catch (err) {
+      throw new Error(
+        `Error getting Ethereum gas data: ${(err as Error).message}`
+      );
+    }
   }
 }
