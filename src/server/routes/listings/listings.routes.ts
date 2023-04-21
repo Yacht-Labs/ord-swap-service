@@ -9,6 +9,7 @@ import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoA
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
 import { ListingController } from "../../controllers/ListingController";
 import { LitError } from "../../../types/errors";
+import { LIT_SWAP_FILE_NAME } from "../../../constants";
 
 const router = Router();
 const listingService = new ListingService(
@@ -33,7 +34,7 @@ router.get("/seller/withdraw", async (req, res, next) => {
   const litService = new LitService();
   try {
     const listing = await listingController.getListingById(listingId as string);
-    const litActionCode = await litService.loadActionCode("PkpBtcSwapEth", {
+    const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
       ethPrice: listing.ethPrice,
       ethPayoutAddress: listing.account.ethAddress,
       inscriptionId: listing.inscriptionId,
@@ -62,7 +63,7 @@ router.post("/buyer/withdraw", async (req, res, next) => {
   const btcTxManager = new BtcTransactionService();
   try {
     const listing = await listingController.getListingById(listingId as string);
-    const litActionCode = await litService.loadActionCode("PkpBtcSwapEth", {
+    const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
       ethPrice: listing.ethPrice,
       ethPayoutAddress: listing.account.ethAddress,
       inscriptionId: listing.inscriptionId,

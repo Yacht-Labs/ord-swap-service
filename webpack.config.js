@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 var webpack = require("webpack");
+const { LIT_SWAP_FILE_NAME } = require("./src//constants");
 
 module.exports = {
   mode: "production",
   entry: "./src/lit/action/PkpBtcSwapEth.ts",
   output: {
-    filename: "PkpBtcSwap.bundle.js",
+    filename: `${LIT_SWAP_FILE_NAME}.js`,
     path: path.resolve(__dirname, "src/lit/action/javascript"),
     publicPath: "",
     // module: true,
