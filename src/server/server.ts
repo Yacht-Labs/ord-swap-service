@@ -29,7 +29,6 @@ setupSwagger(app);
 
 app.use("/accounts", AccountsRoutes);
 app.use("/listings", ListingsRoutes);
-
 app.use("/", (req, res) => {
   return res.sendStatus(200);
 });

@@ -6,6 +6,12 @@ info:
 servers:
   - url: http://localhost:3000
 paths:
+  /:
+    get:
+      summary: Health check
+      responses:
+        200:
+          description: OK
   /listings:
     post:
       summary: Create a new listing
