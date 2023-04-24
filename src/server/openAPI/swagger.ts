@@ -7,7 +7,7 @@ export function setupSwagger(app: Express): void {
   const isDevelopment = process.env.NODE_ENV === "dev";
   const relativePath = isDevelopment
     ? "./specification.yaml"
-    : "../../../../src/server/openAPI/specification.yaml";
+    : "../../../src/server/openAPI/specification.yaml";
 
   const apiSpecPath = path.join(__dirname, relativePath);
   const swaggerDocument = YAML.load(apiSpecPath);

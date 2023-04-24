@@ -1,4 +1,4 @@
-import { InscriptionManager } from "./../../services/InscriptionService";
+import { InscriptionManager } from "../../services/InscriptionService";
 // if (process.env.NODE_ENV === "dev") {
 //   require("../../../development");
 // }
@@ -13,97 +13,98 @@ import {
 } from "./test/ordinalSwapAction";
 import { OrdXyzInscriptionAPI } from "../../api/inscription/OrdXyzInscriptionAPI";
 import { ListingService } from "../../services/listings/ListingService";
-import { MempoolSPaceAPI } from "../../api/bitcoin/MempoolSpaceAPI";
+import { MempoolSpaceAPI } from "../../api/bitcoin/MempoolSpaceAPI";
+import { AlchemyEthTransactionAPI } from "../../api/ethereum/AlchemyEthTransactionApi";
+import { EthereumService } from "../../services/ethereum/EthereumService";
 
-// const ethPrice = "0.001";
-// const pkpEthAddress = "0x5342b85821849ef2F8b0fB4e7eFf27952F28b3f2";
-// const inscriptionId =
-//   "9b2590f8a8d358e9f09d9a3d25aec3a964d063a44b61974c018562de064f66bei0";
-// const ethPayoutAddress = "0x90B8F7A3004080a8dadC9Ab935250714a3A27aaE";
-// const btcPayoutAddress =
-//   "bc1pal6d4gfjt5aa58yv29kzu2a9xwp69rl797uhk8lwk6t2h8wd0s9skhaer8";
-// const pkpBtcAddress = "184rYD2CTpTv8AabFmwAoXFuPn7dPDrbMi";
+const pkpEthAddress = "0x5342b85821849ef2F8b0fB4e7eFf27952F28b3f2";
+const btcPayoutAddress =
+  "bc1pal6d4gfjt5aa58yv29kzu2a9xwp69rl797uhk8lwk6t2h8wd0s9skhaer8";
+const pkpBtcAddress = "184rYD2CTpTv8AabFmwAoXFuPn7dPDrbMi";
 
-const ethPrice = "{{ethPrice}}";
+const ethPrice = "0.01";
+// const ethPrice = "{{ethPrice}}";
 const inscriptionId = "{{inscriptionId}}";
-const ethPayoutAddress = "{{ethPayoutAddress}}";
+const ethPayoutAddress = "0x9D55D24aA6186d4a61Fa3BefeDBE4dD5dc0DC171";
+// const ethPayoutAddress = "{{ethPayoutAddress}}";
 
 export async function go() {
+  let response: Record<any, any> = {};
   try {
-    const utxoAPI = new MempoolSPaceAPI();
+    const utxoAPI = new MempoolSpaceAPI();
     const inscriptionAPI = new OrdXyzInscriptionAPI();
     const listingService = new ListingService(inscriptionAPI, utxoAPI);
+    const ethAPI = new AlchemyEthTransactionAPI();
+    const ethService = new EthereumService(ethAPI);
     const inscriptionManager = new InscriptionManager(listingService);
-    const { ordinalUtxo, cardinalUtxo } =
-      await inscriptionManager.checkInscriptionStatus(
-        pkpBtcAddress,
-        inscriptionId
-      );
+    const btcTransactionService = new BtcTransactionService();
 
-    const inboundEthTransactions = await getInboundEthTransactions(
-      pkpEthAddress
-    );
+    // const { ordinalUtxo, cardinalUtxo } =
+    //   await inscriptionManager.checkInscriptionStatus(
+    //     pkpBtcAddress,
+    //     inscriptionId
+    //   );
+    // if (!ordinalUtxo) {
+    //   throw new Error("The ordinal has not been sent to the PKP address");
+    // }
+    // if (!cardinalUtxo) {
+    //   throw new Error("The cardinal has not been sent to the PKP address");
+    // }
 
-    const { winningTransfer, losingTransfers } = findWinnersByTransaction(
-      inboundEthTransactions,
-      ethPrice
-    );
-
-    const executorAddress = Lit.Auth.authSigAddress;
-    if (executorAddress === winningTransfer?.from) {
-      if (ordinalUtxo && cardinalUtxo && btcPayoutAddress) {
-        const btcTransactionManager = new BtcTransactionService();
-        const { hashForInput0, hashForInput1, transaction } =
-          btcTransactionManager.prepareInscriptionTransaction({
-            ordinalUtxo,
-            cardinalUtxo,
-            receivingAddress: btcPayoutAddress,
-          });
-        await Lit.Actions.signEcdsa({
-          toSign: hashForInput0,
-          publicKey: pkpPublicKey,
-          sigName: "hashForInput0",
-        });
-        await Lit.Actions.signEcdsa({
-          toSign: hashForInput1,
-          publicKey: pkpPublicKey,
-          sigName: "hashForInput1",
-        });
-        Lit.Actions.setResponse({
-          response: JSON.stringify({
-            btcTransaction: transaction.toHex(),
-          }),
-        });
-      }
+    const { winningTransfer, losingTransfers } =
+      await ethService.findWinnersByAddress(pkpEthAddress, ethPrice);
+    if (!winningTransfer) {
+      throw new Error("No winning transfer found");
     }
 
-    if (winningTransfer || losingTransfers.length !== 0) {
+    // Seller Withdraw
+    if (winningTransfer) {
       const { maxPriorityFeePerGas, maxFeePerGas } =
-        await getCurrentGasPricesMainnet();
-
-      if (winningTransfer) {
-        const unsignedTransaction = mapTransferToTransaction(
-          winningTransfer,
-          ethPayoutAddress,
-          0,
-          maxPriorityFeePerGas,
-          maxFeePerGas,
-          80001
-        );
-        await Lit.Actions.signEcdsa({
-          toSign: hashTransaction(unsignedTransaction),
-          publicKey: pkpPublicKey,
-          sigName: "ethTransactionSignature",
-        });
-        Lit.Actions.setResponse({
-          response: JSON.stringify({
-            unsignedEthTransaction: unsignedTransaction,
-          }),
-        });
-      }
-      if (losingTransfers) {
-      }
+        await ethAPI.getCurrentGasPrices();
+      const unsignedTransaction = mapTransferToTransaction(
+        winningTransfer,
+        ethPayoutAddress,
+        0,
+        maxPriorityFeePerGas,
+        maxFeePerGas,
+        80001
+      );
+      await Lit.Actions.signEcdsa({
+        toSign: hashTransaction(unsignedTransaction),
+        publicKey: pkpPublicKey,
+        sigName: "ethWinnerSignature",
+      });
+      response = {
+        ...response,
+        unsignedEthTransaction: unsignedTransaction,
+      };
     }
+
+    // Implement loser refund
+
+    // Buyer Withdraw
+    // if (Lit.Auth.authSigAddress === winningTransfer.from && btcPayoutAddress) {
+    //   const { hashForInput0, hashForInput1, transaction } =
+    //     btcTransactionService.prepareInscriptionTransaction({
+    //       ordinalUtxo,
+    //       cardinalUtxo,
+    //       receivingAddress: btcPayoutAddress,
+    //     });
+    //   await Lit.Actions.signEcdsa({
+    //     toSign: hashForInput0,
+    //     publicKey: pkpPublicKey,
+    //     sigName: "hashForInput0",
+    //   });
+    //   await Lit.Actions.signEcdsa({
+    //     toSign: hashForInput1,
+    //     publicKey: pkpPublicKey,
+    //     sigName: "hashForInput1",
+    //   });
+    //   response = {
+    //     ...response,
+    //     btcTransaction: transaction.toHex(),
+    //   };
+    // }
   } catch (err) {
     Lit.Actions.setResponse({
       response: JSON.stringify({ error: (err as Error).message }),

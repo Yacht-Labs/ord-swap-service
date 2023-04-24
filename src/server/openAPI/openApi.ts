@@ -5,7 +5,7 @@ import * as OpenApiValidator from "express-openapi-validator";
 const isDevelopment = process.env.NODE_ENV === "dev";
 const relativePath = isDevelopment
   ? "../openAPI/specification.yaml"
-  : "../../../../src/server/openAPI/specification.yaml";
+  : "../../../src/server/openAPI/specification.yaml";
 
 const apiSpecPath = path.join(__dirname, relativePath);
 
