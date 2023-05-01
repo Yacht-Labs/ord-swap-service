@@ -6,4 +6,5 @@ COPY . .
 RUN npx prisma generate
 RUN yarn build
 EXPOSE 3000
+ENV DATABASE_URL=postgresql://username:password@host.docker.internal:5432/database_name
 CMD ["npm", "run", "start:prod"]

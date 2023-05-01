@@ -6,7 +6,7 @@
   "author": "a-straus <straus@yachtlabs.io>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && yarn build:litAction",
+    "build": "yarn build-contracts && tsc && yarn build:litAction",
     "start:dev": "NODE_ENV=dev PORT=3001 nodemon src/server/start.ts",
     "start:prod": "npx prisma migrate deploy && node ./dist/src/server/start.js",
     "test": "npx jest",
@@ -15,7 +15,7 @@
     "lint:fix": "eslint --fix 'src/**/*.ts'",
     "db:seed": "ts-node prisma/seed/seed.ts",
     "db:dropLocal": "ts-node prisma/seed/dropLocalDb.ts",
-    "postinstall": "typechain --target ethers-v5 --out-dir ./src/types/typechain-types/contracts './src/abis/*.json'",
+    "build-contracts": "typechain --target ethers-v5 --out-dir ./src/types/typechain-types/contracts './src/abis/*.json'",
     "build:litAction": "npx webpack",
     "rayPreenis": "yarn build:litAction && yarn start:dev"
   },
@@ -60,13 +60,10 @@
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.0.2",
     "@lit-protocol/lit-node-client-nodejs": "^2.1.96",
-    "@lit-protocol/sdk-nodejs": "^1.1.249",
     "@lit-protocol/types": "^2.1.96",
     "@prisma/client": "^4.11.0",
     "@typechain/ethers-v5": "^10.2.0",
     "@types/node-cron": "^3.0.7",
-    "@unisat/ord-utils": "^0.2.4",
-    "alchemy-sdk": "^2.6.2",
     "bitcoinjs-lib": "^6.1.0",
     "bs58": "^5.0.0",
     "compression": "^1.7.4",
