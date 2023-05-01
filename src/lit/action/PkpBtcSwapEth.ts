@@ -14,7 +14,7 @@ import {
 import { OrdXyzInscriptionAPI } from "../../api/inscription/OrdXyzInscriptionAPI";
 import { ListingService } from "../../services/listings/ListingService";
 import { MempoolSpaceAPI } from "../../api/bitcoin/MempoolSpaceAPI";
-import { AlchemyEthTransactionAPI } from "../../api/ethereum/AlchemyEthTransactionApi";
+import { AlchemyEthTransactionAPI } from "../../api/ethereum/AlchemyEthTransactionAPI";
 import { EthereumService } from "../../services/ethereum/EthereumService";
 
 const pkpEthAddress = "0x5342b85821849ef2F8b0fB4e7eFf27952F28b3f2";
