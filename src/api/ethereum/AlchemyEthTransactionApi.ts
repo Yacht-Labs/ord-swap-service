@@ -49,7 +49,7 @@ export class AlchemyEthTransactionAPI extends EthereumAPI {
     return transfers.map(
       (t) =>
       ({
-        blockNum: t.from,
+        blockNum: t.blockNum,
         from: t.from,
         value: ethers.utils.parseEther(t.value.toString()).toString(),
       } as EthTransfer)
