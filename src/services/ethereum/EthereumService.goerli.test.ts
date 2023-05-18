@@ -5,7 +5,7 @@
 // import { EthTransfer } from "src/types";
 // import { parseEther } from "ethers/lib/utils";
 
-// describe("Ethereum Service Tests", () => {
+// describe("Ethereum Service Integration Tests", () => {
 //   const ethService = new EthereumService(new AlchemyEthTransactionAPI());
 //   let winner: EthTransfer | null = null;
 //   const price = "0.00001";
