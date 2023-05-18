@@ -73,6 +73,14 @@ export function readBtcNetworkEnv(): string {
   return readStringEnv("BTC_NETWORK");
 }
 
+export function readGoerliPrivateKey(): string {
+  return readStringEnv("GOERLI_PRIVATE_KEY");
+}
+
+export function readGoerliRpcUrlEnv(): string {
+  return readStringEnv("GOERLI_RPC_URL");
+}
+
 export function isDevelopment(): boolean {
   return readStringEnv("NODE_ENV") === "development";
 }
