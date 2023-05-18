@@ -19,7 +19,7 @@ import { LitError } from "../../types/errors";
 
 export class LitService {
   private litClient: any;
-  private pkpContract: PKPNFT;
+  public pkpContract: PKPNFT;
   private signer: ethers.Wallet;
   private btcTestNet: boolean;
 
@@ -150,7 +150,7 @@ export class LitService {
     }
   }
 
-  private async getPubKeyByPKPTokenId(tokenId: string): Promise<string> {
+  public async getPubKeyByPKPTokenId(tokenId: string): Promise<string> {
     try {
       return await this.pkpContract.getPubkey(tokenId);
     } catch (err) {
