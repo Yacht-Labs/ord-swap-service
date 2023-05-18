@@ -50,4 +50,8 @@ export class EthereumService {
       losingTransfers,
     };
   }
+
+  buildEthTransaction() {
+    return;
+  }
 }

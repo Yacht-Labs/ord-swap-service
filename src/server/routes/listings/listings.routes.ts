@@ -1,13 +1,13 @@
 import { Router, Request, Response } from "express";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ethers } from "ethers";
-import { LitService } from "../../../services/LitService";
+import { LitService } from "../../../services/lit/LitService";
 import prisma from "../../../db/prisma";
 import { ListingService } from "../../../services/listings/ListingService";
 import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
 import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoApi";
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
-import { ListingController } from "../../controllers/ListingController";
+import { ListingController } from "../../controllers/listings/ListingController";
 import { LitError } from "../../../types/errors";
 import { LIT_SWAP_FILE_NAME } from "../../../constants";
 

@@ -1,4 +1,4 @@
-import { InscriptionManager } from "../../services/InscriptionService";
+import { InscriptionManager } from "../../services/inscription/InscriptionService";
 // if (process.env.NODE_ENV === "dev") {
 //   require("../../../development");
 // }
@@ -80,7 +80,7 @@ export async function go() {
       };
     }
 
-    // Implement loser refund
+    // TODO: Implement loser refund
 
     // Buyer Withdraw
     // if (Lit.Auth.authSigAddress === winningTransfer.from && btcPayoutAddress) {

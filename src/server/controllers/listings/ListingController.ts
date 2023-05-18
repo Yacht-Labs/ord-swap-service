@@ -1,10 +1,10 @@
 import { Listing, ListingStatus } from "@prisma/client";
-import prisma from "../../db/prisma";
-import { BusinessLogicError, NotFoundError } from "../../types/errors";
-import { ListingWithAccount } from "../../types/models";
-import { ListingService } from "../../services/listings/ListingService";
-import { OrdXyzInscriptionAPI } from "../../api/inscription/OrdXyzInscriptionAPI";
-import { BlockchainInfoUtxoApi } from "../../api/bitcoin/utxo/BlockchainInfoApi";
+import prisma from "../../../db/prisma";
+import { BusinessLogicError, NotFoundError } from "../../../types/errors";
+import { ListingWithAccount } from "../../../types/models";
+import { ListingService } from "../../../services/listings/ListingService";
+import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
+import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoApi";
 
 export class ListingController {
   listingService: ListingService;
@@ -55,6 +55,11 @@ export class ListingController {
   }
 
   async buyListing(listingId: string, accountId: string): Promise<Listing> {
+    // TODO: front end confirms that eth transaction to PKP succeeds
+    // This endpoint is then hit
+    // Run EthereumListingService to get the winner
+    // Set the winner in the database
+    // Set the Listing to SOLD
     try {
       const listing = await prisma.listing.update({
         where: { id: listingId },

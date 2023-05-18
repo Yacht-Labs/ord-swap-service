@@ -1,4 +1,4 @@
-import { ListingService } from "./listings/ListingService";
+import { ListingService } from "../listings/ListingService";
 
 export class InscriptionManager {
   constructor(private listingService: ListingService) {}

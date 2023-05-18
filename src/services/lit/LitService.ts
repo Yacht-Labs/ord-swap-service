@@ -5,17 +5,17 @@ import * as bitcoin from "bitcoinjs-lib";
 import * as ecc from "tiny-secp256k1";
 import fs from "fs";
 import path from "path";
-import pkpNftContract from "../abis/PKPNFT.json";
-import { PKP_CONTRACT_ADDRESS_LIT } from "../constants/index";
+import pkpNftContract from "../../abis/PKPNFT.json";
+import { PKP_CONTRACT_ADDRESS_LIT } from "../../constants/index";
 import {
   readPKPPrivateKey,
   readLitRpcURL,
   readBitcoinNetwork,
-} from "../utils/env";
-import { PKPNFT } from "../types/typechain-types/contracts";
-import { generateAuthSig } from "../utils/lit";
-import { LitActionResponse } from "../types";
-import { LitError } from "../types/errors";
+} from "../../utils/env";
+import { PKPNFT } from "../../types/typechain-types/contracts";
+import { generateAuthSig } from "../../utils/lit";
+import { LitActionResponse } from "../../types";
+import { LitError } from "../../types/errors";
 
 export class LitService {
   private litClient: any;
