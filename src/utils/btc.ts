@@ -35,3 +35,18 @@ export function getBtcNetwork(): Network {
 export function padHexString(hexString: string) {
   return hexString.length % 2 === 0 ? hexString : "0" + hexString;
 }
+
+function getRandomHexNumber(numChars: number) {
+  let result = "";
+  const characters = "abcdef0123456789";
+  for (let i = 0; i < numChars; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+export function generateInscriptionId() {
+  const txid = getRandomHexNumber(64); // a Bitcoin transaction ID is a 64-character hexadecimal string
+  const n = Math.floor(Math.random() * 10); // a random number between 0 and 9 inclusive
+  return `${txid}i${n}`;
+}

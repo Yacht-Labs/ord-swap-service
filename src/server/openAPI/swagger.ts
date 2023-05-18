@@ -4,7 +4,8 @@ import YAML from "yamljs";
 import path from "path";
 
 export function setupSwagger(app: Express): void {
-  const isDevelopment = process.env.NODE_ENV === "dev";
+  const isDevelopment =
+    process.env.NODE_ENV === "dev" || process.env.NODE_ENV === "test";
   const relativePath = isDevelopment
     ? "./specification.yaml"
     : "../../../../src/server/openAPI/specification.yaml";

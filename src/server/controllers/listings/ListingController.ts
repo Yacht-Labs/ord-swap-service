@@ -98,4 +98,8 @@ export class ListingController {
     }
     return updatedListing || listing;
   }
+
+  async createListing() {
+    return;
+  }
 }

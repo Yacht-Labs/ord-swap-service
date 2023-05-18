@@ -10,6 +10,7 @@ import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionS
 import { ListingController } from "../../controllers/listings/ListingController";
 import { LitError } from "../../../types/errors";
 import { LIT_SWAP_FILE_NAME } from "../../../constants";
+import { AccountController } from "../../controllers/accounts/AccountController";
 
 const router = Router();
 const listingService = new ListingService(
@@ -130,18 +131,13 @@ router.put("/buy", async (req: Request, res: Response, next) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
+  const accountController = new AccountController();
+  const litService = new LitService();
   try {
     const { ethAddress, ethPrice, inscriptionId, inscriptionNumber } = req.body;
-    let account = await prisma.account.findUnique({ where: { ethAddress } });
-    if (!account) {
-      account = await prisma.account.create({
-        data: {
-          ethAddress,
-        },
-      });
-    }
 
-    const litService = new LitService();
+    const account = await accountController.getOrCreateAccount(ethAddress);
+
     const pkp = await litService.mintPkp();
     const pkpBtcAddress = litService.generateBtcAddress(pkp.publicKey);
 

@@ -1,4 +1,4 @@
-export function getRandomEthereumAddress(): string {
+export function generateEthereumAddress(): string {
   const length = 40;
   const number: string = [...Array(length)]
     .map(() => {

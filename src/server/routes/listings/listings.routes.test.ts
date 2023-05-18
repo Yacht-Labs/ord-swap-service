@@ -1,28 +1,36 @@
-describe("Listing Routes", () => {
-  xit("Should create an account if it doesn't exist", async () => {});
+// /* eslint-disable @typescript-eslint/no-explicit-any */
+import request from "supertest";
+import { Listing } from "@prisma/client";
+import { prismaMock } from "../../../db/prisma.singleton";
+import { generateEthereumAddress, generateInscriptionId } from "../../../utils";
+import { startServer } from "../../server"; // Import your server start function
+let server: any;
 
-  describe("POST /listings", () => {
-    xit("Should respond with a 500 if pkp generation fails", async () => {});
-    xit("Should respond with 200 if pkp generation succeeds", async () => {});
-  });
+beforeAll(async () => {
+  server = await startServer(0);
 });
 
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// import request from "supertest";
-// import { Listing } from "@prisma/client";
-// import { prismaMock } from "../../../db/prisma.singleton";
-// import { getRandomEthereumAddress } from "../../../util/eth";
-// import { startServer } from "../../server"; // Import your server start function
-// // Import your prisma instance
-// let server: any;
+afterAll(async () => {
+  server.close();
+});
 
-// beforeAll(async () => {
-//   server = await startServer(0);
-// });
-
-// afterEach(async () => {
-//   server.close();
-// });
+describe("Listing routes", () => {
+  describe("POST /listings", () => {
+    it("Should throw a database error if account creation fails", async () => {
+      prismaMock.account.findUnique.mockResolvedValue(null);
+      prismaMock.account.create.mockRejectedValue(new Error("Database error"));
+      const res = await request(server)
+        .post("/listings")
+        .send({
+          ethAddress: generateEthereumAddress(),
+          ethPrice: Math.floor(Math.random() * 1000000 + 1).toString(),
+          inscriptionId: generateInscriptionId(),
+        });
+      expect(res.status).toBe(500);
+      expect(res.body.message).toBe("Database error");
+    });
+  });
+});
 
 // describe("POST /listings", () => {
 //   let validData: any;
