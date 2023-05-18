@@ -1,3 +1,12 @@
+describe("Listing Routes", () => {
+  xit("Should create an account if it doesn't exist", async () => {});
+
+  describe("POST /listings", () => {
+    xit("Should respond with a 500 if pkp generation fails", async () => {});
+    xit("Should respond with 200 if pkp generation succeeds", async () => {});
+  });
+});
+
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 // import request from "supertest";
 // import { Listing } from "@prisma/client";
