@@ -1,9 +1,9 @@
-import { EthereumAPI } from "../../api/ethereum/EthTransactionAPI";
+import { EthereumAPI } from "../../api/ethereum/EthTransactionApi";
 import { EthTransfer } from "../../types";
 import { ethers } from "ethers";
 
 export class EthereumService {
-  constructor(public transactionAPI: EthereumAPI) {}
+  constructor(public transactionAPI: EthereumAPI) { }
   public async findWinnersByAddress(address: string, price: string) {
     const transfers = await this.transactionAPI.getInboundTransactions(address);
     return this.findWinnersByTransaction(transfers, price);
@@ -31,9 +31,8 @@ export class EthereumService {
         winner = transfer;
         continue;
       }
-
       if (
-        transfer.blockNum < winner.blockNum ||
+        parseInt(transfer.blockNum, 16) < parseInt(winner.blockNum, 16) ||
         (transfer.blockNum === winner.blockNum && transfer.from < winner.from)
       ) {
         eligibleTransfers.push(winner);
