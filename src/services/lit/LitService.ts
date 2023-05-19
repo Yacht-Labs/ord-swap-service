@@ -103,7 +103,7 @@ export class LitService {
   }
 
   /**
-   * Mints a PKP NFT on the Polygon Mumbai network using the signer
+   * Mints a PKP NFT on the network specified by Lit RPC URL
    * @returns {Promise<{tokenId: string; publicKey: string; address: string}>} tokenId, publicKey, and address of the minted NFT
    * @throws Error if signer not set
    * @throws Error if signer provider not set
