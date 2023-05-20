@@ -446,6 +446,56 @@ paths:
         "500":
           description: Internal Server Error
 
+  /swapdata:
+    get:
+      summary: Retrieve swap data
+      parameters:
+        - name: pkpBtcAddress
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: inscriptionId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: pkpEthAddress
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: ethPrice
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Swap data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SwapData"
+        400:
+          description: Bad request - Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Error occurred while retrieving the swap data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
 components:
   schemas:
     Account:
@@ -515,3 +565,47 @@ components:
         - Ready
         - Sold
         - Cancelled
+        
+    SwapData:
+      type: object
+      properties:
+        ordinalUtxo:
+          $ref: "#/components/schemas/Utxo"
+        cardinalUtxo:
+          $ref: "#/components/schemas/Utxo"
+        winningTransfer:
+          $ref: "#/components/schemas/EthTransfer"
+        losingTransfers:
+          type: array
+          items:
+            $ref: "#/components/schemas/EthTransfer"
+        maxPriorityFeePerGas:
+          type: string
+        maxFeePerGas:
+          type: string
+
+    Utxo:
+      type: object
+      properties:
+        txid:
+          type: string
+        vout:
+          type: number
+        address:
+          type: string
+        scriptPubKey:
+          type: string
+        amount:
+          type: number
+        confirmations:
+          type: number
+
+    EthTransfer:
+      type: object
+      properties:
+        blockNum:
+          type: string
+        from:
+          type: string
+        value:
+          type: string
