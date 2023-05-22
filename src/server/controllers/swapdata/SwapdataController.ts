@@ -6,6 +6,8 @@ import { EthereumService } from "../../../services/ethereum/EthereumService";
 import { InscriptionManager } from "../../../services/inscription/InscriptionService";
 import { Utxo } from "../../../types/models";
 import { EthTransfer } from "src/types";
+import { InscriptionAPI } from "src/api/inscription/InscriptionAPI";
+import { UtxoAPI } from "src/api/bitcoin/utxo/UtxoAPI";
 
 interface SwapData {
     ordinalUtxo: Utxo | null;
@@ -17,13 +19,14 @@ interface SwapData {
 }
 
 export class SwapDataController {
-    private utxoAPI: MempoolSpaceAPI;
-    private inscriptionAPI: OrdXyzInscriptionAPI;
+    private utxoAPI: UtxoAPI;
+    private inscriptionAPI: InscriptionAPI;
     private listingService: ListingService;
     private ethAPI: AlchemyEthTransactionAPI;
     private ethService: EthereumService;
     private inscriptionManager: InscriptionManager;
 
+    // TODO: add conditionals to inject correct dependencies based on env
     constructor() {
         this.utxoAPI = new MempoolSpaceAPI();
         this.inscriptionAPI = new OrdXyzInscriptionAPI();

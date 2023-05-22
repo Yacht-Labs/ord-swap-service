@@ -6,13 +6,14 @@ import * as ecc from "tiny-secp256k1";
 import fs from "fs";
 import path from "path";
 import pkpNftContract from "../../abis/PKPNFT.json";
-import { PKP_CONTRACT_ADDRESS_LIT } from "../../constants/index";
+import pkpNftPermissionsContract from "../../abis/PKPPermissions.json";
+import { PKP_CONTRACT_ADDRESS_LIT, PKP_PERMISSIONS_CONTRACT_ADDRESS } from "../../constants/index";
 import {
   readPKPPrivateKey,
   readLitRpcURL,
   readBitcoinNetwork,
 } from "../../utils/env";
-import { PKPNFT } from "../../types/typechain-types/contracts";
+import { PKPNFT, PKPPermissions } from "../../types/typechain-types/contracts";
 import { generateAuthSig } from "../../utils/lit";
 import { LitActionResponse } from "../../types";
 import { LitError } from "../../types/errors";
@@ -20,6 +21,7 @@ import { LitError } from "../../types/errors";
 export class LitService {
   private litClient: any;
   public pkpContract: PKPNFT;
+  public pkpPermissionsContract: PKPPermissions;
   private signer: ethers.Wallet;
   private btcTestNet: boolean;
 
@@ -39,6 +41,11 @@ export class LitService {
       pkpNftContract.abi,
       this.signer
     ) as PKPNFT;
+    this.pkpPermissionsContract = new ethers.Contract(
+      PKP_PERMISSIONS_CONTRACT_ADDRESS,
+      pkpNftPermissionsContract.abi,
+      this.signer
+    ) as PKPPermissions;
   }
 
   private async connect() {
