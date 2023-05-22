@@ -6,6 +6,7 @@ import * as bitcoin from "bitcoinjs-lib";
 import { RegtestUtils } from "regtest-client";
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
 import { sleep } from "../../../utils";
+import { createInscription } from "./inscriber";
 
 describe("Insciber", () => {
   bitcoin.initEccLib(ecc);
@@ -14,7 +15,7 @@ describe("Insciber", () => {
   const APIURL = "http://localhost:8080/1";
   const regtestUtils = new RegtestUtils({ APIPASS, APIURL });
 
-  it("should be able to create a new inscription", (done) => {
+  it("should be able to create a new inscription", async () => {
     // send to legacy, segwit and taproot addresses
     const keyPair = ECPair.makeRandom({ network: bitcoin.networks.regtest });
     const { address } = bitcoin.payments.p2wpkh({
@@ -22,94 +23,82 @@ describe("Insciber", () => {
       network: bitcoin.networks.regtest,
     });
 
-    const child = child_process.spawn("ts-node", [
-      "/Users/traus/dev/yacht/btc/inscriber/inscriberModule.ts",
+    const scriptPubKey = bitcoin.address.toOutputScript(
       address!,
-    ]);
+      regtestUtils.network
+    );
+    await createInscription(scriptPubKey);
 
-    child.stdout.on("data", function (data) {
-      console.log("stdout: " + data);
-    });
+    const cardinal = await regtestUtils.unspents(address!);
+    expect(cardinal).toHaveLength(1);
 
-    child.stderr.on("data", function (data) {
-      console.log("stderr: " + data);
-    });
+    await regtestUtils.faucet(address!, 1e5);
+    await regtestUtils.mine(1);
+    const unspents = await regtestUtils.unspents(address!);
+    expect(unspents).toHaveLength(2);
 
-    child.on("close", async function (code: any) {
-      try {
-        await sleep(4000);
+    const hiroApi = new HiroInscriptionAPI();
+    const inscription = await hiroApi.getInscriptionsByAddress(address!);
+    expect(inscription).not.toBeNull();
 
-        const cardinal = await regtestUtils.unspents(address!);
-        expect(cardinal).toHaveLength(1);
+    const btcTransactionService = new BtcTransactionService();
+    const receivingAddress = regtestUtils.RANDOM_ADDRESS;
 
-        await regtestUtils.faucet(address!, 1e5);
-        await regtestUtils.mine(1);
-        const unspents = await regtestUtils.unspents(address!);
-        expect(unspents).toHaveLength(2);
+    const ordinalUtxo = unspents.find(
+      (u) => u.txId === inscription.txid && u.vout === inscription.vout
+    );
 
-        const hiroApi = new HiroInscriptionAPI();
-        const inscription = await hiroApi.getInscriptionsByAddress(address!);
-        expect(inscription).toHaveLength(1);
+    const cardinalUtxo = unspents.find(
+      (u) => u.txId !== inscription.txid || u.vout !== inscription.vout
+    );
 
-        const btcTransactionService = new BtcTransactionService();
-        const receivingAddress = regtestUtils.RANDOM_ADDRESS;
+    // map ordinal to a UTXO
+    // cardinal is the other one
+    // map them to
+    // const transaction = await btcTransactionService.constructTransaction();
 
-        const ordinalUtxo = unspents.find(
-          (u) => u.txId === inscription.txid && u.vout === inscription.vout
-        );
+    // construct btc transaction with inscription first and other unspent second to destination address
+    // console.log(inscription);
 
-        const cardinalUtxo = unspents.find(
-          (u) => u.txId !== inscription.txid || u.vout !== inscription.vout
-        );
+    // const transaction = new bitcoin.Transaction();
 
-        // map ordinal to a UTXO
-        // cardinal is the other one
-        // map them to
-        // const transaction = await btcTransactionService.constructTransaction();
+    // compute fee
 
-        // construct btc transaction with inscription first and other unspent second to destination address
-        // console.log(inscription);
+    // sign the transaction
 
-        // const transaction = new bitcoin.Transaction();
+    // send the transaction
 
-        // compute fee
+    // mine
 
-        // sign the transaction
+    // check that inscription is at the destination address
 
-        // send the transaction
+    // child_process.exec(
+    //   `ts-node /Users/traus/dev/yacht/btc/inscriber/inscriberModule.ts ${address}`,
+    //   async (err, out) => {
+    //     try {
+    //       if (err) {
+    //         console.log(err);
+    //         return;
+    //       }
+    //       const unspents = await regtestUtils.unspents(
+    //         bitcoin.address
+    //           .toOutputScript(address!, bitcoin.networks.regtest)
+    //           .toString("hex")
+    //       );
+    //       expect(unspents).toHaveLength(1);
+    //       console.log("done");
+    //       done();
+    //     } catch (err) {
+    //       done(err);
+    //     }
+    //   }
+    // );
 
-        // mine
-
-        // check that inscription is at the destination address
-
-        // child_process.exec(
-        //   `ts-node /Users/traus/dev/yacht/btc/inscriber/inscriberModule.ts ${address}`,
-        //   async (err, out) => {
-        //     try {
-        //       if (err) {
-        //         console.log(err);
-        //         return;
-        //       }
-        //       const unspents = await regtestUtils.unspents(
-        //         bitcoin.address
-        //           .toOutputScript(address!, bitcoin.networks.regtest)
-        //           .toString("hex")
-        //       );
-        //       expect(unspents).toHaveLength(1);
-        //       console.log("done");
-        //       done();
-        //     } catch (err) {
-        //       done(err);
-        //     }
-        //   }
-        // );
-
-        done();
-      } catch (err) {
-        done(err);
-      }
-    });
-  }, 600000);
+    //   done();
+    // } catch (err) {
+    //   done(err);
+    // }
+  }, 60000);
 
   xit("should be able to send an inscription from a taproot address to a segwit address", () => {});
 

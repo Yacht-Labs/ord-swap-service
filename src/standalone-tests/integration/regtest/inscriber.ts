@@ -20,13 +20,13 @@ const secret =
 const seckey = new SecretKey(secret, { type: "taproot" });
 const pubkey = seckey.pub;
 
-const address = process.argv[2];
+// const address = process.argv[2];
 // const keyPair = ECPair.makeRandom({ network: bitcoin.networks.regtest });
 // const { address } = bitcoin.payments.p2wpkh({
 //   pubkey: keyPair.publicKey,
 //   network: bitcoin.networks.regtest,
 // });
-const scriptPubKey = bitcoin.address.toOutputScript(address!, regtest);
+// const scriptPubKey = bitcoin.address.toOutputScript(address!, regtest);
 // console.log("Address in module: ", address)
 
 export async function createInscription(scriptPubKey: Buffer) {
@@ -87,8 +87,8 @@ export async function createInscription(scriptPubKey: Buffer) {
   // await regtestUtils.faucet(address, 100_000);
   await regtestUtils.mine(1);
   // console.log("Calling unspents with: ", scriptPubKey.toString('hex'))
-  const unspents = await regtestUtils.unspents(address!);
-  console.log("Unspents in Module: ", unspents);
+  // const unspents = await regtestUtils.unspents(address!);
+  // console.log("Unspents in Module: ", unspents);
   // await regtestUtils.mine(1);
   //scriptPubKey.toString('hex'));
   // console.log("Address: ", bitcoin.address.fromOutputScript(scriptPubKey, regtest));
@@ -96,6 +96,5 @@ export async function createInscription(scriptPubKey: Buffer) {
   // console.log("script: ", scriptPubKey.toString('hex'));
 }
 
-createInscription(scriptPubKey);
 // regtestUtils.unspents(bitcoin.address.toOutputScript("bcrt1qdfymkmyw3lhllv68vfeduaxwptx2qmu2d8lng5", bitcoin.networks.regtest).toString("hex")).then(console.log);
 // regtestUtils.fetch("601131d38d029b4f568c9f7ea758204a9eb5129deaed15175a2b1f7b99e645bfi0").then(console.log);
