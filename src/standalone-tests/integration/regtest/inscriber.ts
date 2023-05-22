@@ -85,7 +85,7 @@ export async function createInscription(scriptPubKey: Buffer) {
   // }
   // await f();
   // await regtestUtils.faucet(address, 100_000);
-  await regtestUtils.mine(1);
+  // await regtestUtils.mine(1);
   // console.log("Calling unspents with: ", scriptPubKey.toString('hex'))
   // const unspents = await regtestUtils.unspents(address!);
   // console.log("Unspents in Module: ", unspents);

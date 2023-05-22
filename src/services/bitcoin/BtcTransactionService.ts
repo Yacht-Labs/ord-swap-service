@@ -1,7 +1,11 @@
 import { Utxo } from "../../types/models";
 import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
-import { padHexString, reverseBuffer } from "../../utils/btc";
+import {
+  padHexString,
+  reverseBuffer,
+  toYachtOutputScript,
+} from "../../utils/btc";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { SignatureData } from "../../types";
 import { CryptoApisBroadcaster } from "../../api/bitcoin/broadcaster/CryptoApisBroadcaster";
@@ -17,11 +21,11 @@ export class BtcTransactionService {
   public prepareInscriptionTransaction({
     ordinalUtxo,
     cardinalUtxo,
-    receivingAddress,
+    destinationAddress,
   }: {
     ordinalUtxo: Utxo;
     cardinalUtxo: Utxo;
-    receivingAddress: string;
+    destinationAddress: string;
   }) {
     const transaction = new bitcoin.Transaction();
     transaction.addInput(
@@ -32,7 +36,7 @@ export class BtcTransactionService {
       reverseBuffer(Buffer.from(cardinalUtxo.txid, "hex")),
       cardinalUtxo.vout
     );
-    const outputScript = toOutputScript(receivingAddress);
+    const outputScript = toYachtOutputScript(destinationAddress);
     transaction.addOutput(outputScript, ordinalUtxo.amount);
     // p2tr have 43 bytes size
     // each p2pkh have under 150 bytes size
@@ -41,12 +45,12 @@ export class BtcTransactionService {
     transaction.addOutput(outputScript, cardinalUtxo.amount - 20000);
     const hashForInput0 = transaction.hashForSignature(
       0,
-      toOutputScript(ordinalUtxo.address),
+      toYachtOutputScript(ordinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
     const hashForInput1 = transaction.hashForSignature(
       1,
-      toOutputScript(cardinalUtxo.address),
+      toYachtOutputScript(cardinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
     return { hashForInput0, hashForInput1, transaction };

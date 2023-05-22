@@ -7,6 +7,8 @@ import { RegtestUtils } from "regtest-client";
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
 import { sleep } from "../../../utils";
 import { createInscription } from "./inscriber";
+import { toOutputScript } from "bitcoinjs-lib/src/address";
+import { Utxo } from "../../../types/models";
 
 describe("Insciber", () => {
   bitcoin.initEccLib(ecc);
@@ -16,41 +18,90 @@ describe("Insciber", () => {
   const regtestUtils = new RegtestUtils({ APIPASS, APIURL });
 
   it("should be able to create a new inscription", async () => {
-    // send to legacy, segwit and taproot addresses
     const keyPair = ECPair.makeRandom({ network: bitcoin.networks.regtest });
     const { address } = bitcoin.payments.p2wpkh({
       pubkey: keyPair.publicKey,
       network: bitcoin.networks.regtest,
     });
 
+    if (!address) throw new Error("Address is null");
+
     const scriptPubKey = bitcoin.address.toOutputScript(
-      address!,
-      regtestUtils.network
+      address,
+      bitcoin.networks.regtest
     );
     await createInscription(scriptPubKey);
 
-    const cardinal = await regtestUtils.unspents(address!);
-    expect(cardinal).toHaveLength(1);
+    const unspents1 = await regtestUtils.unspents(address);
+    console.log({ unspents1 });
+    const ordinal = unspents1[0];
 
-    await regtestUtils.faucet(address!, 1e5);
-    await regtestUtils.mine(1);
-    const unspents = await regtestUtils.unspents(address!);
+    await regtestUtils.faucet(address, 1e10);
+    const unspents = await regtestUtils.unspents(address);
     expect(unspents).toHaveLength(2);
 
-    const hiroApi = new HiroInscriptionAPI();
-    const inscription = await hiroApi.getInscriptionsByAddress(address!);
-    expect(inscription).not.toBeNull();
+    // const hiroApi = new HiroInscriptionAPI();
+    // const inscription = await hiroApi.getInscriptionsByAddress(address);
+    // expect(inscription).not.toBeNull();
 
-    const btcTransactionService = new BtcTransactionService();
-    const receivingAddress = regtestUtils.RANDOM_ADDRESS;
-
-    const ordinalUtxo = unspents.find(
-      (u) => u.txId === inscription.txid && u.vout === inscription.vout
-    );
+    // const btcTransactionService = new BtcTransactionService();
+    // const receivingAddress = regtestUtils.RANDOM_ADDRESS;
 
     const cardinalUtxo = unspents.find(
-      (u) => u.txId !== inscription.txid || u.vout !== inscription.vout
+      (u) => u.txId !== ordinal.txId && u.vout !== ordinal.vout
     );
+
+    console.log({ cardinalUtxo });
+
+    const randomAddress = regtestUtils.RANDOM_ADDRESS;
+    const btcService = new BtcTransactionService();
+    const { hashForInput0, hashForInput1, transaction } =
+      btcService.prepareInscriptionTransaction({
+        ordinalUtxo: {
+          txid: ordinal.txId,
+          vout: ordinal.vout,
+          amount: ordinal.value,
+          address,
+        } as Utxo,
+        cardinalUtxo: {
+          txid: cardinalUtxo!.txId,
+          vout: cardinalUtxo!.vout,
+          amount: cardinalUtxo!.value,
+          address,
+        } as Utxo,
+        destinationAddress: randomAddress,
+      });
+    console.log(hashForInput0, hashForInput1, transaction);
+
+    const signature0 = keyPair.sign(hashForInput0);
+    const signature1 = keyPair.sign(hashForInput1);
+
+    const sig0 = bitcoin.script.compile([
+      bitcoin.script.signature.encode(
+        signature0,
+        bitcoin.Transaction.SIGHASH_ALL
+      ),
+      keyPair.publicKey,
+    ]);
+
+    const sig1 = bitcoin.script.compile([
+      bitcoin.script.signature.encode(
+        signature1,
+        bitcoin.Transaction.SIGHASH_ALL
+      ),
+      keyPair.publicKey,
+    ]);
+
+    transaction.setInputScript(0, sig0);
+    transaction.setInputScript(1, sig1);
+
+    const txId = await regtestUtils.broadcast(transaction.toHex());
+
+    const addressUnspents = await regtestUtils.unspents(randomAddress);
+    console.log({ addressUnspents });
+    // const cardinalUtxo = unspents.find(
+    //   (u) => u.txId !== inscription.txid || u.vout !== inscription.vout
+    // );
 
     // map ordinal to a UTXO
     // cardinal is the other one
