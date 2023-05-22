@@ -27,10 +27,8 @@ describe("Insciber", () => {
       address!,
     ]);
 
-    let output = "";
     child.stdout.on("data", function (data) {
       console.log("stdout: " + data);
-      output += data;
     });
 
     child.stderr.on("data", function (data) {
@@ -39,28 +37,30 @@ describe("Insciber", () => {
 
     child.on("close", async function (code: any) {
       try {
-        console.log("Address in test: ", address);
-        console.log("child process exited with code " + code);
-        // const unspents = JSON.parse(output);
-        // console.log({ unspents });
-        // expect(unspents).toHaveLength(2);
-
         await sleep(4000);
 
-        const Unspents = await regtestUtils.unspents(address!);
-        console.log("Upspents in test: ", Unspents);
+        const cardinal = await regtestUtils.unspents(address!);
+        expect(cardinal).toHaveLength(1);
 
         await regtestUtils.faucet(address!, 1e5);
-
-        const Unspents2 = await regtestUtils.unspents(address!);
-        console.log("Upspents2 in test: ", Unspents2);
+        await regtestUtils.mine(1);
+        const unspents = await regtestUtils.unspents(address!);
+        expect(unspents).toHaveLength(2);
 
         const hiroApi = new HiroInscriptionAPI();
-        // const inscription = await hiroApi.getInscriptionsByAddress(address!);
-        // console.log({ inscription });
+        const inscription = await hiroApi.getInscriptionsByAddress(address!);
+        expect(inscription).toHaveLength(1);
 
         const btcTransactionService = new BtcTransactionService();
         const receivingAddress = regtestUtils.RANDOM_ADDRESS;
+
+        const ordinalUtxo = unspents.find(
+          (u) => u.txId === inscription.txid && u.vout === inscription.vout
+        );
+
+        const cardinalUtxo = unspents.find(
+          (u) => u.txId !== inscription.txid || u.vout !== inscription.vout
+        );
 
         // map ordinal to a UTXO
         // cardinal is the other one

@@ -61,6 +61,9 @@
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.0.2",
+    "@cmdcode/buff-utils": "^1.7.2",
+    "@cmdcode/crypto-utils": "^1.9.2",
+    "@cmdcode/tapscript": "^1.2.8",
     "@lit-protocol/lit-node-client-nodejs": "^2.1.96",
     "@lit-protocol/types": "^2.1.96",
     "@prisma/client": "^4.11.0",

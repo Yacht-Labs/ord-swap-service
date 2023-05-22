@@ -61,8 +61,6 @@ export class HiroInscriptionAPI extends InscriptionAPI {
       const URL = `/ordinals/v1/inscriptions?address=${address}`;
       const inscription = (await this.fetchData(URL)) as any;
       return inscription.results[0];
-      // return this.normalizeInscriptionResponse(inscription);
-      return inscription;
     } catch (err) {
       throw new Error(
         `Failed to retrieve inscription details: ${(err as Error).message}`

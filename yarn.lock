@@ -961,6 +961,21 @@
     "@noble/hashes" "^1.1.5"
     "@noble/secp256k1" "^1.7.1"
 
+"@cmdcode/buff-utils@^1.7.2":
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/@cmdcode/buff-utils/-/buff-utils-1.7.2.tgz#6682734ee59964ce3d9fe718817591293c82fb8a"
+  integrity sha512-O8ba46OYXRYJEH6KBpxbNwfG9xlVNfs9qBMqmDQ+KCO9NB6QJCpCX4xV7QcNw+1KjWnhzSQKlMRCQ7hIPeZw7Q==
+
+"@cmdcode/crypto-utils@^1.9.2":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@cmdcode/crypto-utils/-/crypto-utils-1.9.2.tgz#c344a19cbe2a974bd52a415dd74f8ed1b3d4fb99"
+  integrity sha512-cQfFTROrfHEb7oBWV0D5vdN4QPooKHtV919b9YF/nemK275fuWpwqUcAMayRvZGnGJIjGLLvQD1TCWp9tQG3Xg==
+
+"@cmdcode/tapscript@^1.2.8":
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/@cmdcode/tapscript/-/tapscript-1.2.8.tgz#0c283db4ad8572b5e071024c73dc172ee70dff7d"
+  integrity sha512-w8MtOk9FVmVR9kh5ExQ+aEhwVziv6QYILYrV9tdgwlEgf84J2A2UMzqgn5tizfDp1U/a+UNXHqW7udj8+IyciA==
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
