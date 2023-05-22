@@ -28,7 +28,10 @@ export class HiroInscriptionAPI extends InscriptionAPI {
   protected baseURL: string;
   constructor() {
     super();
-    this.baseURL = "https://api.hiro.so";
+    this.baseURL =
+      process.env.NODE_ENV === "test"
+        ? "http://localhost:3001"
+        : "https://api.hiro.so";
   }
   public getInscription = async (
     inscriptionIdOrNumber: string
@@ -42,6 +45,23 @@ export class HiroInscriptionAPI extends InscriptionAPI {
       // }
       const URL = `/ordinals/v1/inscriptions/${inscriptionIdOrNumber}`;
       const inscription = (await this.fetchData(URL)) as Inscription;
+      return inscription;
+    } catch (err) {
+      throw new Error(
+        `Failed to retrieve inscription details: ${(err as Error).message}`
+      );
+    }
+  };
+
+  public getInscriptionsByAddress = async (address: string): Promise<any> => {
+    try {
+      // if (!this.isValidAddress(address)) {
+      //   throw new Error(`Invalid address: ${address}`);
+      // }
+      const URL = `/ordinals/v1/inscriptions?address=${address}`;
+      const inscription = (await this.fetchData(URL)) as any;
+      return inscription.results[0];
+      // return this.normalizeInscriptionResponse(inscription);
       return inscription;
     } catch (err) {
       throw new Error(

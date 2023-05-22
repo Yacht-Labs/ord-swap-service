@@ -2,7 +2,7 @@ import { ETH_GOERLI } from "../../constants";
 import { Transfer } from "../../lit/action/test/ordinalSwapAction";
 import { EthTransfer } from "../../types";
 import { readEthNetwork } from "../../utils/env";
-import { EthereumAPI } from "./EthTransactionApi";
+import { EthereumAPI } from "./EthTransactionAPI";
 import { ethers } from "ethers";
 
 interface ApiResponse {
@@ -48,11 +48,11 @@ export class AlchemyEthTransactionAPI extends EthereumAPI {
   public normalizeEthTransferResponse(transfers: any[]): EthTransfer[] {
     return transfers.map(
       (t) =>
-      ({
-        blockNum: t.blockNum,
-        from: t.from,
-        value: ethers.utils.parseEther(t.value.toString()).toString(),
-      } as EthTransfer)
+        ({
+          blockNum: t.blockNum,
+          from: t.from,
+          value: ethers.utils.parseEther(t.value.toString()).toString(),
+        } as EthTransfer)
     );
   }
 
