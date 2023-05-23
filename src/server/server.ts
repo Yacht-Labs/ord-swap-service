@@ -5,6 +5,7 @@ import { setupSwagger } from "./openAPI/swagger";
 // Routes
 import AccountsRoutes from "./routes/accounts/accounts.routes";
 import ListingsRoutes from "./routes/listings/listings.routes";
+import SwapdataRoutes from "./routes/swapdata/swapdata.routes";
 import { logger } from "../utils/logger";
 
 import { configureExpress } from "./config";
@@ -29,6 +30,7 @@ setupSwagger(app);
 
 app.use("/accounts", AccountsRoutes);
 app.use("/listings", ListingsRoutes);
+app.use("/swapdata", SwapdataRoutes);
 app.use("/", (req, res) => {
   return res.sendStatus(200);
 });

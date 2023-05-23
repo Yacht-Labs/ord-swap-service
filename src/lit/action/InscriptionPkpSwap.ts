@@ -34,6 +34,14 @@ export async function go() {
     const inscriptionManager = new InscriptionManager(listingService);
     const btcTransactionService = new BtcTransactionService();
 
+    // Inscription Manager
+    // params: pkpBtcAddress, inscriptionId
+    // returns: ordinalUtxo, cardinalUtxo
+
+    // EthApi
+    // params: none
+    // returns: maxPriorityFeePerGas, maxFeePerGas
+
     // const { ordinalUtxo, cardinalUtxo } =
     //   await inscriptionManager.checkInscriptionStatus(
     //     pkpBtcAddress,
