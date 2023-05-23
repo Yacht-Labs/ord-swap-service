@@ -29,7 +29,8 @@ const pubkey = seckey.pub;
 // const scriptPubKey = bitcoin.address.toOutputScript(address!, regtest);
 // console.log("Address in module: ", address)
 
-export async function createInscription(scriptPubKey: Buffer) {
+export async function createInscription(address: string) {
+  const scriptPubKey = bitcoin.address.toOutputScript(address, regtest);
   const script = [
     pubkey,
     "OP_CHECKSIG",
