@@ -27,6 +27,8 @@ const ethPrice = "0.01";
 const inscriptionId = "{{inscriptionId}}";
 const ethPayoutAddress = "0x9D55D24aA6186d4a61Fa3BefeDBE4dD5dc0DC171";
 // const ethPayoutAddress = "{{ethPayoutAddress}}";
+const isCancel = {{isCancel}};
+const btcCancelAddress = "{{btcCancelAddress}}";
 
 export async function go() {
   let response: Record<any, any> = {};
@@ -89,31 +91,80 @@ export async function go() {
       };
     }
 
-    // TODO: Implement loser refund
+    // Cancel listing
+    if (Lit.Auth.authSigAddress === ethPayoutAddress && isCancel) {
+      const { hashForInput0, hashForInput1, transaction } =
+        btcTransactionService.prepareInscriptionTransaction({
+          ordinalUtxo,
+          cardinalUtxo,
+          receivingAddress: btcCancelAddress,
+        });
+      await Lit.Actions.signEcdsa({
+        toSign: hashForInput0,
+        publicKey: pkpPublicKey,
+        sigName: "hashForInput0",
+      });
+      await Lit.Actions.signEcdsa({
+        toSign: hashForInput1,
+        publicKey: pkpPublicKey,
+        sigName: "hashForInput1",
+      });
+      response = {
+        ...response,
+        btcTransaction: transaction.toHex(),
+      };
+    }
+    // Loser Refund
+    if (losingTransfers.length > 0) {
+      //iterate through losing transfers
+      losingTransfers.forEach((transfer) => {
+        if (Lit.Auth.authSigAddress === transfer.from) {
+          const { maxPriorityFeePerGas, maxFeePerGas } =
+            await ethAPI.getCurrentGasPrices();
+          const unsignedTransaction = mapTransferToTransaction(
+            transfer,
+            transfer.from,
+            0,
+            maxPriorityFeePerGas,
+            maxFeePerGas,
+            80001
+          );
+          await Lit.Actions.signEcdsa({
+            toSign: hashTransaction(unsignedTransaction),
+            publicKey: pkpPublicKey,
+            sigName: "ethLoserSignature",
+          });
+          response = {
+            ...response,
+            unsignedEthTransaction: unsignedTransaction,
+          };
+        }
+      });
+    }
 
     // Buyer Withdraw
-    // if (Lit.Auth.authSigAddress === winningTransfer.from && btcPayoutAddress) {
-    //   const { hashForInput0, hashForInput1, transaction } =
-    //     btcTransactionService.prepareInscriptionTransaction({
-    //       ordinalUtxo,
-    //       cardinalUtxo,
-    //       receivingAddress: btcPayoutAddress,
-    //     });
-    //   await Lit.Actions.signEcdsa({
-    //     toSign: hashForInput0,
-    //     publicKey: pkpPublicKey,
-    //     sigName: "hashForInput0",
-    //   });
-    //   await Lit.Actions.signEcdsa({
-    //     toSign: hashForInput1,
-    //     publicKey: pkpPublicKey,
-    //     sigName: "hashForInput1",
-    //   });
-    //   response = {
-    //     ...response,
-    //     btcTransaction: transaction.toHex(),
-    //   };
-    // }
+    if (Lit.Auth.authSigAddress === winningTransfer.from && btcPayoutAddress) {
+      const { hashForInput0, hashForInput1, transaction } =
+        btcTransactionService.prepareInscriptionTransaction({
+          ordinalUtxo,
+          cardinalUtxo,
+          receivingAddress: btcPayoutAddress,
+        });
+      await Lit.Actions.signEcdsa({
+        toSign: hashForInput0,
+        publicKey: pkpPublicKey,
+        sigName: "hashForInput0",
+      });
+      await Lit.Actions.signEcdsa({
+        toSign: hashForInput1,
+        publicKey: pkpPublicKey,
+        sigName: "hashForInput1",
+      });
+      response = {
+        ...response,
+        btcTransaction: transaction.toHex(),
+      };
+    }
   } catch (err) {
     Lit.Actions.setResponse({
       response: JSON.stringify({ error: (err as Error).message }),
