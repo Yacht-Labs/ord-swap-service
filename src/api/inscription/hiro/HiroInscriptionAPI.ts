@@ -1,5 +1,5 @@
-import { Inscription } from "../../types/models";
-import { InscriptionAPI } from "./InscriptionAPI";
+import { Inscription } from "../../../types/models";
+import { InscriptionAPI } from "../InscriptionAPI";
 
 export type HiroInscriptionResponse = {
   id: string;
@@ -58,13 +58,8 @@ export class HiroInscriptionAPI extends InscriptionAPI {
     address: string
   ): Promise<Inscription[]> => {
     try {
-      // if (!this.isValidAddress(address)) {
-      //   throw new Error(`Invalid address: ${address}`);
-      // }
       const URL = `/ordinals/v1/inscriptions?address=${address}`;
-      console.log({ URL });
       const inscription = (await this.fetchData(URL)) as any;
-      console.log({ inscription });
       return inscription.results;
     } catch (err) {
       throw new Error(

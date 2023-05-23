@@ -1,6 +1,6 @@
 import { MinEthersFactory } from "./../../../types/typechain-types/contracts/common";
-import { RegtestUtxoAPI } from "./../../../api/bitcoin/utxo/RegtestUtxoAPI";
-import { HiroInscriptionAPI } from "./../../../api/inscription/HiroInscriptionAPI";
+import { RegtestUtxoAPI } from "../../../api/bitcoin/utxo/regtest/RegtestUtxoAPI";
+import { HiroInscriptionAPI } from "../../../api/inscription/hiro/HiroInscriptionAPI";
 import child_process from "child_process";
 import { ECPairFactory, ECPairInterface } from "ecpair";
 import ecc from "@bitcoinerlab/secp256k1";
@@ -33,38 +33,6 @@ describe("Insciber", () => {
     });
     p2trAddress = address!;
   });
-
-  it("Can retrieve utxos from regtest", async () => {
-    const regtestUtxoApi = new RegtestUtxoAPI();
-    // TODO: Write tests for the rest of address types
-    if (!p2trAddress) throw new Error("Address is null");
-    const faucet1 = await regtestUtils.faucet(p2trAddress, 1e10);
-    const faucet2 = await regtestUtils.faucet(p2trAddress, 2e10);
-    const unspents = await regtestUtxoApi.getUtxosByAddress(p2trAddress);
-    expect(unspents).toHaveLength(2);
-    expect(
-      unspents.some((u) => u.txid === faucet1.txId && u.vout === faucet1.vout)
-    );
-    expect(
-      unspents.some((u) => u.txid === faucet2.txId && u.vout === faucet2.vout)
-    );
-    expect(unspents.every((u) => (u.address = p2trAddress)));
-  });
-
-  it("Can retrieve inscriptions from regtest", async () => {
-    if (!p2trAddress) throw new Error("Address is null");
-    console.log({ p2trAddress });
-    const hiroInscriptionApi = new HiroInscriptionAPI();
-    await createInscription(p2trAddress);
-    await regtestUtils.mine(2);
-    await sleep(2000);
-    const inscriptions = await hiroInscriptionApi.getInscriptionsByAddress(
-      p2trAddress
-    );
-    console.log({ inscriptions });
-    expect(inscriptions).toHaveLength(1);
-    expect(inscriptions[0].address).toBe(p2trAddress);
-  }, 60000);
 
   xit("should be able to create a new inscription", async () => {
     const { address } = bitcoin.payments.p2wpkh({

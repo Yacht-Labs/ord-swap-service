@@ -1,5 +1,5 @@
 import { RegtestUtils } from "regtest-client";
-import { UtxoAPI } from "./UtxoAPI";
+import { UtxoAPI } from "../UtxoAPI";
 
 interface Unspent {
   value: number;
