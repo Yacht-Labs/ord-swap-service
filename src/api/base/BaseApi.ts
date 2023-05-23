@@ -5,7 +5,9 @@ export abstract class BaseAPI {
 
   protected async fetchData(url: string): Promise<any> {
     try {
+      console.log("URL: ", `${this.baseURL}${url}`);
       const response = await fetch(`${this.baseURL}${url}`);
+      console.log({ response });
       return await response.json();
     } catch (err) {
       this.handleError(err);

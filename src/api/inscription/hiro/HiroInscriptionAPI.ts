@@ -45,8 +45,13 @@ export class HiroInscriptionAPI extends InscriptionAPI {
       //   throw new Error(`Invalid inscription number: ${inscriptionIdOrNumber}`);
       // }
       const URL = `/ordinals/v1/inscriptions/${inscriptionIdOrNumber}`;
-      const inscription = (await this.fetchData(URL)) as Inscription;
+      const res = await fetch(`${this.baseURL}${URL}`);
+      console.dir(res);
+      const inscription = await res.json();
+      console.log({ inscription });
       return inscription;
+      // const inscription = (await this.fetchData(URL)) as Inscription;
+      // return inscription;
     } catch (err) {
       throw new Error(
         `Failed to retrieve inscription details: ${(err as Error).message}`

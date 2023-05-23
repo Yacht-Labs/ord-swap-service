@@ -2,7 +2,14 @@ import { Listing, ListingStatus } from "@prisma/client";
 import { InscriptionAPI } from "../../api/inscription/InscriptionAPI";
 import { UtxoAPI } from "../../api/bitcoin/utxo/UtxoAPI";
 import { Inscription, Utxo } from "../../types/models";
+import { RegtestUtils } from "regtest-client";
+import { sleep } from "../../utils";
 type MinimalListing = Pick<Listing, "pkpBtcAddress" | "inscriptionId">;
+
+const regtestUtils = new RegtestUtils({
+  APIPASS: "satoshi",
+  APIURL: "http://localhost:8080/1",
+});
 
 export class ListingService {
   constructor(
@@ -12,25 +19,42 @@ export class ListingService {
 
   async confirmListing(listing: Listing | MinimalListing): Promise<{
     status: ListingStatus;
-    utxos?: Utxo[];
-    inscription?: Inscription;
+    utxos: Utxo[];
+    inscription: Inscription | null;
   }> {
     const utxos = await this.utxoAPI.getUtxosByAddress(
       listing.pkpBtcAddress,
       2
     );
     if (utxos.length === 0) {
-      return { status: ListingStatus.NeedsBoth };
+      return { status: ListingStatus.NeedsBoth, utxos: [], inscription: null };
     }
+
+    if (process.env.NODE_ENV === "test") {
+      console.log("MINING");
+      await regtestUtils.mine(2);
+      sleep(4000);
+    }
+
+    console.log({ inscriptionId: listing.inscriptionId });
     const inscription = await this.inscriptionAPI.getInscription(
       listing.inscriptionId
     );
+
+    if (!inscription || inscription.error) {
+      throw new Error(
+        `Inscription ${listing.inscriptionId} not found or errored`
+      );
+    }
+
     if (inscription.address !== listing.pkpBtcAddress) {
-      return { status: ListingStatus.NeedsOrdinal };
+      return { status: ListingStatus.NeedsOrdinal, utxos, inscription: null };
     }
+
     if (utxos.length === 1) {
-      return { status: ListingStatus.NeedsCardinal };
+      return { status: ListingStatus.NeedsCardinal, utxos, inscription };
     }
+
     return { status: ListingStatus.Ready, utxos, inscription };
   }
 }

@@ -12,6 +12,7 @@ export type Inscription = {
   output: string;
   value: string;
   offset: string;
+  error?: any;
 };
 
 export type Utxo = {

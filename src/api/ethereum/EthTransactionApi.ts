@@ -6,4 +6,8 @@ export abstract class EthereumAPI extends BaseAPI {
     address: string
   ): Promise<EthTransfer[]>;
   public abstract normalizeEthTransferResponse(transfers: any[]): EthTransfer[];
+  public abstract getCurrentGasPrices(): Promise<{
+    maxPriorityFeePerGas: string;
+    maxFeePerGas: string;
+  }>;
 }
