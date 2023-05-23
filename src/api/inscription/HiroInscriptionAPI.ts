@@ -62,7 +62,9 @@ export class HiroInscriptionAPI extends InscriptionAPI {
       //   throw new Error(`Invalid address: ${address}`);
       // }
       const URL = `/ordinals/v1/inscriptions?address=${address}`;
+      console.log({ URL });
       const inscription = (await this.fetchData(URL)) as any;
+      console.log({ inscription });
       return inscription.results;
     } catch (err) {
       throw new Error(

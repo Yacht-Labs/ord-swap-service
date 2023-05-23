@@ -1,3 +1,4 @@
+import { MinEthersFactory } from "./../../../types/typechain-types/contracts/common";
 import { RegtestUtxoAPI } from "./../../../api/bitcoin/utxo/RegtestUtxoAPI";
 import { HiroInscriptionAPI } from "./../../../api/inscription/HiroInscriptionAPI";
 import child_process from "child_process";
@@ -52,15 +53,18 @@ describe("Insciber", () => {
 
   it("Can retrieve inscriptions from regtest", async () => {
     if (!p2trAddress) throw new Error("Address is null");
+    console.log({ p2trAddress });
     const hiroInscriptionApi = new HiroInscriptionAPI();
     await createInscription(p2trAddress);
+    await regtestUtils.mine(2);
+    await sleep(2000);
     const inscriptions = await hiroInscriptionApi.getInscriptionsByAddress(
       p2trAddress
     );
     console.log({ inscriptions });
     expect(inscriptions).toHaveLength(1);
     expect(inscriptions[0].address).toBe(p2trAddress);
-  });
+  }, 60000);
 
   xit("should be able to create a new inscription", async () => {
     const { address } = bitcoin.payments.p2wpkh({
