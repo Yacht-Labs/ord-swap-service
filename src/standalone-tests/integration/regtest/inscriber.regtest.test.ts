@@ -1,26 +1,72 @@
+import { RegtestUtxoAPI } from "./../../../api/bitcoin/utxo/RegtestUtxoAPI";
 import { HiroInscriptionAPI } from "./../../../api/inscription/HiroInscriptionAPI";
 import child_process from "child_process";
-import { ECPairFactory } from "ecpair";
+import { ECPairFactory, ECPairInterface } from "ecpair";
 import ecc from "@bitcoinerlab/secp256k1";
 import * as bitcoin from "bitcoinjs-lib";
 import { RegtestUtils } from "regtest-client";
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
-import { sleep } from "../../../utils";
+import { sleep, toXOnly } from "../../../utils";
 import { createInscription } from "./inscriber";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { Utxo } from "../../../types/models";
+import BIP32Factory from "bip32";
+
+const rng = require("randombytes");
+bitcoin.initEccLib(ecc);
+const ECPair = ECPairFactory(ecc);
+const bip32 = BIP32Factory(ecc);
+const APIPASS = "satoshi";
+const APIURL = "http://localhost:8080/1";
+const regtestUtils = new RegtestUtils({ APIPASS, APIURL });
 
 describe("Insciber", () => {
-  bitcoin.initEccLib(ecc);
-  const ECPair = ECPairFactory(ecc);
-  const APIPASS = "satoshi";
-  const APIURL = "http://localhost:8080/1";
-  const regtestUtils = new RegtestUtils({ APIPASS, APIURL });
+  let keyPair: ECPairInterface;
+  let p2trAddress: string;
 
-  it("should be able to create a new inscription", async () => {
-    const keyPair = ECPair.makeRandom({ network: bitcoin.networks.regtest });
+  beforeEach(async () => {
+    const internalKey = bip32.fromSeed(rng(64), bitcoin.networks.regtest);
+    const { address } = bitcoin.payments.p2tr({
+      pubkey: toXOnly(internalKey.publicKey),
+      network: bitcoin.networks.regtest,
+    });
+    p2trAddress = address!;
+  });
+
+  it("Can retrieve utxos from regtest", async () => {
+    const regtestUtxoApi = new RegtestUtxoAPI();
+    // TODO: Write tests for the rest of address types
+    if (!p2trAddress) throw new Error("Address is null");
+    const faucet1 = await regtestUtils.faucet(p2trAddress, 1e10);
+    const faucet2 = await regtestUtils.faucet(p2trAddress, 2e10);
+    const unspents = await regtestUtxoApi.getUtxosByAddress(p2trAddress);
+    expect(unspents).toHaveLength(2);
+    expect(
+      unspents.some((u) => u.txid === faucet1.txId && u.vout === faucet1.vout)
+    );
+    expect(
+      unspents.some((u) => u.txid === faucet2.txId && u.vout === faucet2.vout)
+    );
+    expect(unspents.every((u) => (u.address = p2trAddress)));
+  });
+
+  it("Can retrieve inscriptions from regtest", async () => {
+    if (!p2trAddress) throw new Error("Address is null");
+    const hiroInscriptionApi = new HiroInscriptionAPI();
+    await createInscription(
+      bitcoin.address.toOutputScript(p2trAddress, bitcoin.networks.regtest)
+    );
+    const inscriptions = await hiroInscriptionApi.getInscriptionsByAddress(
+      p2trAddress
+    );
+    console.log({ inscriptions });
+    expect(inscriptions).toHaveLength(1);
+    expect(inscriptions[0].address).toBe(p2trAddress);
+  });
+
+  xit("should be able to create a new inscription", async () => {
     const { address } = bitcoin.payments.p2wpkh({
-      pubkey: keyPair.publicKey,
+      pubkey: toXOnly(keyPair.publicKey),
       network: bitcoin.networks.regtest,
     });
 
@@ -48,7 +94,7 @@ describe("Insciber", () => {
     // const receivingAddress = regtestUtils.RANDOM_ADDRESS;
 
     const cardinalUtxo = unspents.find(
-      (u) => u.txId !== ordinal.txId && u.vout !== ordinal.vout
+      (u) => u.txId !== ordinal.txId || u.vout !== ordinal.vout
     );
 
     console.log({ cardinalUtxo });

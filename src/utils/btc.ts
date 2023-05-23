@@ -43,6 +43,9 @@ export function getBtcNetwork(): Network {
   }
 }
 
+export const toXOnly = (pubKey: Buffer) =>
+  pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);
+
 export function padHexString(hexString: string) {
   return hexString.length % 2 === 0 ? hexString : "0" + hexString;
 }

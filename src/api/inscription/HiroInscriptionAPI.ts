@@ -33,6 +33,7 @@ export class HiroInscriptionAPI extends InscriptionAPI {
         ? "http://localhost:3001"
         : "https://api.hiro.so";
   }
+
   public getInscription = async (
     inscriptionIdOrNumber: string
   ): Promise<Inscription> => {
@@ -53,14 +54,16 @@ export class HiroInscriptionAPI extends InscriptionAPI {
     }
   };
 
-  public getInscriptionsByAddress = async (address: string): Promise<any> => {
+  public getInscriptionsByAddress = async (
+    address: string
+  ): Promise<Inscription[]> => {
     try {
       // if (!this.isValidAddress(address)) {
       //   throw new Error(`Invalid address: ${address}`);
       // }
       const URL = `/ordinals/v1/inscriptions?address=${address}`;
       const inscription = (await this.fetchData(URL)) as any;
-      return inscription.results[0];
+      return inscription.results;
     } catch (err) {
       throw new Error(
         `Failed to retrieve inscription details: ${(err as Error).message}`

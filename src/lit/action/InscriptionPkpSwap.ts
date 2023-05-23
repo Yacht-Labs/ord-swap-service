@@ -2,7 +2,7 @@ import { InscriptionManager } from "../../services/inscription/InscriptionServic
 // if (process.env.NODE_ENV === "dev") {
 //   require("../../../development");
 // }
-import { BlockchainInfoUtxoApi } from "../../api/bitcoin/utxo/BlockchainInfoApi";
+import { BlockchainInfoUtxoApi } from "../../api/bitcoin/utxo/BlockchainInfoAPI";
 import { BtcTransactionService } from "../../services/bitcoin/BtcTransactionService";
 import {
   findWinnersByTransaction,
@@ -13,20 +13,15 @@ import {
 } from "./test/ordinalSwapAction";
 import { OrdXyzInscriptionAPI } from "../../api/inscription/OrdXyzInscriptionAPI";
 import { ListingService } from "../../services/listings/ListingService";
-import { MempoolSpaceAPI } from "../../api/bitcoin/MempoolSpaceAPI";
+import { MempoolSpaceAPI } from "../../api/bitcoin/utxo/MempoolSpaceAPI";
 import { AlchemyEthTransactionAPI } from "../../api/ethereum/AlchemyEthTransactionAPI";
 import { EthereumService } from "../../services/ethereum/EthereumService";
+import { InscriptionSwapFixture } from "./test/fixtures";
 
-const pkpEthAddress = "0x5342b85821849ef2F8b0fB4e7eFf27952F28b3f2";
-const btcPayoutAddress =
-  "bc1pal6d4gfjt5aa58yv29kzu2a9xwp69rl797uhk8lwk6t2h8wd0s9skhaer8";
-const pkpBtcAddress = "184rYD2CTpTv8AabFmwAoXFuPn7dPDrbMi";
-
-const ethPrice = "0.01";
-// const ethPrice = "{{ethPrice}}";
+const { pkpEthAddress, pkpBtcAddress, btcPayoutAddress, ethPrice } =
+  InscriptionSwapFixture;
 const inscriptionId = "{{inscriptionId}}";
-const ethPayoutAddress = "0x9D55D24aA6186d4a61Fa3BefeDBE4dD5dc0DC171";
-// const ethPayoutAddress = "{{ethPayoutAddress}}";
+const ethPayoutAddress = "{{ethPayoutAddress}}";
 
 export async function go() {
   let response: Record<any, any> = {};

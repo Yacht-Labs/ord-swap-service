@@ -1,7 +1,9 @@
-import { UtxoAPI } from "./utxo/UtxoAPI";
-import { BtcBroadcasterApi } from "./broadcaster/BtcBroadcasterApi";
-import { readBtcNetworkEnv } from "../../utils/env";
-import { Utxo } from "../../types/models";
+import { UtxoAPI } from "./UtxoAPI";
+import { BtcBroadcasterApi } from "../broadcaster/BtcBroadcasterApi";
+import { readBtcNetworkEnv } from "../../../utils/env";
+import { Utxo } from "../../../types/models";
+import mempoolJS from "@mempool/mempool.js";
+import { AddressInstance } from "@mempool/mempool.js/lib/interfaces/bitcoin/addresses";
 
 type MempoolUtxo = {
   txid: string;
@@ -16,24 +18,23 @@ type MempoolUtxo = {
 };
 
 export class MempoolSpaceAPI extends UtxoAPI {
-  protected baseURL: string;
+  public api: AddressInstance;
+  public baseURL = "";
   constructor() {
     super();
-    this.baseURL = `https://mempool.space/${
-      readBtcNetworkEnv() === "TESTNET" ? "testnet/" : ""
-    }api`;
+    const {
+      bitcoin: { addresses },
+    } = mempoolJS({ hostname: "mempool.space", network: readBtcNetworkEnv() });
+    this.api = addresses;
   }
 
   public getUtxosByAddress = async (address: string, confirmations = 0) => {
     try {
-      const URL = `/address/${address}/utxo`;
-      const response = (await this.fetchData(URL)) as MempoolUtxo[];
-      return response
-        .filter((u) => u.status.confirmed)
-        .map((utxo: MempoolUtxo) => ({
-          ...this.normalizeUtxoResponse(utxo),
-          address,
-        }));
+      const addressTxsUtxo = await this.api.getAddressTxsUtxo({ address });
+      const utxos = addressTxsUtxo
+        .filter((utxo) => utxo.status.confirmed)
+        .map((utxo) => this.normalizeUtxoResponse(utxo));
+      return utxos;
     } catch (err) {
       throw new Error(`Failed to retrieve UTXOs: ${(err as Error).message}`);
     }
