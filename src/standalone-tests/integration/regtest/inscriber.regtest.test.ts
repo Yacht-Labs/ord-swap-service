@@ -53,9 +53,7 @@ describe("Insciber", () => {
   it("Can retrieve inscriptions from regtest", async () => {
     if (!p2trAddress) throw new Error("Address is null");
     const hiroInscriptionApi = new HiroInscriptionAPI();
-    await createInscription(
-      bitcoin.address.toOutputScript(p2trAddress, bitcoin.networks.regtest)
-    );
+    await createInscription(p2trAddress);
     const inscriptions = await hiroInscriptionApi.getInscriptionsByAddress(
       p2trAddress
     );
@@ -76,7 +74,7 @@ describe("Insciber", () => {
       address,
       bitcoin.networks.regtest
     );
-    await createInscription(scriptPubKey);
+    await createInscription(address);
 
     const unspents1 = await regtestUtils.unspents(address);
     console.log({ unspents1 });
