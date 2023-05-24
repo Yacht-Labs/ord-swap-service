@@ -565,7 +565,7 @@ components:
         - Ready
         - Sold
         - Cancelled
-        
+
     SwapData:
       type: object
       properties:
@@ -587,7 +587,7 @@ components:
     Utxo:
       type: object
       properties:
-        txid:
+        txId:
           type: string
         vout:
           type: number

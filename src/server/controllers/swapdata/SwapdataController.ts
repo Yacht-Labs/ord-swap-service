@@ -16,10 +16,10 @@ interface SwapData {
 export class SwapDataController {
   private ethAPI: EthereumAPI;
   private ethService: EthereumService;
-  private inscriptionManager: InscriptionManager;
+  private inscriptionManager: InscriptionService;
 
   constructor(
-    inscriptionManager: InscriptionManager,
+    inscriptionManager: InscriptionService,
     ethAPI: EthereumAPI,
     ethService: EthereumService
   ) {

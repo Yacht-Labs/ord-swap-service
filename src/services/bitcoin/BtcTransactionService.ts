@@ -29,11 +29,11 @@ export class BtcTransactionService {
   }) {
     const transaction = new bitcoin.Transaction();
     transaction.addInput(
-      reverseBuffer(Buffer.from(ordinalUtxo.txid, "hex")),
+      reverseBuffer(Buffer.from(ordinalUtxo.txId, "hex")),
       ordinalUtxo.vout
     );
     transaction.addInput(
-      reverseBuffer(Buffer.from(cardinalUtxo.txid, "hex")),
+      reverseBuffer(Buffer.from(cardinalUtxo.txId, "hex")),
       cardinalUtxo.vout
     );
     const outputScript = toYachtOutputScript(destinationAddress);

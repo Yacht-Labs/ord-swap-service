@@ -1,3 +1,4 @@
+import { InscriptionService } from "../../services/inscription/InscriptionService";
 // if (process.env.NODE_ENV === "dev") {
 //   require("../../../development");
 // }
