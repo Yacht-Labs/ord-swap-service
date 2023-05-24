@@ -22,6 +22,7 @@ export const appErrorHandler: express.ErrorRequestHandler = (
   }
 };
 
+// TODO: Fix swagger validation error handling
 export const unhandledErrorHandler: express.ErrorRequestHandler = (
   err: any,
   req: express.Request,

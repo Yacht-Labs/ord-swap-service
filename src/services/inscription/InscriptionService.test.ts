@@ -30,10 +30,13 @@ describe("InscriptionService", () => {
       utxos: [],
       inscription: null,
     });
+    const inscriptionId = generateInscriptionId();
     await expect(
-      inscriptionService.checkInscriptionStatus("address", "inscriptionId")
+      inscriptionService.checkInscriptionStatus("address", inscriptionId)
     ).rejects.toThrowError(
-      "The current listing status for inscriptionID: inscriptionId is: NeedsOrdinal"
+      "The current listing status for inscriptionID: " +
+        inscriptionId +
+        " is: NeedsOrdinal"
     );
   });
 
@@ -43,10 +46,12 @@ describe("InscriptionService", () => {
       utxos: [],
       inscription: null,
     });
+    const inscriptionId = generateInscriptionId();
     await expect(
-      inscriptionService.checkInscriptionStatus("address", "inscriptionId")
+      inscriptionService.checkInscriptionStatus("address", inscriptionId)
     ).rejects.toThrowError(
-      "Unknown error checking inscription status for inscriptionID: inscriptionId"
+      "Unknown error checking inscription status for inscriptionID: " +
+        inscriptionId
     );
   });
 
