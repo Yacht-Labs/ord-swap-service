@@ -1,12 +1,6 @@
 import { Router, Request, Response } from "express";
 import { SwapDataController } from "../../controllers/swapdata/SwapdataController";
-import { RegtestUtxoAPI } from "../../../api/bitcoin/utxo/regtest/RegtestUtxoAPI";
-import { HiroInscriptionAPI } from "../../../api/inscription/hiro/HiroInscriptionAPI";
-import { ListingService } from "../../../services/listings/ListingService";
-import { InscriptionManager } from "../../../services/inscription/InscriptionService";
-import { AlchemyEthTransactionAPI } from "../../../api/ethereum/AlchemyEthTransactionAPI";
-import { EthereumService } from "../../../services/ethereum/EthereumService";
-import { EthereumAPI } from "../../../api/ethereum/EthTransactionAPI";
+import { SwapDataControllerDependencyFactory } from "src/factories/SwapDataControllerDependencyFactory";
 
 const router = Router();
 
@@ -34,44 +28,5 @@ router.get("/swapdata", async (req, res, next) => {
     next(err);
   }
 });
-
-interface SwapDataControllerDependencies {
-  inscriptionManager: InscriptionManager;
-  ethAPI: EthereumAPI;
-  ethService: EthereumService;
-}
-class SwapDataControllerDependencyFactory {
-  public getDependenciesForEnv(
-    environment: string
-  ): SwapDataControllerDependencies {
-    switch (environment) {
-      case "REGTEST":
-        const utxoAPI = new RegtestUtxoAPI();
-        const inscriptionAPI = new HiroInscriptionAPI();
-        const listingService = new ListingService(inscriptionAPI, utxoAPI);
-        const inscriptionManager = new InscriptionManager(listingService);
-        const ethAPI = new AlchemyEthTransactionAPI();
-        const ethService = new EthereumService(ethAPI);
-
-        return {
-          inscriptionManager,
-          ethAPI,
-          ethService,
-        };
-    }
-    const utxoAPI = new RegtestUtxoAPI();
-    const inscriptionAPI = new HiroInscriptionAPI();
-    const listingService = new ListingService(inscriptionAPI, utxoAPI);
-    const inscriptionManager = new InscriptionManager(listingService);
-    const ethAPI = new AlchemyEthTransactionAPI();
-    const ethService = new EthereumService(ethAPI);
-
-    return {
-      inscriptionManager,
-      ethAPI,
-      ethService,
-    };
-  }
-}
 
 export default router;
