@@ -1,6 +1,6 @@
 import { EthereumService } from "../../../services/ethereum/EthereumService";
 import { EthereumAPI } from "../../../api/ethereum/EthTransactionAPI";
-import { InscriptionManager } from "../../../services/inscription/InscriptionService";
+import { InscriptionService } from "../../../services/inscription/InscriptionService";
 import { Utxo } from "../../../types/models";
 import { EthTransfer } from "src/types";
 
@@ -16,10 +16,10 @@ interface SwapData {
 export class SwapDataController {
   private ethAPI: EthereumAPI;
   private ethService: EthereumService;
-  private inscriptionManager: InscriptionManager;
+  private inscriptionManager: InscriptionService;
 
   constructor(
-    inscriptionManager: InscriptionManager,
+    inscriptionManager: InscriptionService,
     ethAPI: EthereumAPI,
     ethService: EthereumService
   ) {

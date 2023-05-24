@@ -28,13 +28,13 @@ export function getRandomDateInPast(days: number) {
 
 export function generateRandomInscriptionId() {
   // Generate a random Bitcoin transaction ID (TXID)
-  const txid = faker.finance.bitcoinAddress();
+  const txId = faker.finance.bitcoinAddress();
 
   // Generate a random index N (between 1 and 10 for example)
   const n = faker.datatype.number({ min: 1, max: 10 });
 
   // Return the inscription ID in the format "TXIDiN"
-  return `${txid}i${n}`;
+  return `${txId}i${n}`;
 }
 
 export function getRandomListingStatus() {

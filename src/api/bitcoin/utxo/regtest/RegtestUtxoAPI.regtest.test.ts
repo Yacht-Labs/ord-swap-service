@@ -3,7 +3,7 @@ import * as bitcoin from "bitcoinjs-lib";
 import ECPairFactory, { ECPairInterface } from "ecpair";
 import { RegtestUtils } from "regtest-client";
 import ecc from "@bitcoinerlab/secp256k1";
-import { toXOnly } from "../../../../utils";
+import { sleep, toXOnly } from "../../../../utils";
 import { RegtestUtxoAPI } from "./RegtestUtxoAPI";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -34,13 +34,14 @@ describe("Regtest UTXO API", () => {
     if (!p2trAddress) throw new Error("Address is null");
     const faucet1 = await regtestUtils.faucet(p2trAddress, 1e10);
     const faucet2 = await regtestUtils.faucet(p2trAddress, 2e10);
+    await sleep(2000);
     const unspents = await regtestUtxoApi.getUtxosByAddress(p2trAddress);
     expect(unspents).toHaveLength(2);
     expect(
-      unspents.some((u) => u.txid === faucet1.txId && u.vout === faucet1.vout)
+      unspents.some((u) => u.txId === faucet1.txId && u.vout === faucet1.vout)
     );
     expect(
-      unspents.some((u) => u.txid === faucet2.txId && u.vout === faucet2.vout)
+      unspents.some((u) => u.txId === faucet2.txId && u.vout === faucet2.vout)
     );
     expect(unspents.every((u) => (u.address = p2trAddress)));
   });

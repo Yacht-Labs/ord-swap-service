@@ -74,13 +74,13 @@ describe("Insciber", () => {
     const { hashForInput0, hashForInput1, transaction } =
       btcService.prepareInscriptionTransaction({
         ordinalUtxo: {
-          txid: ordinal.txId,
+          txId: ordinal.txId,
           vout: ordinal.vout,
           amount: ordinal.value,
           address,
         } as Utxo,
         cardinalUtxo: {
-          txid: cardinalUtxo!.txId,
+          txId: cardinalUtxo!.txId,
           vout: cardinalUtxo!.vout,
           amount: cardinalUtxo!.value,
           address,

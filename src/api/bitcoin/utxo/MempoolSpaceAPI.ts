@@ -42,7 +42,7 @@ export class MempoolSpaceAPI extends UtxoAPI {
 
   public normalizeUtxoResponse(mempoolUtxo: MempoolUtxo): Utxo {
     return {
-      txid: mempoolUtxo.txid,
+      txId: mempoolUtxo.txid,
       vout: mempoolUtxo.vout,
       address: "", // You'll need to provide the address information from a different source
       scriptPubKey: null, // You'll need to provide the scriptPubKey information from a different source
