@@ -59,8 +59,12 @@ function getRandomHexNumber(numChars: number) {
   return result;
 }
 
+export function generateTransactionId() {
+  return getRandomHexNumber(64); // a Bitcoin transaction ID is a 64-character hexadecimal string
+}
+
 export function generateInscriptionId() {
-  const txid = getRandomHexNumber(64); // a Bitcoin transaction ID is a 64-character hexadecimal string
+  const txid = generateTransactionId(); // a Bitcoin transaction ID is a 64-character hexadecimal string
   const n = Math.floor(Math.random() * 10); // a random number between 0 and 9 inclusive
   return `${txid}i${n}`;
 }

@@ -27,7 +27,7 @@ export class RegtestUtxoAPI extends UtxoAPI {
 
   public normalizeUtxoResponse(utxo: Unspent) {
     return {
-      txid: utxo.txId,
+      txId: utxo.txId,
       vout: utxo.vout,
       scriptPubKey: "",
       amount: utxo.value,

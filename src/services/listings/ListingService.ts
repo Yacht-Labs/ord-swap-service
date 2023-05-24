@@ -22,53 +22,61 @@ export class ListingService {
     utxos: Utxo[];
     inscription: Inscription | null;
   }> {
-    const utxos = await this.utxoAPI.getUtxosByAddress(
-      listing.pkpBtcAddress,
-      2
-    );
+    try {
+      const utxos = await this.utxoAPI.getUtxosByAddress(
+        listing.pkpBtcAddress,
+        2
+      );
 
-    if (utxos.length === 0) {
-      return { status: ListingStatus.NeedsBoth, utxos: [], inscription: null };
-    }
-
-    if (process.env.NODE_ENV === "test") {
-      await regtestUtils.mine(2);
-      await sleep(5000);
-    }
-
-    let inscription: Inscription;
-    if (utxos.length === 1) {
-      if (
-        utxos[0].txid ===
-        listing.inscriptionId.substring(
-          0,
-          listing.inscriptionId.lastIndexOf("i")
-        )
-      ) {
-        inscription = await this.inscriptionAPI.getInscription(
-          listing.inscriptionId
-        );
+      if (utxos.length === 0) {
         return {
-          status: ListingStatus.NeedsCardinal,
-          utxos,
-          inscription: inscription,
-        };
-      } else
-        return {
-          status: ListingStatus.NeedsOrdinal,
-          utxos,
+          status: ListingStatus.NeedsBoth,
+          utxos: [],
           inscription: null,
         };
+      }
+
+      if (process.env.NODE_ENV === "test") {
+        await regtestUtils.mine(2);
+        await sleep(5000);
+      }
+
+      let inscription: Inscription;
+      if (utxos.length === 1) {
+        if (
+          utxos[0].txId ===
+          listing.inscriptionId.substring(
+            0,
+            listing.inscriptionId.lastIndexOf("i")
+          )
+        ) {
+          inscription = await this.inscriptionAPI.getInscription(
+            listing.inscriptionId
+          );
+          return {
+            status: ListingStatus.NeedsCardinal,
+            utxos,
+            inscription: inscription,
+          };
+        } else
+          return {
+            status: ListingStatus.NeedsOrdinal,
+            utxos,
+            inscription: null,
+          };
+      }
+
+      inscription = await this.inscriptionAPI.getInscription(
+        listing.inscriptionId
+      );
+
+      if (inscription.address !== listing.pkpBtcAddress) {
+        return { status: ListingStatus.NeedsOrdinal, utxos, inscription: null };
+      }
+
+      return { status: ListingStatus.Ready, utxos, inscription };
+    } catch (e) {
+      throw e;
     }
-
-    inscription = await this.inscriptionAPI.getInscription(
-      listing.inscriptionId
-    );
-
-    if (inscription.address !== listing.pkpBtcAddress) {
-      return { status: ListingStatus.NeedsOrdinal, utxos, inscription: null };
-    }
-
-    return { status: ListingStatus.Ready, utxos, inscription };
   }
 }

@@ -16,7 +16,7 @@ export type Inscription = {
 };
 
 export type Utxo = {
-  txid: string;
+  txId: string;
   vout: number;
   address: string;
   scriptPubKey: string | null;

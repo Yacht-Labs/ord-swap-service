@@ -1,4 +1,4 @@
-import { InscriptionManager } from "../../services/inscription/InscriptionService";
+import { InscriptionService } from "../../services/inscription/InscriptionService";
 // if (process.env.NODE_ENV === "dev") {
 //   require("../../../development");
 // }
@@ -31,7 +31,7 @@ export async function go() {
     const listingService = new ListingService(inscriptionAPI, utxoAPI);
     const ethAPI = new AlchemyEthTransactionAPI();
     const ethService = new EthereumService(ethAPI);
-    const inscriptionManager = new InscriptionManager(listingService);
+    const inscriptionService = new InscriptionService(listingService);
     const btcTransactionService = new BtcTransactionService();
 
     // Inscription Manager
@@ -43,7 +43,7 @@ export async function go() {
     // returns: maxPriorityFeePerGas, maxFeePerGas
 
     // const { ordinalUtxo, cardinalUtxo } =
-    //   await inscriptionManager.checkInscriptionStatus(
+    //   await inscriptionService.checkInscriptionStatus(
     //     pkpBtcAddress,
     //     inscriptionId
     //   );

@@ -43,7 +43,7 @@ export class BlockchainInfoUtxoApi extends UtxoAPI {
 
   public normalizeUtxoResponse(output: BlockchainInfoUtxo): Utxo {
     return {
-      txid: output.tx_hash_big_endian,
+      txId: output.tx_hash_big_endian,
       vout: output.tx_output_n,
       scriptPubKey: output.script,
       amount: output.value,
