@@ -7,7 +7,10 @@ import fs from "fs";
 import path from "path";
 import pkpNftContract from "../../abis/PKPNFT.json";
 import pkpNftPermissionsContract from "../../abis/PKPPermissions.json";
-import { PKP_CONTRACT_ADDRESS_LIT, PKP_PERMISSIONS_CONTRACT_ADDRESS } from "../../constants/index";
+import {
+  PKP_CONTRACT_ADDRESS_LIT,
+  PKP_PERMISSIONS_CONTRACT_ADDRESS,
+} from "../../constants/index";
 import {
   readPKPPrivateKey,
   readLitRpcURL,
@@ -89,7 +92,7 @@ export class LitService {
     const { address } = bitcoin.payments.p2pkh({
       pubkey: Buffer.from(compressedPoint),
       network: this.btcTestNet
-        ? bitcoin.networks.testnet
+        ? bitcoin.networks.regtest
         : bitcoin.networks.bitcoin,
     });
     if (!address) throw new Error("Could not generate address");

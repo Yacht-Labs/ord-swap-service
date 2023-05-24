@@ -1,11 +1,11 @@
 import { Router, Request, Response } from "express";
 import { SwapDataController } from "../../controllers/swapdata/SwapdataController";
-import { SwapDataControllerDependencyFactory } from "src/factories/SwapDataControllerDependencyFactory";
+import { SwapDataControllerDependencyFactory } from "../../../factories/SwapDataControllerDependencyFactory";
 
 const router = Router();
 
 // pkpBtcAddress: string, inscriptionId: string, pkpEthAddress: string, ethPrice: string
-router.get("/swapdata", async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   const factory = new SwapDataControllerDependencyFactory();
   const { inscriptionManager, ethAPI, ethService } =
     factory.getDependenciesForEnv("REGTEST");
@@ -23,6 +23,7 @@ router.get("/swapdata", async (req, res, next) => {
       pkpEthAddress,
       ethPrice
     );
+    console.log("swapdata", swapdata);
     return res.status(200).json(swapdata);
   } catch (err) {
     next(err);

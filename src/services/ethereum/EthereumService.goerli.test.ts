@@ -1,5 +1,5 @@
 import { EthereumService } from "../../services/ethereum/EthereumService";
-import { AlchemyEthTransactionAPI } from "../../api/ethereum/AlchemyEthTransactionAPI";
+import { AlchemyEthTransactionAPI } from "../../api/ethereum/AlchemyEthTransactionApi";
 import { ethers } from "ethers";
 import {
   readGoerliPrivateKey,

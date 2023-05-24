@@ -4,7 +4,7 @@ import { ListingService } from "../services/listings/ListingService";
 import { InscriptionManager } from "../services/inscription/InscriptionService";
 import { AlchemyEthTransactionAPI } from "../api/ethereum/AlchemyEthTransactionApi";
 import { EthereumService } from "../services/ethereum/EthereumService";
-import { EthereumAPI } from "../api/ethereum/EthTransactionAPI";
+import { EthereumAPI } from "../api/ethereum/EthTransactionApi";
 
 interface SwapDataControllerDependencies {
   inscriptionManager: InscriptionManager;
