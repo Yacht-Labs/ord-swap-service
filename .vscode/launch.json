@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+
     {
       "type": "node",
       "request": "launch",
@@ -44,6 +45,25 @@
       "env": {
         "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
         "TS_NODE_FILES": "true",
+        "NODE_ENV": "dev"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug ListingService test",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**/*.js"
+      ],
+      "runtimeArgs": [ "${workspaceRoot}/node_modules/.bin/jest",
+      "--runInBand"],
+      "args": ["ListingService"],
+      "outputCapture": "std",
+      "sourceMaps": true,
+      "smartStep": true,
+      "protocol": "inspector",
+      "env": {
         "NODE_ENV": "dev"
       }
     }
