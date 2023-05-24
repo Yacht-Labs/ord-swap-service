@@ -15,6 +15,7 @@ const APIURL = process.env.APIURL || "http://localhost:8080/1";
 const regtestUtils = new RegtestUtils({ APIPASS, APIURL });
 const regtest = bitcoin.networks.regtest;
 
+//TODO get a random secret
 const secret =
   "0a7d01d1c2e1592a02ea7671bb79ecd31d8d5e660b008f4b10e67787f4f24712";
 const seckey = new SecretKey(secret, { type: "taproot" });
@@ -40,7 +41,9 @@ export async function createInscription(address: string) {
     "01",
     Buff.encode("image/png"),
     "OP_0",
-    new Uint8Array(11),
+    new Uint8Array(
+      Array.from({ length: 32 }, () => Math.floor(Math.random() * 256))
+    ),
     "OP_ENDIF",
   ];
   const tapleaf = Tap.encodeScript(script);

@@ -69,6 +69,7 @@ describe("ListingService Integration", () => {
 
   it("Should respond with READY if both utxos", async () => {
     const { inscriptionId } = await createInscription(p2trAddress);
+    await regtestUtils.faucet(p2trAddress, 1e10);
     const { status, utxos, inscription } = await listingService.confirmListing({
       pkpBtcAddress: p2trAddress,
       inscriptionId: inscriptionId,
@@ -76,5 +77,5 @@ describe("ListingService Integration", () => {
     expect(status).toBe(ListingStatus.Ready);
     expect(utxos).toHaveLength(2);
     expect(inscription).toHaveProperty("id", inscriptionId);
-  }, 1000000);
+  }, 100000);
 });

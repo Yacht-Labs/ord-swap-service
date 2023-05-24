@@ -33,7 +33,7 @@ export class ListingService {
 
     if (process.env.NODE_ENV === "test") {
       await regtestUtils.mine(2);
-      sleep(8000);
+      await sleep(5000);
     }
 
     let inscription: Inscription;
