@@ -4,6 +4,7 @@ import { Listing } from "@prisma/client";
 import { prismaMock } from "../../../db/prisma.singleton";
 import { generateEthereumAddress, generateInscriptionId } from "../../../utils";
 import { startServer } from "../../server"; // Import your server start function
+import { DatabaseError } from "../../../types/errors";
 let server: any;
 
 beforeAll(async () => {
@@ -18,15 +19,19 @@ describe("Listing routes", () => {
   describe("POST /listings", () => {
     it("Should throw a database error if account creation fails", async () => {
       prismaMock.account.findUnique.mockResolvedValue(null);
-      prismaMock.account.create.mockRejectedValue(new Error("Database error"));
+      prismaMock.account.create.mockRejectedValue(
+        new DatabaseError("Database error")
+      );
       const res = await request(server)
         .post("/listings")
         .send({
           ethAddress: generateEthereumAddress(),
           ethPrice: Math.floor(Math.random() * 1000000 + 1).toString(),
           inscriptionId: generateInscriptionId(),
+          inscriptionNumber: Math.floor(Math.random() * 1000000 + 1).toString(),
         });
       expect(res.status).toBe(500);
+      expect(res.body.error).toBe("DatabaseError");
       expect(res.body.message).toBe("Database error");
     });
   });

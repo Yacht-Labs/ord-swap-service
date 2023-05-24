@@ -1,9 +1,9 @@
-import { EthereumAPI } from "../../api/ethereum/EthTransactionApi";
+import { EthereumAPI } from "../../api/ethereum/EthTransactionAPI";
 import { EthTransfer } from "../../types";
 import { ethers } from "ethers";
 
 export class EthereumService {
-  constructor(public transactionAPI: EthereumAPI) { }
+  constructor(public transactionAPI: EthereumAPI) {}
   public async findWinnersByAddress(address: string, price: string) {
     const transfers = await this.transactionAPI.getInboundTransactions(address);
     return this.findWinnersByTransaction(transfers, price);

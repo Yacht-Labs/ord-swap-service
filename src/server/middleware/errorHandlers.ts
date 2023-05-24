@@ -4,7 +4,7 @@ import { logger } from "../../utils/logger";
 import express from "express";
 
 export const appErrorHandler: express.ErrorRequestHandler = (
-  err: Error,
+  err: AppError | Error,
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
@@ -15,7 +15,7 @@ export const appErrorHandler: express.ErrorRequestHandler = (
       statusCode: err.statusCode,
       message: err.message,
     });
-    res.status(err.statusCode).json({ error: err.message });
+    res.status(err.statusCode).json({ error: err.error, message: err.message });
   } else {
     // If it's not an AppError, pass the error to the next middleware
     next(err);

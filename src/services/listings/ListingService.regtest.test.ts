@@ -43,7 +43,7 @@ describe("ListingService Integration", () => {
     expect(status).toBe(ListingStatus.NeedsBoth);
     expect(utxos).toHaveLength(0);
     expect(inscription).toBeNull();
-  });
+  }, 10000);
 
   it("Should respond with NEEDS CARDINAL if no cardinal utxos", async () => {
     const { inscriptionId } = await createInscription(p2trAddress);
@@ -51,12 +51,30 @@ describe("ListingService Integration", () => {
       pkpBtcAddress: p2trAddress,
       inscriptionId: inscriptionId,
     });
+    await sleep(2000);
     expect(status).toBe(ListingStatus.NeedsCardinal);
     expect(utxos).toHaveLength(1);
     expect(inscription).toHaveProperty("id", inscriptionId);
-  });
+  }, 12000);
 
-  it("Should respond with NEEDS ORDINAL if no ordinal utxos", async () => {});
+  it("Should respond with NEEDS ORDINAL if no ordinal utxos", async () => {
+    await regtestUtils.faucet(p2trAddress, 1e10);
+    const { status, utxos } = await listingService.confirmListing({
+      pkpBtcAddress: p2trAddress,
+      inscriptionId: "12345",
+    });
+    expect(status).toBe(ListingStatus.NeedsOrdinal);
+    expect(utxos).toHaveLength(1);
+  }, 10000);
 
-  it("Should respond with READY if both utxos", async () => {});
+  it("Should respond with READY if both utxos", async () => {
+    const { inscriptionId } = await createInscription(p2trAddress);
+    const { status, utxos, inscription } = await listingService.confirmListing({
+      pkpBtcAddress: p2trAddress,
+      inscriptionId: inscriptionId,
+    });
+    expect(status).toBe(ListingStatus.Ready);
+    expect(utxos).toHaveLength(2);
+    expect(inscription).toHaveProperty("id", inscriptionId);
+  }, 1000000);
 });

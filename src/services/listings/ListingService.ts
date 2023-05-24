@@ -26,33 +26,47 @@ export class ListingService {
       listing.pkpBtcAddress,
       2
     );
+
     if (utxos.length === 0) {
       return { status: ListingStatus.NeedsBoth, utxos: [], inscription: null };
     }
 
     if (process.env.NODE_ENV === "test") {
-      console.log("MINING");
       await regtestUtils.mine(2);
-      sleep(4000);
+      sleep(8000);
     }
 
-    console.log({ inscriptionId: listing.inscriptionId });
-    const inscription = await this.inscriptionAPI.getInscription(
+    let inscription: Inscription;
+    if (utxos.length === 1) {
+      if (
+        utxos[0].txid ===
+        listing.inscriptionId.substring(
+          0,
+          listing.inscriptionId.lastIndexOf("i")
+        )
+      ) {
+        inscription = await this.inscriptionAPI.getInscription(
+          listing.inscriptionId
+        );
+        return {
+          status: ListingStatus.NeedsCardinal,
+          utxos,
+          inscription: inscription,
+        };
+      } else
+        return {
+          status: ListingStatus.NeedsOrdinal,
+          utxos,
+          inscription: null,
+        };
+    }
+
+    inscription = await this.inscriptionAPI.getInscription(
       listing.inscriptionId
     );
 
-    if (!inscription || inscription.error) {
-      throw new Error(
-        `Inscription ${listing.inscriptionId} not found or errored`
-      );
-    }
-
     if (inscription.address !== listing.pkpBtcAddress) {
       return { status: ListingStatus.NeedsOrdinal, utxos, inscription: null };
-    }
-
-    if (utxos.length === 1) {
-      return { status: ListingStatus.NeedsCardinal, utxos, inscription };
     }
 
     return { status: ListingStatus.Ready, utxos, inscription };

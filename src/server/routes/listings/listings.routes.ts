@@ -130,7 +130,7 @@ router.put("/buy", async (req: Request, res: Response, next) => {
   }
 });
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response, next) => {
   const accountController = new AccountController();
   const litService = new LitService();
   try {
@@ -154,7 +154,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.status(201).json(listing);
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    next(error);
   }
 });
 

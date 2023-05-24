@@ -80,7 +80,6 @@ export async function createInscription(address: string) {
   const sig = Signer.taproot.sign(seckey, txdata, 0, { extension: tapleaf });
   txdata.vin[0].witness = [sig, script, cblock];
   const txId = Tx.util.getTxid(txdata);
-  console.log({ txId });
   await regtestUtils.broadcast(Tx.encode(txdata).hex);
   return { inscriptionId: `${txId}i0` };
 }

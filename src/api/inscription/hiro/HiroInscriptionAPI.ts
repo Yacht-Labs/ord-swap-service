@@ -1,3 +1,4 @@
+import { ApiError } from "../../../types/errors";
 import { Inscription } from "../../../types/models";
 import { InscriptionAPI } from "../InscriptionAPI";
 
@@ -38,22 +39,12 @@ export class HiroInscriptionAPI extends InscriptionAPI {
     inscriptionIdOrNumber: string
   ): Promise<Inscription> => {
     try {
-      // if (!this.isValidInscriptionId(inscriptionIdOrNumber)) {
-      //   throw new Error(`Invalid inscription id: ${inscriptionIdOrNumber}`);
-      // }
-      // if (!this.isValidInscriptionNumber(inscriptionIdOrNumber)) {
-      //   throw new Error(`Invalid inscription number: ${inscriptionIdOrNumber}`);
-      // }
+      // TODO: VALIDATE INSCRIPTION ID
       const URL = `/ordinals/v1/inscriptions/${inscriptionIdOrNumber}`;
-      const res = await fetch(`${this.baseURL}${URL}`);
-      console.dir(res);
-      const inscription = await res.json();
-      console.log({ inscription });
+      const inscription = (await this.fetchData(URL)) as Inscription;
       return inscription;
-      // const inscription = (await this.fetchData(URL)) as Inscription;
-      // return inscription;
     } catch (err) {
-      throw new Error(
+      throw new ApiError(
         `Failed to retrieve inscription details: ${(err as Error).message}`
       );
     }
@@ -64,10 +55,13 @@ export class HiroInscriptionAPI extends InscriptionAPI {
   ): Promise<Inscription[]> => {
     try {
       const URL = `/ordinals/v1/inscriptions?address=${address}`;
-      const inscription = (await this.fetchData(URL)) as any;
-      return inscription.results;
+      const inscriptions = (await this.fetchData(URL)) as any;
+      if (inscriptions.results) {
+        return inscriptions.results.map(this.normalizeInscriptionResponse);
+      }
+      throw new Error(`No inscriptions found for address: ${address}`);
     } catch (err) {
-      throw new Error(
+      throw new ApiError(
         `Failed to retrieve inscription details: ${(err as Error).message}`
       );
     }
