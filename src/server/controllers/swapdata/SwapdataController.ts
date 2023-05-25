@@ -1,6 +1,6 @@
 import { EthereumService } from "../../../services/ethereum/EthereumService";
 import { EthereumAPI } from "../../../api/ethereum/EthTransactionApi";
-import { InscriptionManager } from "../../../services/inscription/InscriptionService";
+import { InscriptionService } from "../../../services/inscription/InscriptionService";
 import { Utxo } from "../../../types/models";
 import { EthTransfer } from "src/types";
 

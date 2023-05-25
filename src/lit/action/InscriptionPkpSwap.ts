@@ -7,6 +7,7 @@ import {
   mapTransferToTransaction,
   hashTransaction,
 } from "./test/ordinalSwapAction";
+import { EthTransfer } from "src/types";
 
 const pkpEthAddress = "0x5342b85821849ef2F8b0fB4e7eFf27952F28b3f2";
 const btcPayoutAddress =
@@ -20,6 +21,7 @@ const ethPayoutAddress = "0x9D55D24aA6186d4a61Fa3BefeDBE4dD5dc0DC171";
 // const ethPayoutAddress = "{{ethPayoutAddress}}";
 const isCancel = "{{isCancel}}";
 const btcCancelAddress = "{{btcCancelAddress}}";
+const API_ENDPOINT = "https://api.localhost:3001/swapdata";
 
 export async function go() {
   let response: Record<any, any> = {};
@@ -30,8 +32,8 @@ export async function go() {
     let cardinalUtxo;
     let winningTransfer;
     let losingTransfers;
-    let maxPriorityFeePerGas;
-    let maxFeePerGas;
+    let maxPriorityFeePerGas: string;
+    let maxFeePerGas: string;
     try {
       const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}?inscriptionId=${inscriptionId}?pkpEthAddress=${pkpEthAddress}?ethPrice=${ethPrice}`;
       const response = await fetch(url);
@@ -84,7 +86,7 @@ export async function go() {
         btcTransactionService.prepareInscriptionTransaction({
           ordinalUtxo,
           cardinalUtxo,
-          receivingAddress: btcCancelAddress,
+          destinationAddress: btcCancelAddress,
         });
       await Lit.Actions.signEcdsa({
         toSign: hashForInput0,
@@ -104,7 +106,7 @@ export async function go() {
     // Loser Refund
     if (losingTransfers.length > 0) {
       //iterate through losing transfers
-      losingTransfers.forEach((transfer) => {
+      losingTransfers.forEach(async (transfer: EthTransfer) => {
         if (Lit.Auth.authSigAddress === transfer.from) {
           const unsignedTransaction = mapTransferToTransaction(
             transfer,
@@ -133,7 +135,7 @@ export async function go() {
         btcTransactionService.prepareInscriptionTransaction({
           ordinalUtxo,
           cardinalUtxo,
-          receivingAddress: btcPayoutAddress,
+          destinationAddress: btcPayoutAddress,
         });
       await Lit.Actions.signEcdsa({
         toSign: hashForInput0,
