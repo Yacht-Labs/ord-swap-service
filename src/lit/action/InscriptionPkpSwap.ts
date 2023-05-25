@@ -1,26 +1,41 @@
 import { InscriptionService } from "../../services/inscription/InscriptionService";
-// if (process.env.NODE_ENV === "dev") {
-//   require("../../../development");
-// }
+if (process.env.NODE_ENV === "test") {
+  require("../../../development");
+}
 import { BtcTransactionService } from "../../services/bitcoin/BtcTransactionService";
 import {
   mapTransferToTransaction,
   hashTransaction,
 } from "./test/ordinalSwapAction";
 import { EthTransfer } from "src/types";
+import { InscriptionSwapFixture } from "../../lit/action/test/fixtures";
 
-const pkpEthAddress = "0x5342b85821849ef2F8b0fB4e7eFf27952F28b3f2";
-const btcPayoutAddress =
-  "bc1pal6d4gfjt5aa58yv29kzu2a9xwp69rl797uhk8lwk6t2h8wd0s9skhaer8";
-const pkpBtcAddress = "184rYD2CTpTv8AabFmwAoXFuPn7dPDrbMi";
+// HARD CODED on Lit Action Creation
+const ethPrice =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.ethPrice
+    : "{{ethPrice}}";
+const inscriptionId =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.inscriptionId
+    : "{{inscriptionId}}";
+const ethPayoutAddress =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.ethPayoutAddress
+    : "{{ethPayoutAddress}}";
+const chainId =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.chainId
+    : "{{chainId}}";
 
-const ethPrice = "0.01";
-// const ethPrice = "{{ethPrice}}";
-const inscriptionId = "{{inscriptionId}}";
-const ethPayoutAddress = "0x9D55D24aA6186d4a61Fa3BefeDBE4dD5dc0DC171";
-// const ethPayoutAddress = "{{ethPayoutAddress}}";
-const isCancel = "{{isCancel}}";
-const btcCancelAddress = "{{btcCancelAddress}}";
+// Passed in on execution
+// pkpBtcAddress
+// pkpEthAddress
+// pkpPublicKey
+// btcPayoutAddress
+// isCancel
+// btcCancelAddress
+
 const API_ENDPOINT = "https://api.localhost:3001/swapdata";
 
 export async function go() {
@@ -48,8 +63,8 @@ export async function go() {
       } else {
         throw new Error("Swap data API call returned not ok");
       }
-    } catch (error) {
-      throw new Error("Swap data API call failed");
+    } catch (e) {
+      throw e;
     }
 
     if (!ordinalUtxo) {
@@ -67,7 +82,7 @@ export async function go() {
         0,
         maxPriorityFeePerGas,
         maxFeePerGas,
-        80001
+        parseInt(chainId)
       );
       await Lit.Actions.signEcdsa({
         toSign: hashTransaction(unsignedTransaction),
@@ -91,12 +106,12 @@ export async function go() {
       await Lit.Actions.signEcdsa({
         toSign: hashForInput0,
         publicKey: pkpPublicKey,
-        sigName: "hashForInput0",
+        sigName: "cancelHashForInput0",
       });
       await Lit.Actions.signEcdsa({
         toSign: hashForInput1,
         publicKey: pkpPublicKey,
-        sigName: "hashForInput1",
+        sigName: "cancelHashForInput1",
       });
       response = {
         ...response,
@@ -152,6 +167,9 @@ export async function go() {
         btcTransaction: transaction.toHex(),
       };
     }
+    Lit.Actions.setResponse({
+      response: JSON.stringify({ response: response }),
+    });
   } catch (err) {
     Lit.Actions.setResponse({
       response: JSON.stringify({ error: (err as Error).message }),
@@ -159,4 +177,6 @@ export async function go() {
   }
 }
 
-go();
+if (process.env.NODE_ENV !== "test") {
+  go();
+}

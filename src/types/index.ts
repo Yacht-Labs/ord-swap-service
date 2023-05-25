@@ -1,4 +1,5 @@
 import { UnsignedTransaction } from "ethers";
+import { Utxo } from "./models";
 
 export type AuthSignature = {
   sig: string;
@@ -34,4 +35,13 @@ export type LitActionResponse = {
     hashForInput1: SignatureData;
     ethTransactionSignature: SignatureData;
   };
+};
+
+export type SwapData = {
+  ordinalUtxo: Utxo | null;
+  cardinalUtxo: Utxo | null;
+  winningTransfer: EthTransfer | null;
+  losingTransfers: EthTransfer[] | null;
+  maxPriorityFeePerGas: string;
+  maxFeePerGas: string;
 };

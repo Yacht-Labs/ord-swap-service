@@ -2,16 +2,8 @@ import { EthereumService } from "../../../services/ethereum/EthereumService";
 import { EthereumAPI } from "../../../api/ethereum/EthTransactionApi";
 import { InscriptionService } from "../../../services/inscription/InscriptionService";
 import { Utxo } from "../../../types/models";
-import { EthTransfer } from "src/types";
-
-interface SwapData {
-  ordinalUtxo: Utxo | null;
-  cardinalUtxo: Utxo | null;
-  winningTransfer: EthTransfer | null;
-  losingTransfers: EthTransfer[] | null;
-  maxPriorityFeePerGas: string;
-  maxFeePerGas: string;
-}
+import { EthTransfer } from "../../../types";
+import { SwapData } from "../../../types";
 
 export class SwapDataController {
   private ethAPI: EthereumAPI;

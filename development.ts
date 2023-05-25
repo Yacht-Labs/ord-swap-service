@@ -4,6 +4,21 @@
 (global as any).pkpPublicKey =
   "0x043ad6fd35de7bd4f025653d1f91cff5ef55cf0433532cb28abb6f1660b691f85244cedc75f7bdf04f71d2f09061865f6862b8245eecc5b21b4c9a224128442595";
 (global as any).btcPayoutAddress = "999999UzuA7iS8s2pbdBfXbAHJAE999999";
+(global as any).isCancel = true;
+(global as any).btcCancelAddress = "999999UzuA7iS8s2pbdBfXbAHJAE999999";
+
+export const mockLitActionSetResponse = jest.fn((options) => {
+  return options;
+});
+
+export const mockLitActionSignEcdsa = jest.fn((options) => {
+  return options;
+});
+
+let memoizedAddress = () => "";
+export const setLitActionAuthAddress = (address = "") => {
+  memoizedAddress = () => address;
+};
 
 // Fake Lit implementation
 const fakeLit: {
@@ -13,6 +28,7 @@ const fakeLit: {
 } = {
   Actions: {
     setResponse: (options: { response: string }) => {
+      mockLitActionSetResponse(options);
       console.log("Fake setResponse called with:", options);
     },
     signEcdsa: (options: {
@@ -20,11 +36,12 @@ const fakeLit: {
       publicKey: string;
       sigName: string;
     }) => {
+      mockLitActionSignEcdsa(options);
       console.log("Fake signEcdsa called with:", options);
     },
   },
-  Auth: {
-    authSigAddress: "0x9d55d24aa6186d4a61fa3befedbe4dd5dc0dc171",
+  get Auth() {
+    return { authSigAddress: memoizedAddress() };
   },
   LitActions: {
     signEcdsa: (options: {
