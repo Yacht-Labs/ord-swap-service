@@ -7,7 +7,7 @@ import { EthereumService } from "../services/ethereum/EthereumService";
 import { EthereumAPI } from "../api/ethereum/EthTransactionApi";
 
 interface SwapDataControllerDependencies {
-  inscriptionManager: InscriptionManager;
+  inscriptionService: InscriptionService;
   ethAPI: EthereumAPI;
   ethService: EthereumService;
 }
@@ -20,12 +20,12 @@ export class SwapDataControllerDependencyFactory {
         const utxoAPI = new RegtestUtxoAPI();
         const inscriptionAPI = new HiroInscriptionAPI();
         const listingService = new ListingService(inscriptionAPI, utxoAPI);
-        const inscriptionManager = new InscriptionService(listingService);
+        const inscriptionService = new InscriptionService(listingService);
         const ethAPI = new AlchemyEthTransactionAPI();
         const ethService = new EthereumService(ethAPI);
 
         return {
-          inscriptionManager,
+          inscriptionService,
           ethAPI,
           ethService,
         };
@@ -33,12 +33,12 @@ export class SwapDataControllerDependencyFactory {
     const utxoAPI = new RegtestUtxoAPI();
     const inscriptionAPI = new HiroInscriptionAPI();
     const listingService = new ListingService(inscriptionAPI, utxoAPI);
-    const inscriptionManager = new InscriptionManager(listingService);
+    const inscriptionService = new InscriptionService(listingService);
     const ethAPI = new AlchemyEthTransactionAPI();
     const ethService = new EthereumService(ethAPI);
 
     return {
-      inscriptionManager,
+      inscriptionService,
       ethAPI,
       ethService,
     };

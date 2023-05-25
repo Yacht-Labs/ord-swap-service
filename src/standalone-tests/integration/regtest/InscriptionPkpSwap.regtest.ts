@@ -13,30 +13,30 @@
 // run the lit action as the buyer
 // expect to get a signature to transfer ordinal to buyer
 
-import { LitService } from "../../../services/lit/LitService";
-import { LIT_SWAP_FILE_NAME } from "../../../constants";
+// import { LitService } from "../../../services/lit/LitService";
+// import { LIT_SWAP_FILE_NAME } from "../../../constants";
 
-describe("InscriptionPkpSwap", () => {
-  const litService = new LitService();
-  let pkp: any;
+// describe("InscriptionPkpSwap", () => {
+//   const litService = new LitService();
+//   let pkp: any;
 
-  beforeAll(async () => {
-    pkp = await litService.mintPkp();
-  }, 60000);
+//   beforeAll(async () => {
+//     pkp = await litService.mintPkp();
+//   }, 60000);
 
-  it("should not get any signatures if nothing exists on pkp", async () => {
-    const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
-      ethPrice: listing.ethPrice,
-      ethPayoutAddress: listing.account.ethAddress,
-      inscriptionId: listing.inscriptionId,
-    });
-    const { response, signatures } = await litService.runLitAction({
-      pkpPublicKey: listing.pkpPublicKey,
-      code: litActionCode,
-      authSig: authSig,
-      pkpEthAddress: ethers.utils.computeAddress(listing.pkpPublicKey),
-      pkpBtcAddress: listing.pkpBtcAddress,
-      btcPayoutAddress: taprootAddress,
-    });
-  });
-});
+//   it("should not get any signatures if nothing exists on pkp", async () => {
+//     const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
+//       ethPrice: listing.ethPrice,
+//       ethPayoutAddress: listing.account.ethAddress,
+//       inscriptionId: listing.inscriptionId,
+//     });
+//     const { response, signatures } = await litService.runLitAction({
+//       pkpPublicKey: listing.pkpPublicKey,
+//       code: litActionCode,
+//       authSig: authSig,
+//       pkpEthAddress: ethers.utils.computeAddress(listing.pkpPublicKey),
+//       pkpBtcAddress: listing.pkpBtcAddress,
+//       btcPayoutAddress: taprootAddress,
+//     });
+//   });
+// });

@@ -7,10 +7,10 @@ const router = Router();
 // pkpBtcAddress: string, inscriptionId: string, pkpEthAddress: string, ethPrice: string
 router.get("/", async (req, res, next) => {
   const factory = new SwapDataControllerDependencyFactory();
-  const { inscriptionManager, ethAPI, ethService } =
+  const { inscriptionService, ethAPI, ethService } =
     factory.getDependenciesForEnv("REGTEST");
   const swapdataController = new SwapDataController(
-    inscriptionManager,
+    inscriptionService,
     ethAPI,
     ethService
   );
