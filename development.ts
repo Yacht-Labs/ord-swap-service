@@ -1,5 +1,4 @@
 // development.ts
-import { jest } from "@jest/globals";
 (global as any).pkpBtcAddress = "184NQjUzuA7iS8s2pbdBfXbAHJAE2Hf2QK";
 (global as any).pkpEthAddress = "0x6fa1deB6AE1792Cf2f3A78283Cb2B8da2C620808";
 (global as any).pkpPublicKey =

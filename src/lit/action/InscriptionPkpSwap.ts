@@ -1,7 +1,7 @@
 import { InscriptionService } from "../../services/inscription/InscriptionService";
-// if (process.env.NODE_ENV === "test") {
-require("../../../development");
-// }
+if (process.env.NODE_ENV === "test") {
+  require("../../../development");
+}
 import { BtcTransactionService } from "../../services/bitcoin/BtcTransactionService";
 import {
   mapTransferToTransaction,
@@ -176,7 +176,7 @@ export async function go() {
     });
   }
 }
-go();
 
 if (process.env.NODE_ENV !== "test") {
+  go();
 }
