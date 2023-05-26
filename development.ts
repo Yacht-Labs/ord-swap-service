@@ -1,4 +1,5 @@
 // development.ts
+import { jest } from "@jest/globals";
 (global as any).pkpBtcAddress = "184NQjUzuA7iS8s2pbdBfXbAHJAE2Hf2QK";
 (global as any).pkpEthAddress = "0x6fa1deB6AE1792Cf2f3A78283Cb2B8da2C620808";
 (global as any).pkpPublicKey =
@@ -7,11 +8,11 @@
 (global as any).isCancel = true;
 (global as any).btcCancelAddress = "999999UzuA7iS8s2pbdBfXbAHJAE999999";
 
-export const mockLitActionSetResponse = jest.fn((options) => {
+export const mockLitActionSetResponse = jest.fn((options: any) => {
   return options;
 });
 
-export const mockLitActionSignEcdsa = jest.fn((options) => {
+export const mockLitActionSignEcdsa = jest.fn((options: any) => {
   return options;
 });
 
