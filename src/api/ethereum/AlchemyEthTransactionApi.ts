@@ -2,7 +2,7 @@ import { ETH_GOERLI } from "../../constants";
 import { Transfer } from "../../lit/action/test/ordinalSwapAction";
 import { EthTransfer } from "../../types";
 import { readEthNetwork } from "../../utils/env";
-import { EthereumAPI } from "./EthTransactionAPI";
+import { EthereumAPI } from "./EthTransactionApi";
 import { ethers } from "ethers";
 
 interface ApiResponse {

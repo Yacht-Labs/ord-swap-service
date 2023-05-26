@@ -5,7 +5,7 @@ const { LIT_SWAP_FILE_NAME } = require("./src/constants");
 
 module.exports = {
   mode: "production",
-  entry: "./src/lit/action/PkpBtcSwapEth.ts",
+  entry: "./src/lit/action/InscriptionPkpSwap.ts",
   output: {
     filename: `${LIT_SWAP_FILE_NAME}.js`,
     path: path.resolve(__dirname, "src/lit/action/javascript"),

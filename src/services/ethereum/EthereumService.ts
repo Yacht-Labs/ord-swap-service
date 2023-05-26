@@ -1,4 +1,4 @@
-import { EthereumAPI } from "../../api/ethereum/EthTransactionAPI";
+import { EthereumAPI } from "../../api/ethereum/EthTransactionApi";
 import { EthTransfer } from "../../types";
 import { ethers } from "ethers";
 

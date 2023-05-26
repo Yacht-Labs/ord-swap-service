@@ -190,6 +190,7 @@ export class LitService {
     const filePath = path.join(
       __dirname,
       "..",
+      "..",
       "lit",
       "action",
       "javascript",

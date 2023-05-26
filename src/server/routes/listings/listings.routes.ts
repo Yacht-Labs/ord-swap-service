@@ -5,7 +5,7 @@ import { LitService } from "../../../services/lit/LitService";
 import prisma from "../../../db/prisma";
 import { ListingService } from "../../../services/listings/ListingService";
 import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
-import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoAPI";
+import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoApi";
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
 import { ListingController } from "../../controllers/listings/ListingController";
 import { LitError } from "../../../types/errors";

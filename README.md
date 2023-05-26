@@ -32,7 +32,7 @@ yarn install
 3. Start the PostgreSQL Docker container.
 
 ```bash
-docker-compose up -f db-docker-compose.yml -d
+docker-compose -f db-docker-compose.yml up -d
 ```
 
 This command will read the docker-compose.yml file and create a Docker container running PostgreSQL. The container will be named ord-swap-db, and the database will have the following settings:

@@ -2,9 +2,9 @@ import { RegtestUtxoAPI } from "../api/bitcoin/utxo/regtest/RegtestUtxoAPI";
 import { HiroInscriptionAPI } from "../api/inscription/hiro/HiroInscriptionAPI";
 import { ListingService } from "../services/listings/ListingService";
 import { InscriptionService } from "../services/inscription/InscriptionService";
-import { AlchemyEthTransactionAPI } from "../api/ethereum/AlchemyEthTransactionAPI";
+import { AlchemyEthTransactionAPI } from "../api/ethereum/AlchemyEthTransactionApi";
 import { EthereumService } from "../services/ethereum/EthereumService";
-import { EthereumAPI } from "../api/ethereum/EthTransactionAPI";
+import { EthereumAPI } from "../api/ethereum/EthTransactionApi";
 
 interface SwapDataControllerDependencies {
   inscriptionService: InscriptionService;
