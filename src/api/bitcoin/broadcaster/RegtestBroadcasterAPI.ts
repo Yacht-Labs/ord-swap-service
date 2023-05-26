@@ -1,3 +1,4 @@
+import { RegtestUtils } from "regtest-client";
 import { ApiError } from "../../../types/errors";
 import { BtcBroadcasterApi } from "./BtcBroadcasterApi";
 
@@ -12,20 +13,20 @@ type ApiResponse = {
   };
 };
 
-export class CryptoApisBroadcaster extends BtcBroadcasterApi {
+export class RegtestBroadcasterAPI extends BtcBroadcasterApi {
   protected baseURL: string;
   constructor() {
     super();
     this.baseURL = "https://rest.cryptoapis.io";
   }
   public broadcastTransaction = async (transactionHex: string) => {
+    const regtestUtils = new RegtestUtils();
     try {
-      const URL = `/blockchain-tools/bitcoin/mainnet/transactions/broadcast?context=${transactionHex}`;
-      const response = (await this.fetchData(URL)) as ApiResponse;
-      return response.data.item.transactionId;
+      const response = await regtestUtils.broadcast(transactionHex);
+      return "success";
     } catch (err) {
       throw new ApiError(
-        `CryptoApisBroadcaster API failed to broadcast transaction: ${
+        `RegtestBroadcaster API failed to broadcast transaction: ${
           (err as Error).message
         }`
       );

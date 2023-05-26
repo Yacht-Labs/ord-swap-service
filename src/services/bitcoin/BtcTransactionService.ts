@@ -8,14 +8,18 @@ import {
 } from "../../utils/btc";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { SignatureData } from "../../types";
-import { CryptoApisBroadcaster } from "../../api/bitcoin/broadcaster/CryptoApisBroadcaster";
+import { CryptoApisBroadcasterAPI } from "../../api/bitcoin/broadcaster/CryptoApisBroadcasterAPI";
 import { BtcBroadcasterApi } from "../../api/bitcoin/broadcaster/BtcBroadcasterApi";
+import { RegtestBroadcasterAPI } from "../../api/bitcoin/broadcaster/RegtestBroadcasterAPI";
 export class BtcTransactionService {
   private FEE_RATE = 30;
   private broadcasterApi: BtcBroadcasterApi;
   constructor() {
     bitcoin.initEccLib(ecc);
-    this.broadcasterApi = new CryptoApisBroadcaster();
+    this.broadcasterApi =
+      process.env.NODE_ENV === "test"
+        ? new RegtestBroadcasterAPI()
+        : new CryptoApisBroadcasterAPI();
   }
 
   public prepareInscriptionTransaction({
