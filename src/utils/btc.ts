@@ -50,6 +50,23 @@ export function padHexString(hexString: string) {
   return hexString.length % 2 === 0 ? hexString : "0" + hexString;
 }
 
+export function unpadHexString(buffer: Buffer): { r: string; s: string } {
+  // Convert buffer to hex string
+  const hexString = buffer.toString("hex");
+
+  // Length of hexString should be even (due to padding) and be split equally into r and s
+  if (hexString.length % 2 !== 0 || hexString.length % 4 !== 0) {
+    throw new Error("Invalid hex string length");
+  }
+
+  const elementLength = hexString.length / 2;
+
+  const r = hexString.substring(0, elementLength);
+  const s = hexString.substring(elementLength);
+
+  return { r, s };
+}
+
 function getRandomHexNumber(numChars: number) {
   let result = "";
   const characters = "abcdef0123456789";

@@ -13,6 +13,7 @@ import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { Utxo } from "../../../types/models";
 import BIP32Factory from "bip32";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const rng = require("randombytes");
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
@@ -32,6 +33,17 @@ describe("Insciber", () => {
       network: bitcoin.networks.regtest,
     });
     p2trAddress = address!;
+  });
+
+  xit("Should 1 + 1", () => {
+    const internalKey = bip32.fromSeed(rng(64), bitcoin.networks.regtest);
+    console.log({ p2trAddress });
+    expect(1 + 1).toBe(2);
+    const { address } = bitcoin.payments.p2wpkh({
+      pubkey: toXOnly(internalKey.publicKey),
+      network: bitcoin.networks.regtest,
+    });
+    console.log({ address });
   });
 
   xit("should be able to create a new inscription", async () => {
