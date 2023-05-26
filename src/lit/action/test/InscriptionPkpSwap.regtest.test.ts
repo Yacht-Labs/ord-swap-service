@@ -22,8 +22,14 @@ jest.mock("../../../services/bitcoin/BtcTransactionService", () => {
   };
 });
 
+afterEach(() => {
+  mockLitActionSignEcdsa.mockClear();
+  mockLitActionSetResponse.mockClear();
+});
+
 describe("InscriptionPKPSwap", () => {
-  it("should respond with error if ordinal utxo is null", async () => {
+  it("should respond with error if ordinal utxo is null and auth user is seller cancelling", async () => {
+    setLitActionAuthAddress("0x6fa1deB6AE1792Cf2f3A78283Cb2B8da2C620808"); // this is same as ethPayoutAddress
     const mockApiResponse = {
       results: {
         ordinalUtxo: null,
@@ -53,7 +59,8 @@ describe("InscriptionPKPSwap", () => {
     );
   });
 
-  it("should respond with error if cardinal utxo is null", async () => {
+  it("should respond with error if cardinal utxo is null and auth user is seller cancelling ", async () => {
+    setLitActionAuthAddress("0x6fa1deB6AE1792Cf2f3A78283Cb2B8da2C620808"); // this is same as ethPayoutAddress
     const mockApiResponse = {
       results: {
         ordinalUtxo: "test",
@@ -78,7 +85,69 @@ describe("InscriptionPKPSwap", () => {
     fetchMock.mockResponseOnce(JSON.stringify(mockApiResponse));
 
     const result = await go();
-    expect(mockLitActionSetResponse.mock.calls[1][0].response).toBe(
+    expect(mockLitActionSetResponse.mock.calls[0][0].response).toBe(
+      '{"error":"The cardinal has not been sent to the PKP address"}'
+    );
+  });
+
+  it("should respond with error if ordinal utxo is null and auth user is buyer withdrawing", async () => {
+    setLitActionAuthAddress("0xec9C0179538D8416890d53fD50c87fb2CE9eB45e"); // this is same as winningTransfer.from
+    const mockApiResponse = {
+      results: {
+        ordinalUtxo: null,
+        cardinalUtxo: "test2",
+        winningTransfer: {
+          blockNum: "0",
+          from: "0xec9C0179538D8416890d53fD50c87fb2CE9eB45e",
+          value: "0",
+        },
+        losingTransfers: [
+          {
+            blockNum: "0",
+            from: "0xec9C0179538D8416890d53fD50c87fb2CE9eB45e",
+            value: "0",
+          },
+        ],
+        maxPriorityFeePerGas: "100",
+        maxFeePerGas: "100",
+      },
+    };
+
+    fetchMock.mockResponseOnce(JSON.stringify(mockApiResponse));
+
+    const result = await go();
+    expect(mockLitActionSetResponse.mock.calls[0][0].response).toBe(
+      '{"error":"The ordinal has not been sent to the PKP address"}'
+    );
+  });
+
+  it("should respond with error if cardinal utxo is null and auth user is buyer withdrawing", async () => {
+    setLitActionAuthAddress("0xec9C0179538D8416890d53fD50c87fb2CE9eB45e"); // this is same as winningTransfer.from
+    const mockApiResponse = {
+      results: {
+        ordinalUtxo: "test",
+        cardinalUtxo: null,
+        winningTransfer: {
+          blockNum: "0",
+          from: "0xec9C0179538D8416890d53fD50c87fb2CE9eB45e",
+          value: "0",
+        },
+        losingTransfers: [
+          {
+            blockNum: "0",
+            from: "0xec9C0179538D8416890d53fD50c87fb2CE9eB45e",
+            value: "0",
+          },
+        ],
+        maxPriorityFeePerGas: "100",
+        maxFeePerGas: "100",
+      },
+    };
+
+    fetchMock.mockResponseOnce(JSON.stringify(mockApiResponse));
+
+    const result = await go();
+    expect(mockLitActionSetResponse.mock.calls[0][0].response).toBe(
       '{"error":"The cardinal has not been sent to the PKP address"}'
     );
   });
@@ -125,11 +194,11 @@ describe("InscriptionPKPSwap", () => {
     };
     fetchMock.mockResponseOnce(JSON.stringify(mockApiResponse));
     const result = await go();
-    console.log(mockLitActionSignEcdsa.mock.calls);
-    expect(mockLitActionSignEcdsa.mock.calls[1][0].sigName).toEqual(
+
+    expect(mockLitActionSignEcdsa.mock.calls[0][0].sigName).toEqual(
       "cancelHashForInput0"
     );
-    expect(mockLitActionSignEcdsa.mock.calls[2][0].sigName).toEqual(
+    expect(mockLitActionSignEcdsa.mock.calls[1][0].sigName).toEqual(
       "cancelHashForInput1"
     );
   });
@@ -154,7 +223,7 @@ describe("InscriptionPKPSwap", () => {
     };
     fetchMock.mockResponseOnce(JSON.stringify(mockApiResponse));
     const result = await go();
-    expect(mockLitActionSignEcdsa.mock.calls[3][0].sigName).toEqual(
+    expect(mockLitActionSignEcdsa.mock.calls[0][0].sigName).toEqual(
       "ethLoserSignature"
     );
   });
@@ -182,11 +251,11 @@ describe("InscriptionPKPSwap", () => {
     };
     fetchMock.mockResponseOnce(JSON.stringify(mockApiResponse));
     const result = await go();
-    console.log(mockLitActionSignEcdsa.mock.calls);
-    expect(mockLitActionSignEcdsa.mock.calls[5][0].sigName).toEqual(
+
+    expect(mockLitActionSignEcdsa.mock.calls[1][0].sigName).toEqual(
       "hashForInput0"
     );
-    expect(mockLitActionSignEcdsa.mock.calls[6][0].sigName).toEqual(
+    expect(mockLitActionSignEcdsa.mock.calls[2][0].sigName).toEqual(
       "hashForInput1"
     );
   });

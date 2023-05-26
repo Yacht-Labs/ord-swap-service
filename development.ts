@@ -29,7 +29,6 @@ const fakeLit: {
   Actions: {
     setResponse: (options: { response: string }) => {
       mockLitActionSetResponse(options);
-      console.log("Fake setResponse called with:", options);
     },
     signEcdsa: (options: {
       toSign: Uint8Array;
@@ -37,7 +36,6 @@ const fakeLit: {
       sigName: string;
     }) => {
       mockLitActionSignEcdsa(options);
-      console.log("Fake signEcdsa called with:", options);
     },
   },
   get Auth() {

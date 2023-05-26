@@ -67,13 +67,6 @@ export async function go() {
       throw e;
     }
 
-    if (!ordinalUtxo) {
-      throw new Error("The ordinal has not been sent to the PKP address");
-    }
-    if (!cardinalUtxo) {
-      throw new Error("The cardinal has not been sent to the PKP address");
-    }
-
     // Seller Withdraw
     if (winningTransfer) {
       const unsignedTransaction = mapTransferToTransaction(
@@ -97,6 +90,12 @@ export async function go() {
 
     // Cancel listing
     if (Lit.Auth.authSigAddress === ethPayoutAddress && isCancel) {
+      if (!ordinalUtxo) {
+        throw new Error("The ordinal has not been sent to the PKP address");
+      }
+      if (!cardinalUtxo) {
+        throw new Error("The cardinal has not been sent to the PKP address");
+      }
       const { hashForInput0, hashForInput1, transaction } =
         btcTransactionService.prepareInscriptionTransaction({
           ordinalUtxo,
@@ -146,6 +145,12 @@ export async function go() {
 
     // Buyer Withdraw
     if (Lit.Auth.authSigAddress === winningTransfer.from && btcPayoutAddress) {
+      if (!ordinalUtxo) {
+        throw new Error("The ordinal has not been sent to the PKP address");
+      }
+      if (!cardinalUtxo) {
+        throw new Error("The cardinal has not been sent to the PKP address");
+      }
       const { hashForInput0, hashForInput1, transaction } =
         btcTransactionService.prepareInscriptionTransaction({
           ordinalUtxo,
