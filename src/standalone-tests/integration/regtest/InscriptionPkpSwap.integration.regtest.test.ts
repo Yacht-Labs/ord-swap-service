@@ -17,17 +17,25 @@ const sellerEthWallet = new ethers.Wallet(
 
 describe("InscriptionPkpSwap Integration", () => {
   const litService = new LitService();
-  let pkp: any;
+  // let pkp: any;
+  const pkp = {
+    tokenId:
+      "9584624190520229793684518815665461083423772642060812468802145859465862214156",
+    publicKey:
+      "0x04bfa10c90fc1592686e0e0b85bcf991f9462c86b60c8546885d3070f60a8e62fbbe1fd712e69d216492d8aec298de3c25c33cdc49a55cdf4cb68ae7b90d01e204",
+    address: "0x14698cbc9dD499Ab659106Ff23B5106f9bA09D85",
+  };
 
-  beforeAll(async () => {
-    try {
-      pkp = await litService.mintPkp();
-    } catch (err) {
-      console.log("error minting pkp", err);
-    }
-  }, 15000);
+  // beforeAll(async () => {
+  //   try {
+  //     pkp = await litService.mintPkp();
+  //     console.log({ pkp });
+  //   } catch (err) {
+  //     console.log("error minting pkp", err);
+  //   }
+  // }, 15000);
 
-  it("should get no signatures when running the lit action on empty pkp", async () => {
+  it("should get no signatures when running the lit action on empty kp", async () => {
     const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
       ethPrice: ethPrice,
       ethPayoutAddress: sellerEthWallet.address,
@@ -35,7 +43,8 @@ describe("InscriptionPkpSwap Integration", () => {
     });
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
-      code: litActionCode,
+      // code: litActionCode,
+      ipfsCID: "QmTx3g3AN89mcMJ5JD1bGRbLR9Zmrzo3BV1FSn8aarkZsw",
       authSig: await litService.generateAuthSig(),
       pkpEthAddress: ethers.utils.computeAddress(pkp.publicKey),
       pkpBtcAddress: litService.generateBtcAddress(pkp.publicKey),

@@ -2,6 +2,8 @@
 const path = require("path");
 const webpack = require("webpack");
 const { LIT_SWAP_FILE_NAME } = require("./src/constants");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
   mode: "production",
@@ -21,6 +23,8 @@ module.exports = {
       buffer: require.resolve("buffer"),
       events: require.resolve("events"),
       util: require.resolve("util"),
+      url: require.resolve("url"),
+      assert: require.resolve("assert"),
     },
   },
   module: {
@@ -36,5 +40,8 @@ module.exports = {
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
     }),
+
+    new BundleAnalyzerPlugin(),
+    // ...
   ],
 };

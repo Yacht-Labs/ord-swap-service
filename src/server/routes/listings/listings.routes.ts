@@ -5,7 +5,7 @@ import { LitService } from "../../../services/lit/LitService";
 import prisma from "../../../db/prisma";
 import { ListingService } from "../../../services/listings/ListingService";
 import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
-import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoApi";
+import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoAPI";
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
 import { ListingController } from "../../controllers/listings/ListingController";
 import { LitError } from "../../../types/errors";
@@ -87,10 +87,11 @@ router.post("/buyer/withdraw", async (req, res, next) => {
         signatures.hashForInput1,
         listing.pkpPublicKey
       );
-      const txId = await btcTxManager.broadcastTransaction(
-        signedTransactionHex
-      );
-      return res.status(200).json({ txId });
+      console.log("TODO: REPLACE ME WITH BROADCASTER");
+      // const txId = await btcTxManager.broadcastTransaction(
+      //   signedTransactionHex
+      // );
+      // return res.status(200).json({ txId });
     }
   } catch (err) {
     next(err);
