@@ -75,7 +75,7 @@ export async function go() {
         parseInt(chainId)
       );
       await Lit.Actions.signEcdsa({
-        toSign: new Uint8Array([32]),
+        toSign: hashTransaction(unsignedTransaction),
         publicKey: pkpPublicKey,
         sigName: "ethWinnerSignature",
       });
