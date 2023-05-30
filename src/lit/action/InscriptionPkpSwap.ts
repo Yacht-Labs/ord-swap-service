@@ -1,8 +1,6 @@
-import { InscriptionService } from "../../services/inscription/InscriptionService";
 if (process.env.NODE_ENV === "test") {
   require("../../../development");
 }
-import { BtcTransactionService } from "../../services/bitcoin/BtcTransactionService";
 import {
   mapTransferToTransaction,
   hashTransaction,
@@ -32,9 +30,8 @@ const chainId =
 // pkpBtcAddress
 // pkpEthAddress
 // pkpPublicKey
-// btcPayoutAddress
+// btcDestinationAddress
 // isCancel
-// btcCancelAddress
 
 const API_ENDPOINT =
   "https://790b-2600-1700-280-2910-412f-782c-af0a-4e97.ngrok-free.app/swapdata";
@@ -42,14 +39,16 @@ const API_ENDPOINT =
 export async function go() {
   let response: Record<any, any> = {};
   try {
-    const btcTransactionService = new BtcTransactionService();
     let ordinalUtxo;
     let cardinalUtxo;
     let winningTransfer;
     let losingTransfers;
     let maxPriorityFeePerGas: string;
     let maxFeePerGas: string;
-    const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}&inscriptionId=${inscriptionId}&pkpEthAddress=${pkpEthAddress}&ethPrice=${ethPrice}`;
+    let hashForInput0: string;
+    let hashForInput1: string;
+    let transaction: string;
+    const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}&inscriptionId=${inscriptionId}&pkpEthAddress=${pkpEthAddress}&ethPrice=${ethPrice}&btcDestinationAddress=${btcDestinationAddress}`;
     const apiResponse = await fetch(url);
     if (apiResponse.ok) {
       const data = await apiResponse.json();
@@ -59,6 +58,9 @@ export async function go() {
       losingTransfers = data.results.losingTransfers;
       maxPriorityFeePerGas = data.results.maxPriorityFeePerGas;
       maxFeePerGas = data.results.maxFeePerGas;
+      hashForInput0 = data.results.hashForInput0;
+      hashForInput1 = data.results.hashForInput1;
+      transaction = data.results.transaction;
     } else {
       throw new Error(
         `Swap data API call returned not ok: ${apiResponse.status}: ${apiResponse.statusText}`
@@ -92,25 +94,19 @@ export async function go() {
       if (!cardinalUtxo) {
         throw new Error("The cardinal has not been sent to the PKP address");
       }
-      const { hashForInput0, hashForInput1, transaction } =
-        btcTransactionService.prepareInscriptionTransaction({
-          ordinalUtxo,
-          cardinalUtxo,
-          destinationAddress: btcCancelAddress,
-        });
       await Lit.Actions.signEcdsa({
-        toSign: hashForInput0,
+        toSign: Buffer.from(hashForInput0, "hex"),
         publicKey: pkpPublicKey,
         sigName: "cancelHashForInput0",
       });
       await Lit.Actions.signEcdsa({
-        toSign: hashForInput1,
+        toSign: Buffer.from(hashForInput1, "hex"),
         publicKey: pkpPublicKey,
         sigName: "cancelHashForInput1",
       });
       response = {
         ...response,
-        btcTransaction: transaction.toHex(),
+        btcTransaction: transaction,
       };
     }
     // Loser Refund
@@ -146,25 +142,19 @@ export async function go() {
       if (!cardinalUtxo) {
         throw new Error("The cardinal has not been sent to the PKP address");
       }
-      const { hashForInput0, hashForInput1, transaction } =
-        btcTransactionService.prepareInscriptionTransaction({
-          ordinalUtxo,
-          cardinalUtxo,
-          destinationAddress: btcPayoutAddress,
-        });
       await Lit.Actions.signEcdsa({
-        toSign: hashForInput0,
+        toSign: Buffer.from(hashForInput0, "hex"),
         publicKey: pkpPublicKey,
         sigName: "hashForInput0",
       });
       await Lit.Actions.signEcdsa({
-        toSign: hashForInput1,
+        toSign: Buffer.from(hashForInput1, "hex"),
         publicKey: pkpPublicKey,
         sigName: "hashForInput1",
       });
       response = {
         ...response,
-        btcTransaction: transaction.toHex(),
+        btcTransaction: transaction,
       };
     }
     Lit.Actions.setResponse({

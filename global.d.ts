@@ -6,9 +6,8 @@ declare global {
   const pkpBtcAddress: string;
   const pkpEthAddress: string;
   const pkpPublicKey: string;
-  const btcPayoutAddress: string;
+  const btcDestinationAddress: string;
   const isCancel: boolean;
-  const btcCancelAddress: string;
 
   interface Action {
     setResponse: (options: { response: any }) => void;

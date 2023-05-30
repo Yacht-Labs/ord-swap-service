@@ -470,6 +470,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: btcDestinationAddress
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Swap data retrieved successfully
@@ -582,6 +587,12 @@ components:
         maxPriorityFeePerGas:
           type: string
         maxFeePerGas:
+          type: string
+        hashForInput0:
+          type: string
+        hashForInput1:
+          type: string
+        transaction:
           type: string
 
     Utxo:

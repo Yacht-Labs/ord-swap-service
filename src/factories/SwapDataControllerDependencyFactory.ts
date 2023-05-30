@@ -5,11 +5,13 @@ import { InscriptionService } from "../services/inscription/InscriptionService";
 import { AlchemyEthTransactionAPI } from "../api/ethereum/AlchemyEthTransactionApi";
 import { EthereumService } from "../services/ethereum/EthereumService";
 import { EthereumAPI } from "../api/ethereum/EthTransactionApi";
+import { BtcTransactionService } from "../services/bitcoin/BtcTransactionService";
 
 interface SwapDataControllerDependencies {
   inscriptionService: InscriptionService;
   ethAPI: EthereumAPI;
   ethService: EthereumService;
+  btcTxService: BtcTransactionService;
 }
 export class SwapDataControllerDependencyFactory {
   public getDependenciesForEnv(
@@ -23,11 +25,13 @@ export class SwapDataControllerDependencyFactory {
         const inscriptionService = new InscriptionService(listingService);
         const ethAPI = new AlchemyEthTransactionAPI();
         const ethService = new EthereumService(ethAPI);
+        const btcTxService = new BtcTransactionService();
 
         return {
           inscriptionService,
           ethAPI,
           ethService,
+          btcTxService,
         };
     }
     const utxoAPI = new RegtestUtxoAPI();
@@ -36,11 +40,13 @@ export class SwapDataControllerDependencyFactory {
     const inscriptionService = new InscriptionService(listingService);
     const ethAPI = new AlchemyEthTransactionAPI();
     const ethService = new EthereumService(ethAPI);
+    const btcTxService = new BtcTransactionService();
 
     return {
       inscriptionService,
       ethAPI,
       ethService,
+      btcTxService,
     };
   }
 }

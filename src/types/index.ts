@@ -1,5 +1,6 @@
 import { UnsignedTransaction } from "ethers";
 import { Utxo } from "./models";
+import { Transaction } from "bitcoinjs-lib";
 
 export type AuthSignature = {
   sig: string;
@@ -40,6 +41,9 @@ export type LitActionResponse = {
 export type SwapData = {
   ordinalUtxo: Utxo | null;
   cardinalUtxo: Utxo | null;
+  hashForInput0: string;
+  hashForInput1: string;
+  transaction: string;
   winningTransfer: EthTransfer | null;
   losingTransfers: EthTransfer[] | null;
   maxPriorityFeePerGas: string;

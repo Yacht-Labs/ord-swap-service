@@ -4,27 +4,33 @@ import { InscriptionService } from "../../../services/inscription/InscriptionSer
 import { Utxo } from "../../../types/models";
 import { EthTransfer } from "../../../types";
 import { SwapData } from "../../../types";
+import { BtcTransactionService } from "src/services/bitcoin/BtcTransactionService";
+import { Transaction } from "bitcoinjs-lib";
 
 export class SwapDataController {
   private ethAPI: EthereumAPI;
   private ethService: EthereumService;
   private inscriptionManager: InscriptionService;
+  private btcTxService: BtcTransactionService;
 
   constructor(
     inscriptionManager: InscriptionService,
     ethAPI: EthereumAPI,
-    ethService: EthereumService
+    ethService: EthereumService,
+    btcTxService: BtcTransactionService
   ) {
     this.ethAPI = ethAPI;
     this.ethService = ethService;
     this.inscriptionManager = inscriptionManager;
+    this.btcTxService = btcTxService;
   }
 
   async getSwapData(
     pkpBtcAddress: string,
     inscriptionId: string,
     pkpEthAddress: string,
-    ethPrice: string
+    ethPrice: string,
+    btcDestinationAddress: string
   ): Promise<SwapData> {
     let ordinalUtxo: Utxo | null = null;
     let cardinalUtxo: Utxo | null = null;
@@ -32,6 +38,9 @@ export class SwapDataController {
     let losingTransfers: EthTransfer[] | null = null;
     let maxPriorityFeePerGas = "";
     let maxFeePerGas = "";
+    let hashForInput0: string | null = null;
+    let hashForInput1: string | null = null;
+    let transaction: string | null = null;
     try {
       const inscriptionResponse =
         await this.inscriptionManager.checkInscriptionStatus(
@@ -40,6 +49,15 @@ export class SwapDataController {
         );
       ordinalUtxo = inscriptionResponse.ordinalUtxo;
       cardinalUtxo = inscriptionResponse.cardinalUtxo;
+
+      const inscriptionTx = this.btcTxService.prepareInscriptionTransaction({
+        ordinalUtxo,
+        cardinalUtxo,
+        destinationAddress: btcDestinationAddress,
+      });
+      hashForInput0 = inscriptionTx.hashForInput0.toString("hex");
+      hashForInput1 = inscriptionTx.hashForInput1.toString("hex");
+      transaction = inscriptionTx.transaction.toHex();
 
       // get the winning and losing eth transfers
       const ethResponse = await this.ethService.findWinnersByAddress(
@@ -59,6 +77,9 @@ export class SwapDataController {
     return {
       ordinalUtxo,
       cardinalUtxo,
+      hashForInput0,
+      hashForInput1,
+      transaction,
       winningTransfer,
       losingTransfers,
       maxPriorityFeePerGas,
