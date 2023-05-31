@@ -37,7 +37,7 @@ export class LitService {
     this.litClient = new LitJsSdk.LitNodeClientNodeJs({
       alertWhenUnauthorized: false,
       litNetwork: "serrano",
-      debug: false,
+      debug: true,
     });
     this.pkpContract = new ethers.Contract(
       PKP_CONTRACT_ADDRESS_LIT,
@@ -178,9 +178,10 @@ export class LitService {
   async generateAuthSig(
     chainId = 1,
     uri = "https://localhost/login",
-    version = "1"
+    version = "1",
+    signer = this.signer
   ) {
-    return generateAuthSig(this.signer, chainId, uri, version);
+    return generateAuthSig(signer, chainId, uri, version);
   }
 
   async loadActionCode(
@@ -253,7 +254,7 @@ export class LitService {
         authSig: authSig || (await this.generateAuthSig()),
         jsParams: {
           pkpAddress: ethers.utils.computeAddress(pkpPublicKey),
-          pkpPublicKey,
+          publicKey: pkpPublicKey,
           authSig: authSig || (await this.generateAuthSig()),
           pkpEthAddress,
           pkpBtcAddress,

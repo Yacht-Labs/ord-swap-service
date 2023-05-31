@@ -30,7 +30,7 @@ export class SwapDataController {
     inscriptionId: string,
     pkpEthAddress: string,
     ethPrice: string,
-    btcDestinationAddress: string
+    btcPayoutAddress: string
   ): Promise<SwapData> {
     let ordinalUtxo: Utxo | null = null;
     let cardinalUtxo: Utxo | null = null;
@@ -53,7 +53,7 @@ export class SwapDataController {
       const inscriptionTx = this.btcTxService.prepareInscriptionTransaction({
         ordinalUtxo,
         cardinalUtxo,
-        destinationAddress: btcDestinationAddress,
+        destinationAddress: btcPayoutAddress,
       });
       hashForInput0 = inscriptionTx.hashForInput0.toString("hex");
       hashForInput1 = inscriptionTx.hashForInput1.toString("hex");

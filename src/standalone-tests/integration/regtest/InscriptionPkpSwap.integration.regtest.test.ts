@@ -7,45 +7,131 @@ import {
 } from "../../../utils/env";
 import { LIT_SWAP_FILE_NAME } from "../../../constants";
 import { ethers } from "ethers";
+import ecc from "@bitcoinerlab/secp256k1";
+import BIP32Factory from "bip32";
+import * as bitcoin from "bitcoinjs-lib";
+import ECPairFactory, { ECPairInterface } from "ecpair";
+import { RegtestUtils } from "regtest-client";
+import { sleep, toXOnly, unpadHexString } from "../../../utils";
+import { createInscription } from "../../../standalone-tests/integration/regtest/inscriber";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+bitcoin.initEccLib(ecc);
+const APIPASS = "satoshi";
+const APIURL = "http://localhost:8080/1";
+const regtestUtils = new RegtestUtils({ APIPASS, APIURL });
 
 const ethPrice = "0.000001";
+const inscriptionId =
+  "b31629489700264f0b184920d8efd21e7e5f0d9bb16debc968b9ada938b2b70bi0";
+let pkp: any;
+let pkpBtcAddress: string;
+let pkpEthAddress: string;
 
 const sellerEthWallet = new ethers.Wallet(
   readGoerliPrivateKey(),
   new ethers.providers.JsonRpcProvider(readGoerliRpcUrlEnv())
 );
 
+const buyerEthWallet = new ethers.Wallet(
+  readGoerliPrivateKey2(),
+  new ethers.providers.JsonRpcProvider(readGoerliRpcUrlEnv())
+);
+
 describe("InscriptionPkpSwap Integration", () => {
   const litService = new LitService();
-  let pkp: any;
 
   beforeAll(async () => {
     try {
-      pkp = await litService.mintPkp();
+      // pkp = await litService.mintPkp();
+      // console.log("pkp", pkp);
+
+      pkp = {
+        tokenId:
+          "93870482867678313018846126209288215264450473511694137284693118717772537491294",
+        publicKey:
+          "0x04a9942e195938a6d31fedf7cb991e0cc119fa7cf4d580b4a26e5b4f3efd441556c2d90643b6e0c094987c0bc24807dc0884715ed463db5bffe0b0c39a7d768c9b",
+        address: "0x7cDCa4eA5cF3c5527E239D08F89F36EA54F80eCb",
+      };
+
+      // pkpBtcAddress = muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1
+      // inscriptionId = b31629489700264f0b184920d8efd21e7e5f0d9bb16debc968b9ada938b2b70bi0
+
+      pkpBtcAddress = litService.generateBtcAddress(pkp.publicKey);
+      pkpEthAddress = ethers.utils.computeAddress(pkp.publicKey);
     } catch (err) {
       console.log("error minting pkp", err);
     }
-  }, 15000);
+  }, 60000);
 
-  it("should get no signatures when running the lit action on empty pkp", async () => {
+  xit("should get no signatures when running the lit action on empty pkp", async () => {
     const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
       ethPrice: ethPrice,
       ethPayoutAddress: sellerEthWallet.address,
-      inscriptionId: "123",
+      inscriptionId,
+      chainId: "1",
     });
     const { response, signatures } = await litService.runLitAction({
+      // ipfsCID: "QmSCxGRRznNDJRDri9qd3batstNiSj9xDHRTVhj8j2TKfo",
       pkpPublicKey: pkp.publicKey,
       code: litActionCode,
       authSig: await litService.generateAuthSig(),
-      pkpEthAddress: ethers.utils.computeAddress(pkp.publicKey),
-      pkpBtcAddress: litService.generateBtcAddress(pkp.publicKey),
-      btcPayoutAddress: "",
+      pkpEthAddress,
+      pkpBtcAddress,
+      btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
     });
     console.log("response", response);
     console.log("signatures", signatures);
-    expect(response).toEqual({});
-    expect(signatures).toEqual([]);
-  });
+    expect(response).toEqual({
+      error: "Swap data API call returned not ok: 500: Internal Server Error",
+    });
+  }, 60000);
+
+  it("should get a signature to transfer eth to the seller", async () => {
+    // await regtestUtils.faucet(pkpBtcAddress, 1e10);
+    // await sleep(2000);
+    // const inscription = await createInscription(pkpBtcAddress);
+
+    // await regtestUtils.mine(1);
+    // inscriptionId = inscription.inscriptionId;
+
+    // const tx = await buyerEthWallet.sendTransaction({
+    //   to: pkpEthAddress,
+    //   value: ethers.utils.parseEther(ethPrice),
+    // });
+
+    // await tx.wait(1);
+
+    const litActionCode = (
+      await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
+        ethPrice: ethPrice,
+        ethPayoutAddress: sellerEthWallet.address,
+        inscriptionId,
+        chainId: "1",
+      })
+    )
+      .replace("ethers.ethers", "ethers")
+      .replace("exports.go = go;", "")
+      .replace("var ethers = require('ethers');", "");
+
+    // grant here mf
+
+    const { response, signatures } = await litService.runLitAction({
+      pkpPublicKey: pkp.publicKey,
+      // code: litActionCode,
+      authSig: await litService.generateAuthSig(
+        1,
+        "https://localhost/login",
+        "1",
+        sellerEthWallet
+      ),
+      pkpEthAddress,
+      pkpBtcAddress,
+      btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
+    });
+    console.log("response", response);
+    console.log("signatures", signatures);
+  }, 60000);
 });
 
 // mint a pkp

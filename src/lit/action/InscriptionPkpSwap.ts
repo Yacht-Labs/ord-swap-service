@@ -1,40 +1,46 @@
-if (process.env.NODE_ENV === "test") {
-  require("../../../development");
-}
+// if (process.env.NODE_ENV === "test") {
+//   require("../../../development");
+// }
 import {
   mapTransferToTransaction,
   hashTransaction,
 } from "./test/ordinalSwapAction";
 import { EthTransfer } from "src/types";
 import { InscriptionSwapFixture } from "../../lit/action/test/fixtures";
+import * as bitcoin from "bitcoinjs-lib";
 
 // HARD CODED on Lit Action Creation
-const ethPrice =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.ethPrice
-    : "{{ethPrice}}";
-const inscriptionId =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.inscriptionId
-    : "{{inscriptionId}}";
-const ethPayoutAddress =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.ethPayoutAddress
-    : "{{ethPayoutAddress}}";
-const chainId =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.chainId
-    : "{{chainId}}";
+// const ethPrice =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.ethPrice
+//     : "{{ethPrice}}";
+// const inscriptionId =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.inscriptionId
+//     : "{{inscriptionId}}";
+// const ethPayoutAddress =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.ethPayoutAddress
+//     : "{{ethPayoutAddress}}";
+// const chainId =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.chainId
+//     : "{{chainId}}";
+
+const ethPrice = "{{ethPrice}}";
+const inscriptionId = "{{inscriptionId}}";
+const ethPayoutAddress = "{{ethPayoutAddress}}";
+const chainId = "{{chainId}}";
 
 // Passed in on execution
 // pkpBtcAddress
 // pkpEthAddress
 // pkpPublicKey
-// btcDestinationAddress
+// btcPayoutAddress
 // isCancel
 
 const API_ENDPOINT =
-  "https://790b-2600-1700-280-2910-412f-782c-af0a-4e97.ngrok-free.app/swapdata";
+  "https://05f0-2600-1700-280-2910-f9dc-97f2-1162-2b77.ngrok-free.app/swapdata";
 
 export async function go() {
   let response: Record<any, any> = {};
@@ -48,19 +54,19 @@ export async function go() {
     let hashForInput0: string;
     let hashForInput1: string;
     let transaction: string;
-    const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}&inscriptionId=${inscriptionId}&pkpEthAddress=${pkpEthAddress}&ethPrice=${ethPrice}&btcDestinationAddress=${btcDestinationAddress}`;
+    const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}&inscriptionId=${inscriptionId}&pkpEthAddress=${pkpEthAddress}&ethPrice=${ethPrice}&btcPayoutAddress=${btcPayoutAddress}`;
     const apiResponse = await fetch(url);
     if (apiResponse.ok) {
       const data = await apiResponse.json();
-      ordinalUtxo = data.results.ordinalUtxo;
-      cardinalUtxo = data.results.cardinalUtxo;
-      winningTransfer = data.results.winningTransfer;
-      losingTransfers = data.results.losingTransfers;
-      maxPriorityFeePerGas = data.results.maxPriorityFeePerGas;
-      maxFeePerGas = data.results.maxFeePerGas;
-      hashForInput0 = data.results.hashForInput0;
-      hashForInput1 = data.results.hashForInput1;
-      transaction = data.results.transaction;
+      ordinalUtxo = data.ordinalUtxo;
+      cardinalUtxo = data.cardinalUtxo;
+      winningTransfer = data.winningTransfer;
+      losingTransfers = data.losingTransfers;
+      maxPriorityFeePerGas = data.maxPriorityFeePerGas;
+      maxFeePerGas = data.maxFeePerGas;
+      hashForInput0 = data.hashForInput0;
+      hashForInput1 = data.hashForInput1;
+      transaction = data.transaction;
     } else {
       throw new Error(
         `Swap data API call returned not ok: ${apiResponse.status}: ${apiResponse.statusText}`
@@ -78,7 +84,7 @@ export async function go() {
       );
       await Lit.Actions.signEcdsa({
         toSign: hashTransaction(unsignedTransaction),
-        publicKey: pkpPublicKey,
+        publicKey,
         sigName: "ethWinnerSignature",
       });
       response = {
@@ -96,12 +102,12 @@ export async function go() {
       }
       await Lit.Actions.signEcdsa({
         toSign: Buffer.from(hashForInput0, "hex"),
-        publicKey: pkpPublicKey,
+        publicKey,
         sigName: "cancelHashForInput0",
       });
       await Lit.Actions.signEcdsa({
         toSign: Buffer.from(hashForInput1, "hex"),
-        publicKey: pkpPublicKey,
+        publicKey,
         sigName: "cancelHashForInput1",
       });
       response = {
@@ -124,7 +130,7 @@ export async function go() {
           );
           await Lit.Actions.signEcdsa({
             toSign: hashTransaction(unsignedTransaction),
-            publicKey: pkpPublicKey,
+            publicKey,
             sigName: "ethLoserSignature",
           });
           response = {
@@ -144,12 +150,12 @@ export async function go() {
       }
       await Lit.Actions.signEcdsa({
         toSign: Buffer.from(hashForInput0, "hex"),
-        publicKey: pkpPublicKey,
+        publicKey,
         sigName: "hashForInput0",
       });
       await Lit.Actions.signEcdsa({
         toSign: Buffer.from(hashForInput1, "hex"),
-        publicKey: pkpPublicKey,
+        publicKey,
         sigName: "hashForInput1",
       });
       response = {
@@ -166,7 +172,7 @@ export async function go() {
     });
   }
 }
-
-if (process.env.NODE_ENV !== "test") {
-  go();
-}
+go();
+// if (process.env.NODE_ENV !== "test") {
+//   go();
+// }
