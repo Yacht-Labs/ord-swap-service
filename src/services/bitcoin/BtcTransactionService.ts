@@ -42,6 +42,7 @@ export class BtcTransactionService {
     );
     const outputScript = toYachtOutputScript(destinationAddress);
     transaction.addOutput(outputScript, ordinalUtxo.amount);
+
     // p2tr have 43 bytes size
     // each p2pkh have under 150 bytes size
     // 12 bytes fixed size
@@ -52,6 +53,7 @@ export class BtcTransactionService {
       toYachtOutputScript(ordinalUtxo.address),
       bitcoin.Transaction.SIGHASH_ALL
     );
+
     const hashForInput1 = transaction.hashForSignature(
       1,
       toYachtOutputScript(cardinalUtxo.address),

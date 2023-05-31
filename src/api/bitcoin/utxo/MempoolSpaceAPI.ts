@@ -46,7 +46,7 @@ export class MempoolSpaceAPI extends UtxoAPI {
       vout: mempoolUtxo.vout,
       address: "", // You'll need to provide the address information from a different source
       scriptPubKey: null, // You'll need to provide the scriptPubKey information from a different source
-      amount: mempoolUtxo.value / 1e8, // Assuming the value is in satoshis and you want to convert it to BTC
+      amount: mempoolUtxo.value, // Assuming the value is in satoshis and you want to convert it to BTC
       confirmations: 2,
     };
   }
