@@ -20,6 +20,7 @@ import { PKPNFT, PKPPermissions } from "../../types/typechain-types/contracts";
 import { generateAuthSig } from "../../utils/lit";
 import { LitActionResponse } from "../../types";
 import { LitError } from "../../types/errors";
+import { getBytesFromMultihash } from "../../utils/lit";
 
 export class LitService {
   private litClient: any;
@@ -157,6 +158,47 @@ export class LitService {
       }
     } catch (err) {
       throw new Error(`Error minting PKP: ${err}`);
+    }
+  }
+
+  public async addPermittedAction(tokenId: string, ipfsCID: string) {
+    if (!this.signer) {
+      throw new Error("Lit Service signer not set");
+    }
+    if (!this.signer.provider) {
+      throw new Error("Lit Service provider not set, required to get gas info");
+    }
+    const ipfsBytes = getBytesFromMultihash(ipfsCID);
+    try {
+      const addTx = await this.pkpPermissionsContract.addPermittedAction(
+        tokenId,
+        ipfsBytes,
+        []
+      );
+      const minedAddTx = await addTx.wait();
+    } catch (err) {
+      throw new Error(`Error adding permitted action: ${err}`);
+    }
+  }
+
+  public async isPermittedAction(
+    tokenId: string,
+    ipfsCID: string
+  ): Promise<boolean> {
+    if (!this.signer) {
+      throw new Error("Lit Service signer not set");
+    }
+    if (!this.signer.provider) {
+      throw new Error("Lit Service provider not set, required to get gas info");
+    }
+    try {
+      const permitted = await this.pkpPermissionsContract.isPermittedAction(
+        tokenId,
+        getBytesFromMultihash(ipfsCID)
+      );
+      return permitted;
+    } catch (err) {
+      throw new Error(`Error checking if action is permitted: ${err}`);
     }
   }
 

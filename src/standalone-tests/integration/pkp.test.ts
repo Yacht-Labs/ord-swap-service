@@ -1,3 +1,4 @@
+import { getBytesFromMultihash } from "../../utils/lit";
 import { LitService } from "../../services/lit/LitService";
 
 describe("PKP Tests", () => {
@@ -16,15 +17,27 @@ describe("PKP Tests", () => {
   it("should throw an error if minting fails", async () => {
     litService.pkpContract = {
       mintNext: jest.fn().mockImplementation(() => {
-        throw new Error('mock error');
-      })
+        throw new Error("mock error");
+      }),
     } as any;
 
     try {
       await litService.mintPkp();
     } catch (e) {
       expect(e).toBeInstanceOf(Error);
-      expect(e).toHaveProperty('message', 'Error minting PKP: Error: mock error');
+      expect(e).toHaveProperty(
+        "message",
+        "Error minting PKP: Error: mock error"
+      );
     }
+  }, 60000);
+
+  it("should add permitted action", async () => {
+    const actionCode = "Ad astra per aspera";
+    const ipfsCID = await LitService.getIPFSHash(actionCode);
+    await litService.addPermittedAction(pkp.tokenId, ipfsCID);
+    const permitted = await litService.isPermittedAction(pkp.tokenId, ipfsCID);
+    console.log("permitted", permitted);
+    expect(permitted).toBe(true);
   }, 60000);
 });
