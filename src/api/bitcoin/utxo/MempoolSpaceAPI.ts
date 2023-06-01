@@ -31,6 +31,9 @@ export class MempoolSpaceAPI extends UtxoAPI {
   public getUtxosByAddress = async (address: string, confirmations = 0) => {
     try {
       const addressTxsUtxo = await this.api.getAddressTxsUtxo({ address });
+      // if (!addressTxsUtxo) {
+      //   addressTxsUtxo = await this.api.getAddressTxsMempool({ address });
+      // }
       const utxos = addressTxsUtxo
         .filter((utxo) => utxo.status.confirmed)
         .map((utxo) => this.normalizeUtxoResponse(utxo));
