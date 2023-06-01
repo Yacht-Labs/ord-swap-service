@@ -31,6 +31,9 @@ export class MempoolSpaceAPI extends UtxoAPI {
   public getUtxosByAddress = async (address: string, confirmations = 0) => {
     try {
       const addressTxsUtxo = await this.api.getAddressTxsUtxo({ address });
+      // if (!addressTxsUtxo) {
+      //   addressTxsUtxo = await this.api.getAddressTxsMempool({ address });
+      // }
       const utxos = addressTxsUtxo
         .filter((utxo) => utxo.status.confirmed)
         .map((utxo) => this.normalizeUtxoResponse(utxo));
@@ -46,7 +49,7 @@ export class MempoolSpaceAPI extends UtxoAPI {
       vout: mempoolUtxo.vout,
       address: "", // You'll need to provide the address information from a different source
       scriptPubKey: null, // You'll need to provide the scriptPubKey information from a different source
-      amount: mempoolUtxo.value / 1e8, // Assuming the value is in satoshis and you want to convert it to BTC
+      amount: mempoolUtxo.value, // Assuming the value is in satoshis and you want to convert it to BTC
       confirmations: 2,
     };
   }
