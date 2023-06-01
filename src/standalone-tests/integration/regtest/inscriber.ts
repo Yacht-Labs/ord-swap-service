@@ -6,7 +6,7 @@ import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
 import { RegtestUtils } from "regtest-client";
 import { ECPairFactory } from "ecpair";
-import { BITCOIN_NETWORKS } from "../../../utils/btc.js";
+import { BITCOIN_NETWORKS } from "../../../utils";
 
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);

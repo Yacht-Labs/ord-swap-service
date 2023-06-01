@@ -1,13 +1,35 @@
+if (process.env.NODE_ENV === "test") {
+  require("../../../development");
+}
 import {
   mapTransferToTransaction,
   hashTransaction,
 } from "./test/ordinalSwapAction";
+import { InscriptionSwapFixture } from "./test/fixtures";
 import { EthTransfer } from "src/types";
 
-const ethPrice = "{{ethPrice}}";
-const inscriptionId = "{{inscriptionId}}";
-const ethPayoutAddress = "{{ethPayoutAddress}}";
-const chainId = "{{chainId}}";
+// const ethPrice = "{{ethPrice}}";
+// const inscriptionId = "{{inscriptionId}}";
+// const ethPayoutAddress = "{{ethPayoutAddress}}";
+// const chainId = "{{chainId}}";
+
+// HARD CODED on Lit Action Creation
+const ethPrice =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.ethPrice
+    : "{{ethPrice}}";
+const inscriptionId =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.inscriptionId
+    : "{{inscriptionId}}";
+const ethPayoutAddress =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.ethPayoutAddress
+    : "{{ethPayoutAddress}}";
+const chainId =
+  process.env.NODE_ENV === "test"
+    ? InscriptionSwapFixture.chainId
+    : "{{chainId}}";
 
 // Passed in on execution
 // pkpBtcAddress
@@ -163,4 +185,7 @@ export async function go() {
     });
   }
 }
-go();
+// go();
+if (process.env.NODE_ENV !== "test") {
+  go();
+}
