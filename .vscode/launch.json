@@ -12,7 +12,7 @@
       "sourceMaps": true,
       "protocol": "inspector",
       "env": {
-        "PORT": "3001",
+        "PORT": "3002",
         "NODE_ENV": "dev"
       }
     },

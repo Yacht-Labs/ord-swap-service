@@ -30,7 +30,8 @@ export class HiroInscriptionAPI extends InscriptionAPI {
   constructor() {
     super();
     this.baseURL =
-      process.env.NODE_ENV === "test"
+      // TODO: FIX
+      process.env.NODE_ENV === "test" || process.env.NODE_ENV === "dev"
         ? "http://localhost:3001"
         : "https://api.hiro.so";
   }

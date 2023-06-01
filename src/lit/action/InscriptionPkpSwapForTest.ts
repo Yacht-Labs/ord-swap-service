@@ -1,8 +1,31 @@
+// if (process.env.NODE_ENV === "test") {
+//   require("../../../development");
+// }
 import {
   mapTransferToTransaction,
   hashTransaction,
 } from "./test/ordinalSwapAction";
 import { EthTransfer } from "src/types";
+import { InscriptionSwapFixture } from "../../lit/action/test/fixtures";
+import * as bitcoin from "bitcoinjs-lib";
+
+// HARD CODED on Lit Action Creation
+// const ethPrice =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.ethPrice
+//     : "{{ethPrice}}";
+// const inscriptionId =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.inscriptionId
+//     : "{{inscriptionId}}";
+// const ethPayoutAddress =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.ethPayoutAddress
+//     : "{{ethPayoutAddress}}";
+// const chainId =
+//   process.env.NODE_ENV === "test"
+//     ? InscriptionSwapFixture.chainId
+//     : "{{chainId}}";
 
 const ethPrice = "{{ethPrice}}";
 const inscriptionId = "{{inscriptionId}}";
@@ -164,3 +187,6 @@ export async function go() {
   }
 }
 go();
+// if (process.env.NODE_ENV !== "test") {
+//   go();
+// }

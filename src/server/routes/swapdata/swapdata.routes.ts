@@ -21,14 +21,14 @@ router.get("/", async (req, res, next) => {
       inscriptionId,
       pkpEthAddress,
       ethPrice,
-      btcDestinationAddress,
+      btcPayoutAddress,
     } = req.query as any;
     const swapdata = await swapdataController.getSwapData(
       pkpBtcAddress,
       inscriptionId,
       pkpEthAddress,
       ethPrice,
-      btcDestinationAddress
+      btcPayoutAddress
     );
     console.log("swapdata", swapdata);
     return res.status(200).json(swapdata);

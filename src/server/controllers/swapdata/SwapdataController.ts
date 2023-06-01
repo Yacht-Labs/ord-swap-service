@@ -30,7 +30,7 @@ export class SwapDataController {
     inscriptionId: string,
     pkpEthAddress: string,
     ethPrice: string,
-    btcDestinationAddress: string
+    btcPayoutAddress: string
   ): Promise<SwapData> {
     let ordinalUtxo: Utxo | null = null;
     let cardinalUtxo: Utxo | null = null;
@@ -38,8 +38,8 @@ export class SwapDataController {
     let losingTransfers: EthTransfer[] | null = null;
     let maxPriorityFeePerGas = "";
     let maxFeePerGas = "";
-    let hashForInput0: string | null = null;
-    let hashForInput1: string | null = null;
+    let hashForInput0: Buffer | null = null;
+    let hashForInput1: Buffer | null = null;
     let transaction: string | null = null;
     try {
       const inscriptionResponse =
@@ -53,10 +53,12 @@ export class SwapDataController {
       const inscriptionTx = this.btcTxService.prepareInscriptionTransaction({
         ordinalUtxo,
         cardinalUtxo,
-        destinationAddress: btcDestinationAddress,
+        destinationAddress: btcPayoutAddress,
       });
-      hashForInput0 = inscriptionTx.hashForInput0.toString("hex");
-      hashForInput1 = inscriptionTx.hashForInput1.toString("hex");
+      // hashForInput0 = inscriptionTx.hashForInput0.toString("hex");
+      // hashForInput1 = inscriptionTx.hashForInput1.toString("hex");
+      hashForInput0 = inscriptionTx.hashForInput0;
+      hashForInput1 = inscriptionTx.hashForInput1;
       transaction = inscriptionTx.transaction.toHex();
 
       // get the winning and losing eth transfers

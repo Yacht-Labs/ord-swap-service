@@ -20,6 +20,7 @@ import { PKPNFT, PKPPermissions } from "../../types/typechain-types/contracts";
 import { generateAuthSig } from "../../utils/lit";
 import { LitActionResponse } from "../../types";
 import { LitError } from "../../types/errors";
+import { getBytesFromMultihash } from "../../utils/lit";
 
 export class LitService {
   private litClient: any;
@@ -37,7 +38,7 @@ export class LitService {
     this.litClient = new LitJsSdk.LitNodeClientNodeJs({
       alertWhenUnauthorized: false,
       litNetwork: "serrano",
-      debug: false,
+      debug: true,
     });
     this.pkpContract = new ethers.Contract(
       PKP_CONTRACT_ADDRESS_LIT,
@@ -160,6 +161,47 @@ export class LitService {
     }
   }
 
+  public async addPermittedAction(tokenId: string, ipfsCID: string) {
+    if (!this.signer) {
+      throw new Error("Lit Service signer not set");
+    }
+    if (!this.signer.provider) {
+      throw new Error("Lit Service provider not set, required to get gas info");
+    }
+    const ipfsBytes = getBytesFromMultihash(ipfsCID);
+    try {
+      const addTx = await this.pkpPermissionsContract.addPermittedAction(
+        tokenId,
+        ipfsBytes,
+        []
+      );
+      const minedAddTx = await addTx.wait();
+    } catch (err) {
+      throw new Error(`Error adding permitted action: ${err}`);
+    }
+  }
+
+  public async isPermittedAction(
+    tokenId: string,
+    ipfsCID: string
+  ): Promise<boolean> {
+    if (!this.signer) {
+      throw new Error("Lit Service signer not set");
+    }
+    if (!this.signer.provider) {
+      throw new Error("Lit Service provider not set, required to get gas info");
+    }
+    try {
+      const permitted = await this.pkpPermissionsContract.isPermittedAction(
+        tokenId,
+        getBytesFromMultihash(ipfsCID)
+      );
+      return permitted;
+    } catch (err) {
+      throw new Error(`Error checking if action is permitted: ${err}`);
+    }
+  }
+
   public async getPubKeyByPKPTokenId(tokenId: string): Promise<string> {
     try {
       return await this.pkpContract.getPubkey(tokenId);
@@ -178,9 +220,10 @@ export class LitService {
   async generateAuthSig(
     chainId = 1,
     uri = "https://localhost/login",
-    version = "1"
+    version = "1",
+    signer = this.signer
   ) {
-    return generateAuthSig(this.signer, chainId, uri, version);
+    return generateAuthSig(signer, chainId, uri, version);
   }
 
   async loadActionCode(
@@ -236,6 +279,7 @@ export class LitService {
     pkpEthAddress,
     pkpBtcAddress,
     btcPayoutAddress,
+    isCancel,
   }: {
     pkpPublicKey: string;
     ipfsCID?: string;
@@ -244,6 +288,7 @@ export class LitService {
     pkpEthAddress: string;
     pkpBtcAddress: string;
     btcPayoutAddress?: string;
+    isCancel?: boolean;
   }): Promise<LitActionResponse> {
     try {
       await this.litClient.connect();
@@ -253,11 +298,12 @@ export class LitService {
         authSig: authSig || (await this.generateAuthSig()),
         jsParams: {
           pkpAddress: ethers.utils.computeAddress(pkpPublicKey),
-          pkpPublicKey,
+          publicKey: pkpPublicKey,
           authSig: authSig || (await this.generateAuthSig()),
           pkpEthAddress,
           pkpBtcAddress,
           btcPayoutAddress,
+          isCancel,
         },
       });
       if (response?.error) {

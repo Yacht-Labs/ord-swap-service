@@ -81,6 +81,10 @@ export function readGoerliPrivateKey2(): string {
   return readStringEnv("GOERLI_PRIVATE_KEY_2");
 }
 
+export function readGoerliPrivateKey3(): string {
+  return readStringEnv("GOERLI_PRIVATE_KEY_3");
+}
+
 export function readGoerliRpcUrlEnv(): string {
   return readStringEnv("GOERLI_RPC_URL");
 }

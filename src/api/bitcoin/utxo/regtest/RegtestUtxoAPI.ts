@@ -1,6 +1,6 @@
 import { RegtestUtils } from "regtest-client";
 import { UtxoAPI } from "../UtxoAPI";
-
+import { ApiError } from "../../../../types/errors";
 interface Unspent {
   value: number;
   txId: string;
@@ -17,12 +17,16 @@ export class RegtestUtxoAPI extends UtxoAPI {
   }
 
   getUtxosByAddress = async (address: string, confirmations = 0) => {
-    const regtestUtils = new RegtestUtils({ APIURL: this.baseURL });
-    const utxos = await regtestUtils.unspents(address);
-    return utxos.map((utxo) => ({
-      ...this.normalizeUtxoResponse(utxo),
-      address,
-    }));
+    try {
+      const regtestUtils = new RegtestUtils({ APIURL: this.baseURL });
+      const utxos = await regtestUtils.unspents(address);
+      return utxos.map((utxo) => ({
+        ...this.normalizeUtxoResponse(utxo),
+        address,
+      }));
+    } catch (e) {
+      throw new ApiError((e as Error).message);
+    }
   };
 
   public normalizeUtxoResponse(utxo: Unspent) {
