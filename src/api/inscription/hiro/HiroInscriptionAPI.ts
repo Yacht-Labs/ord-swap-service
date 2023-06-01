@@ -1,5 +1,6 @@
 import { ApiError } from "../../../types/errors";
 import { Inscription } from "../../../types/models";
+import { isDevelopment, isTest } from "../../../utils/env";
 import { InscriptionAPI } from "../InscriptionAPI";
 
 export type HiroInscriptionResponse = {
@@ -30,8 +31,7 @@ export class HiroInscriptionAPI extends InscriptionAPI {
   constructor() {
     super();
     this.baseURL =
-      // TODO: FIX
-      process.env.NODE_ENV === "test" || process.env.NODE_ENV === "dev"
+      isTest() || isDevelopment()
         ? "http://localhost:3001"
         : "https://api.hiro.so";
   }

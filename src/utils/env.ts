@@ -1,3 +1,5 @@
+import { BITCOIN_NETWORKS } from "./btc";
+
 export function checkEnvVar(name: string): boolean {
   const value = process.env[name];
   return value !== undefined;
@@ -90,5 +92,24 @@ export function readGoerliRpcUrlEnv(): string {
 }
 
 export function isDevelopment(): boolean {
-  return readStringEnv("NODE_ENV") === "development";
+  return (
+    readStringEnv("NODE_ENV") === "development" ||
+    readStringEnv("NODE_ENV") === "dev"
+  );
+}
+
+export function isProduction(): boolean {
+  return readStringEnv("NODE_ENV") === "production";
+}
+
+export function isTest(): boolean {
+  return readStringEnv("NODE_ENV") === "test";
+}
+
+export function readBitcoinNetworkEnv(): string {
+  const network = readStringEnv("BTC_NETWORK").toLowerCase();
+  if (!(network.toUpperCase() in BITCOIN_NETWORKS)) {
+    throw new Error(`Invalid bitcoin network: ${network}`);
+  }
+  return network;
 }

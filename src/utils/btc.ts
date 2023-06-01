@@ -85,3 +85,23 @@ export function generateInscriptionId() {
   const n = Math.floor(Math.random() * 10); // a random number between 0 and 9 inclusive
   return `${txId}i${n}`;
 }
+
+export enum BITCOIN_NETWORKS {
+  MAINNET = "mainnet",
+  TESTNET = "testnet",
+  REGTEST = "regtest",
+}
+
+export function getBitcoinLibJsNetwork() {
+  const network = readBtcNetworkEnv();
+  switch (network) {
+    case BITCOIN_NETWORKS.TESTNET:
+      return bitcoin.networks.testnet;
+    case BITCOIN_NETWORKS.REGTEST:
+      return bitcoin.networks.regtest;
+    case BITCOIN_NETWORKS.MAINNET:
+      return bitcoin.networks.bitcoin;
+    default:
+      throw new Error(`Invalid Bitcoin network: ${network}`);
+  }
+}
