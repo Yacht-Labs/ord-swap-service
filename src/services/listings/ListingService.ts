@@ -36,7 +36,7 @@ export class ListingService {
         };
       }
 
-      if (process.env.NODE_ENV === "test") {
+      if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "dev") {
         await regtestUtils.mine(2);
         await sleep(5000);
       }

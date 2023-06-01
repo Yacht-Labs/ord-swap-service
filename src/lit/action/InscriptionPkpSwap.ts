@@ -17,7 +17,7 @@ const chainId = "{{chainId}}";
 // isCancel
 
 const API_ENDPOINT =
-  "https://05f0-2600-1700-280-2910-f9dc-97f2-1162-2b77.ngrok-free.app/swapdata";
+  "https://9c50-2600-1700-280-2910-6040-8448-9815-5a85.ngrok-free.app/swapdata";
 
 export async function go() {
   let response: Record<any, any> = {};
@@ -113,7 +113,7 @@ export async function go() {
             0,
             maxPriorityFeePerGas,
             maxFeePerGas,
-            80001
+            parseInt(chainId)
           );
           await Lit.Actions.signEcdsa({
             toSign: hashTransaction(unsignedTransaction),
