@@ -33,14 +33,6 @@ export function readBooleanEnv(name: string): boolean {
   throw new Error(`Environment variable ${name} is not a boolean`);
 }
 
-export function readBitcoinNetwork() {
-  try {
-    return readStringEnv("BTC_NETWORK");
-  } catch (err) {
-    return "MAINNET";
-  }
-}
-
 export function readEthNetwork() {
   try {
     return readStringEnv("ETH_NETWORK");
@@ -69,10 +61,6 @@ export function readPKPPrivateKey(): string {
 // function to read env var MUMBAI_RPC_URL
 export function readMumbaiRpcUrlEnv(): string {
   return readStringEnv("MUMBAI_RPC_URL");
-}
-
-export function readBtcNetworkEnv(): string {
-  return readStringEnv("BTC_NETWORK");
 }
 
 export function readGoerliPrivateKey(): string {
@@ -110,7 +98,7 @@ export function isLocal(): boolean {
   return isTest() || isDevelopment();
 }
 
-export function readBitcoinNetworkEnv(): string {
+export function readBitcoinNetwork(): string {
   const network = readStringEnv("BTC_NETWORK").toLowerCase();
   if (!(network.toUpperCase() in BITCOIN_NETWORKS)) {
     throw new Error(`Invalid bitcoin network: ${network}`);
