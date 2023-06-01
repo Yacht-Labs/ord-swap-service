@@ -1,5 +1,5 @@
-import { ListingService } from "./../listings/ListingService";
-import { InscriptionService } from "./../inscription/InscriptionService";
+import { ListingService } from "../listings/ListingService";
+import { InscriptionService } from "../inscription/InscriptionService";
 import { BtcTransactionService } from "./BtcTransactionService";
 import { HiroInscriptionAPI } from "../../api/inscription/hiro/HiroInscriptionAPI";
 import { RegtestUtxoAPI } from "../../api/bitcoin/utxo/regtest/RegtestUtxoAPI";

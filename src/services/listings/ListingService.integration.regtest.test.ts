@@ -1,4 +1,4 @@
-import { RegtestUtxoAPI } from "./../../api/bitcoin/utxo/regtest/RegtestUtxoAPI";
+import { RegtestUtxoAPI } from "../../api/bitcoin/utxo/regtest/RegtestUtxoAPI";
 import * as bitcoin from "bitcoinjs-lib";
 import { RegtestUtils } from "regtest-client";
 import { BIP32Factory } from "bip32";

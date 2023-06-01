@@ -26,6 +26,7 @@ let inscriptionId: string;
 let pkpEthAddress: string;
 const ethPrice = ".000001";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const rng = require("randombytes");
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);

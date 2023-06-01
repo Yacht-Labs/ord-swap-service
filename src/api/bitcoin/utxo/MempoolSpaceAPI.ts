@@ -1,6 +1,6 @@
 import { UtxoAPI } from "./UtxoAPI";
 import { BtcBroadcasterApi } from "../broadcaster/BtcBroadcasterApi";
-import { readBtcNetworkEnv } from "../../../utils/env";
+import { readBtcNetwork } from "../../../utils/env";
 import { Utxo } from "../../../types/models";
 import mempoolJS from "@mempool/mempool.js";
 import { AddressInstance } from "@mempool/mempool.js/lib/interfaces/bitcoin/addresses";
@@ -24,7 +24,7 @@ export class MempoolSpaceAPI extends UtxoAPI {
     super();
     const {
       bitcoin: { addresses },
-    } = mempoolJS({ hostname: "mempool.space", network: readBtcNetworkEnv() });
+    } = mempoolJS({ hostname: "mempool.space", network: readBtcNetwork() });
     this.api = addresses;
   }
 

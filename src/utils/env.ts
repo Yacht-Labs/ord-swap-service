@@ -98,7 +98,7 @@ export function isLocal(): boolean {
   return isTest() || isDevelopment();
 }
 
-export function readBitcoinNetwork(): string {
+export function readBtcNetwork(): string {
   const network = readStringEnv("BTC_NETWORK").toLowerCase();
   if (!(network.toUpperCase() in BITCOIN_NETWORKS)) {
     throw new Error(`Invalid bitcoin network: ${network}`);

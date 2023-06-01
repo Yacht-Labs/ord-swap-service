@@ -14,7 +14,7 @@ import {
 import {
   readPKPPrivateKey,
   readLitRpcURL,
-  readBitcoinNetwork,
+  readBtcNetwork,
 } from "../../utils/env";
 import { PKPNFT, PKPPermissions } from "../../types/typechain-types/contracts";
 import { generateAuthSig } from "../../utils/lit";
@@ -31,7 +31,7 @@ export class LitService {
   private btcTestNet: boolean;
 
   constructor() {
-    this.btcTestNet = readBitcoinNetwork() === BITCOIN_NETWORKS.REGTEST;
+    this.btcTestNet = readBtcNetwork() === BITCOIN_NETWORKS.REGTEST;
     this.signer = new ethers.Wallet(
       readPKPPrivateKey(),
       new ethers.providers.JsonRpcProvider(readLitRpcURL())
