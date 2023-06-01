@@ -6,7 +6,7 @@ import {
   hashTransaction,
 } from "./test/ordinalSwapAction";
 import { EthTransfer } from "src/types";
-import { InscriptionSwapFixture } from "../../lit/action/test/fixtures";
+import { InscriptionSwapFixture } from "./test/fixtures";
 import * as bitcoin from "bitcoinjs-lib";
 
 // HARD CODED on Lit Action Creation
