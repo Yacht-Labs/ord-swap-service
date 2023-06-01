@@ -21,6 +21,7 @@ import { generateAuthSig } from "../../utils/lit";
 import { LitActionResponse } from "../../types";
 import { LitError } from "../../types/errors";
 import { getBytesFromMultihash } from "../../utils/lit";
+import { BITCOIN_NETWORKS } from "../../utils";
 
 export class LitService {
   private litClient: any;
@@ -30,7 +31,7 @@ export class LitService {
   private btcTestNet: boolean;
 
   constructor() {
-    this.btcTestNet = readBitcoinNetwork() === "TESTNET";
+    this.btcTestNet = readBitcoinNetwork() === BITCOIN_NETWORKS.REGTEST;
     this.signer = new ethers.Wallet(
       readPKPPrivateKey(),
       new ethers.providers.JsonRpcProvider(readLitRpcURL())

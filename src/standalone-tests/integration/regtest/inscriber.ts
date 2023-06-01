@@ -6,6 +6,7 @@ import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
 import { RegtestUtils } from "regtest-client";
 import { ECPairFactory } from "ecpair";
+import { BITCOIN_NETWORKS } from "../../../utils/btc.js";
 
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
@@ -46,7 +47,10 @@ export async function createInscription(address: string) {
   ];
   const tapleaf = Tap.encodeScript(script);
   const [tpubkey, cblock] = Tap.getPubKey(pubkey, { target: tapleaf });
-  const taprootAddress = Address.p2tr.fromPubKey(tpubkey, "regtest");
+  const taprootAddress = Address.p2tr.fromPubKey(
+    tpubkey,
+    BITCOIN_NETWORKS.REGTEST
+  );
 
   // console.log("here");
   const unspent = await regtestUtils.faucet(taprootAddress, 100_000);

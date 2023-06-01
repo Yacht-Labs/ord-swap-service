@@ -11,6 +11,7 @@ import { RegtestUtils } from "regtest-client";
 import { ECPairFactory } from "ecpair";
 import { MempoolSpaceAPI } from "../../../api/bitcoin/utxo/MempoolSpaceAPI";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
+import { BITCOIN_NETWORKS } from "../../../utils";
 
 const mempoolSpaceAPI = new MempoolSpaceAPI();
 
@@ -46,7 +47,10 @@ const script = [
 ];
 const tapleaf = Tap.encodeScript(script);
 const [tpubkey, cblock] = Tap.getPubKey(pubkey, { target: tapleaf });
-const taprootAddress = Address.p2tr.fromPubKey(tpubkey, "testnet");
+const taprootAddress = Address.p2tr.fromPubKey(
+  tpubkey,
+  BITCOIN_NETWORKS.TESTNET
+);
 
 (async () => {
   const unspents = await mempoolSpaceAPI.getUtxosByAddress(address!);

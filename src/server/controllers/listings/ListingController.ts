@@ -4,7 +4,7 @@ import { BusinessLogicError, NotFoundError } from "../../../types/errors";
 import { ListingWithAccount } from "../../../types/models";
 import { ListingService } from "../../../services/listings/ListingService";
 import { OrdXyzInscriptionAPI } from "../../../api/inscription/OrdXyzInscriptionAPI";
-import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoApi";
+import { BlockchainInfoUtxoApi } from "../../../api/bitcoin/utxo/BlockchainInfoAPI";
 
 export class ListingController {
   listingService: ListingService;

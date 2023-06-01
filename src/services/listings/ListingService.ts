@@ -3,7 +3,7 @@ import { InscriptionAPI } from "../../api/inscription/InscriptionAPI";
 import { UtxoAPI } from "../../api/bitcoin/utxo/UtxoAPI";
 import { Inscription, Utxo } from "../../types/models";
 import { RegtestUtils } from "regtest-client";
-import { sleep } from "../../utils";
+import { BITCOIN_NETWORKS, sleep } from "../../utils";
 import { readBitcoinNetwork } from "../../utils/env";
 type MinimalListing = Pick<Listing, "pkpBtcAddress" | "inscriptionId">;
 
@@ -37,7 +37,7 @@ export class ListingService {
         };
       }
 
-      if (readBitcoinNetwork() === "regtest") {
+      if (readBitcoinNetwork() === BITCOIN_NETWORKS.REGTEST) {
         await regtestUtils.mine(2);
         await sleep(5000);
       }

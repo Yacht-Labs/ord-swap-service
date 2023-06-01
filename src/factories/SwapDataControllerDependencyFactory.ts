@@ -2,10 +2,11 @@ import { RegtestUtxoAPI } from "../api/bitcoin/utxo/regtest/RegtestUtxoAPI";
 import { HiroInscriptionAPI } from "../api/inscription/hiro/HiroInscriptionAPI";
 import { ListingService } from "../services/listings/ListingService";
 import { InscriptionService } from "../services/inscription/InscriptionService";
-import { AlchemyEthTransactionAPI } from "../api/ethereum/AlchemyEthTransactionApi";
+import { AlchemyEthTransactionAPI } from "../api/ethereum/AlchemyEthTransactionAPI";
 import { EthereumService } from "../services/ethereum/EthereumService";
-import { EthereumAPI } from "../api/ethereum/EthTransactionApi";
+import { EthereumAPI } from "../api/ethereum/EthTransactionAPI";
 import { BtcTransactionService } from "../services/bitcoin/BtcTransactionService";
+import { BITCOIN_NETWORKS } from "../utils";
 
 interface SwapDataControllerDependencies {
   inscriptionService: InscriptionService;
@@ -15,10 +16,10 @@ interface SwapDataControllerDependencies {
 }
 export class SwapDataControllerDependencyFactory {
   public getDependenciesForEnv(
-    environment: string
+    environment: BITCOIN_NETWORKS
   ): SwapDataControllerDependencies {
     switch (environment) {
-      case "REGTEST":
+      case BITCOIN_NETWORKS.REGTEST:
         const utxoAPI = new RegtestUtxoAPI();
         const inscriptionAPI = new HiroInscriptionAPI();
         const listingService = new ListingService(inscriptionAPI, utxoAPI);

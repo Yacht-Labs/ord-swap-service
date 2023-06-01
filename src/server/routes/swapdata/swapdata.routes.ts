@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { SwapDataController } from "../../controllers/swapdata/SwapdataController";
 import { SwapDataControllerDependencyFactory } from "../../../factories/SwapDataControllerDependencyFactory";
+import { BITCOIN_NETWORKS } from "../../../utils";
 
 const router = Router();
 
@@ -8,7 +9,7 @@ const router = Router();
 router.get("/", async (req, res, next) => {
   const factory = new SwapDataControllerDependencyFactory();
   const { inscriptionService, ethAPI, ethService, btcTxService } =
-    factory.getDependenciesForEnv("REGTEST");
+    factory.getDependenciesForEnv(BITCOIN_NETWORKS.REGTEST);
   const swapdataController = new SwapDataController(
     inscriptionService,
     ethAPI,
