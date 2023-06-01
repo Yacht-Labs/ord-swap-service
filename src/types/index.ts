@@ -35,14 +35,18 @@ export type LitActionResponse = {
     hashForInput0: SignatureData;
     hashForInput1: SignatureData;
     ethTransactionSignature: SignatureData;
+    ethWinnerSignature: SignatureData | undefined;
+    cancelHashForInput0: SignatureData | undefined;
+    cancelHashForInput1: SignatureData | undefined;
+    ethLoserSignature: SignatureData | undefined;
   };
 };
 
 export type SwapData = {
   ordinalUtxo: Utxo | null;
   cardinalUtxo: Utxo | null;
-  hashForInput0: string;
-  hashForInput1: string;
+  hashForInput0: Buffer | null;
+  hashForInput1: Buffer | null;
   transaction: string;
   winningTransfer: EthTransfer | null;
   losingTransfers: EthTransfer[] | null;
