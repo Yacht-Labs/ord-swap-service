@@ -1,5 +1,5 @@
 import { networks, Network } from "bitcoinjs-lib";
-import { readBtcNetworkEnv } from "./env";
+import { readBtcNetwork } from "./env";
 import * as bitcoin from "bitcoinjs-lib";
 import ecc from "@bitcoinerlab/secp256k1";
 import { ECPairFactory } from "ecpair";
@@ -23,7 +23,7 @@ export function sleep(ms: number) {
 }
 
 export function getBtcNetwork(): Network {
-  const network = readBtcNetworkEnv();
+  const network = readBtcNetwork();
   switch (network) {
     case "testnet":
       return networks.testnet;
@@ -84,7 +84,7 @@ export enum BITCOIN_NETWORKS {
 }
 
 export function getBitcoinLibJsNetwork() {
-  const network = readBtcNetworkEnv();
+  const network = readBtcNetwork();
   switch (network) {
     case BITCOIN_NETWORKS.TESTNET:
       return bitcoin.networks.testnet;
