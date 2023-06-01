@@ -24,6 +24,9 @@ export type SignatureData = {
 };
 
 export type LitResponseBody = {
+  response?: {
+    btcTransaction?: string;
+  };
   btcTransactionHex?: string;
   unsignedEthTransaction?: LitUnsignedEthTransaction;
   error?: string;
@@ -43,13 +46,13 @@ export type LitActionResponse = {
 };
 
 export type SwapData = {
-  ordinalUtxo: Utxo | null;
-  cardinalUtxo: Utxo | null;
-  hashForInput0: Buffer | null;
-  hashForInput1: Buffer | null;
+  ordinalUtxo: Utxo;
+  cardinalUtxo: Utxo;
+  hashForInput0: Uint8Array | string;
+  hashForInput1: Uint8Array | string;
   transaction: string;
   winningTransfer: EthTransfer | null;
-  losingTransfers: EthTransfer[] | null;
+  losingTransfers: EthTransfer[];
   maxPriorityFeePerGas: string;
   maxFeePerGas: string;
 };

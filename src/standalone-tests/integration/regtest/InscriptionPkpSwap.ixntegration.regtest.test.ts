@@ -14,7 +14,7 @@ import * as bitcoin from "bitcoinjs-lib";
 import ECPairFactory, { ECPairInterface } from "ecpair";
 import { RegtestUtils } from "regtest-client";
 import { sleep, toXOnly, unpadHexString } from "../../../utils";
-import { createInscription } from "../../../standalone-tests/integration/regtest/inscriber";
+import { createInscription } from "./inscriber";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 bitcoin.initEccLib(ecc);
@@ -108,6 +108,7 @@ describe("InscriptionPkpSwap Integration", () => {
       pkpEthAddress,
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
+      isUnitTest: false,
     });
     console.log("response", response);
     console.log("signatures", signatures);
@@ -137,6 +138,7 @@ describe("InscriptionPkpSwap Integration", () => {
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
       isCancel: false,
+      isUnitTest: false,
     });
     console.log("response", response);
     console.log("signatures", signatures);
@@ -157,6 +159,7 @@ describe("InscriptionPkpSwap Integration", () => {
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
       isCancel: true,
+      isUnitTest: false,
     });
     console.log("signatures", signatures);
     expect(signatures.cancelHashForInput0).toBeDefined();
@@ -177,6 +180,7 @@ describe("InscriptionPkpSwap Integration", () => {
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
       isCancel: false,
+      isUnitTest: false,
     });
     console.log(buyerEthWallet.address);
     console.log("signatures", signatures);
@@ -205,6 +209,7 @@ describe("InscriptionPkpSwap Integration", () => {
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
       isCancel: false,
+      isUnitTest: false,
     });
     console.log(buyerEthWallet.address);
     console.log("signatures", signatures);

@@ -16,8 +16,10 @@
     "db:seed": "ts-node prisma/seed/seed.ts",
     "db:dropLocal": "ts-node prisma/seed/dropLocalDb.ts",
     "build-contracts": "typechain --target ethers-v5 --out-dir ./src/types/typechain-types/contracts './src/abis/*.json'",
-    "build:litAction": "npx webpack",
-    "rayPreenis": "yarn build:litAction && yarn start:dev"
+    "build:litAction": "npx rollup --config",
+    "rayPreenis": "yarn build:litAction && yarn start:dev",
+    "test-unit": "yarn test '^(?!.*integration).*'",
+    "test-integration": "yarn test 'integration' --runInBand"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",

@@ -44,16 +44,20 @@ export class BtcTransactionService {
     // 12 bytes fixed size
     // total 43*2 + 150*2 + 12 = 400 bytes
     transaction.addOutput(outputScript, cardinalUtxo.amount - 20000);
-    const hashForInput0 = transaction.hashForSignature(
-      0,
-      toOutputScript(ordinalUtxo.address, getBtcNetwork()),
-      bitcoin.Transaction.SIGHASH_ALL
+    const hashForInput0 = new Uint8Array(
+      transaction.hashForSignature(
+        0,
+        toOutputScript(ordinalUtxo.address, getBtcNetwork()),
+        bitcoin.Transaction.SIGHASH_ALL
+      )
     );
 
-    const hashForInput1 = transaction.hashForSignature(
-      1,
-      toOutputScript(cardinalUtxo.address, getBtcNetwork()),
-      bitcoin.Transaction.SIGHASH_ALL
+    const hashForInput1 = new Uint8Array(
+      transaction.hashForSignature(
+        1,
+        toOutputScript(cardinalUtxo.address, getBtcNetwork()),
+        bitcoin.Transaction.SIGHASH_ALL
+      )
     );
     return { hashForInput0, hashForInput1, transaction };
   }

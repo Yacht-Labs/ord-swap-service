@@ -67,8 +67,8 @@ describe("Bitcoin Transaction Service", () => {
         destinationAddress: p2tr,
       });
 
-    const signature0 = keyPair.sign(hashForInput0);
-    const signature1 = keyPair.sign(hashForInput1);
+    const signature0 = keyPair.sign(Buffer.from(hashForInput0));
+    const signature1 = keyPair.sign(Buffer.from(hashForInput1));
 
     const compiledSignature0 = bitcoin.script.compile([
       bitcoin.script.signature.encode(
@@ -114,8 +114,8 @@ describe("Bitcoin Transaction Service", () => {
         destinationAddress: p2tr,
       });
 
-    const signature0 = keyPair.sign(hashForInput0);
-    const signature1 = keyPair.sign(hashForInput1);
+    const signature0 = keyPair.sign(Buffer.from(hashForInput0));
+    const signature1 = keyPair.sign(Buffer.from(hashForInput1));
 
     const txHex = btcTransactionService.buildLitBtcTransaction(
       transaction.toHex(),

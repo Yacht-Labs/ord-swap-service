@@ -1,8 +1,6 @@
 import { networks, Network } from "bitcoinjs-lib";
 import { readBtcNetwork } from "./env";
 import * as bitcoin from "bitcoinjs-lib";
-import ecc from "@bitcoinerlab/secp256k1";
-import { ECPairFactory } from "ecpair";
 
 /* eslint-disable no-param-reassign */
 export function reverseBuffer(buffer: Buffer): Buffer {

@@ -76,6 +76,7 @@ router.post("/buyer/withdraw", async (req, res, next) => {
       pkpEthAddress: ethers.utils.computeAddress(listing.pkpPublicKey),
       pkpBtcAddress: listing.pkpBtcAddress,
       btcPayoutAddress: taprootAddress,
+      isUnitTest: false,
     });
     if (response?.error) {
       throw new LitError(response.error);

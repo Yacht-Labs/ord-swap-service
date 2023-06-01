@@ -1,4 +1,10 @@
-if (process.env.NODE_ENV === "test") {
+// Passed in on execution
+// pkpBtcAddress
+// pkpEthAddress
+// pkpPublicKey
+// btcPayoutAddress
+// isCancel
+if (isUnitTest) {
   require("../../../development");
 }
 import {
@@ -8,38 +14,30 @@ import {
 import { InscriptionSwapFixture } from "./test/fixtures";
 import { EthTransfer } from "src/types";
 
-// const ethPrice = "{{ethPrice}}";
-// const inscriptionId = "{{inscriptionId}}";
-// const ethPayoutAddress = "{{ethPayoutAddress}}";
-// const chainId = "{{chainId}}";
-
-// HARD CODED on Lit Action Creation
-const ethPrice =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.ethPrice
-    : "{{ethPrice}}";
-const inscriptionId =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.inscriptionId
-    : "{{inscriptionId}}";
-const ethPayoutAddress =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.ethPayoutAddress
-    : "{{ethPayoutAddress}}";
-const chainId =
-  process.env.NODE_ENV === "test"
-    ? InscriptionSwapFixture.chainId
-    : "{{chainId}}";
-
-// Passed in on execution
-// pkpBtcAddress
-// pkpEthAddress
-// pkpPublicKey
-// btcPayoutAddress
-// isCancel
+const ethPrice = isUnitTest ? InscriptionSwapFixture.ethPrice : "{{ethPrice}}";
+const inscriptionId = isUnitTest
+  ? InscriptionSwapFixture.inscriptionId
+  : "{{inscriptionId}}";
+const ethPayoutAddress = isUnitTest
+  ? InscriptionSwapFixture.ethPayoutAddress
+  : "{{ethPayoutAddress}}";
+const chainId = isUnitTest ? InscriptionSwapFixture.chainId : "{{chainId}}";
 
 const API_ENDPOINT =
-  "https://9c50-2600-1700-280-2910-6040-8448-9815-5a85.ngrok-free.app/swapdata";
+  "https://758f-2603-7000-9103-8700-d05d-38cd-81ff-6456.ngrok-free.app/swapdata";
+
+function toUint8Array(hexString: string) {
+  if (hexString.length % 2 !== 0) {
+    throw new Error(
+      "Invalid hexadecimal string. Length must be an even number."
+    );
+  }
+  const bytes = new Uint8Array(hexString.length / 2);
+  for (let i = 0; i < hexString.length; i += 2) {
+    bytes[i / 2] = Number.parseInt(hexString.substr(i, 2), 16);
+  }
+  return bytes;
+}
 
 export async function go() {
   let response: Record<any, any> = {};
@@ -50,8 +48,8 @@ export async function go() {
     let losingTransfers;
     let maxPriorityFeePerGas: string;
     let maxFeePerGas: string;
-    let hashForInput0: Buffer;
-    let hashForInput1: Buffer;
+    let hashForInput0: string;
+    let hashForInput1: string;
     let transaction: string;
     const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}&inscriptionId=${inscriptionId}&pkpEthAddress=${pkpEthAddress}&ethPrice=${ethPrice}&btcPayoutAddress=${btcPayoutAddress}`;
     const apiResponse = await fetch(url);
@@ -71,6 +69,10 @@ export async function go() {
         `Swap data API call returned not ok: ${apiResponse.status}: ${apiResponse.statusText}`
       );
     }
+
+    // console.log("hashinput0: ", toUint8Array(hashForInput0));
+    // console.log("hashinput1: ", toUint8Array(hashForInput1));
+
     // Seller Withdraw
     if (
       winningTransfer &&
@@ -108,12 +110,12 @@ export async function go() {
         throw new Error("The cardinal has not been sent to the PKP address");
       }
       await Lit.Actions.signEcdsa({
-        toSign: new Uint8Array(hashForInput0),
+        toSign: toUint8Array(hashForInput0),
         publicKey,
         sigName: "cancelHashForInput0",
       });
       await Lit.Actions.signEcdsa({
-        toSign: new Uint8Array(hashForInput1),
+        toSign: toUint8Array(hashForInput1),
         publicKey,
         sigName: "cancelHashForInput1",
       });
@@ -162,12 +164,12 @@ export async function go() {
         throw new Error("The cardinal has not been sent to the PKP address");
       }
       await Lit.Actions.signEcdsa({
-        toSign: new Uint8Array(hashForInput0),
+        toSign: toUint8Array(hashForInput0),
         publicKey,
         sigName: "hashForInput0",
       });
       await Lit.Actions.signEcdsa({
-        toSign: new Uint8Array(hashForInput1),
+        toSign: toUint8Array(hashForInput1),
         publicKey,
         sigName: "hashForInput1",
       });
@@ -185,7 +187,7 @@ export async function go() {
     });
   }
 }
-// go();
-if (process.env.NODE_ENV !== "test") {
+
+if (!isUnitTest) {
   go();
 }

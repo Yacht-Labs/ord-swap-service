@@ -11,6 +11,8 @@ import * as bitcoin from "bitcoinjs-lib";
 import { RegtestUtils } from "regtest-client";
 import { sleep } from "../../../utils";
 import { createInscription } from "../../../standalone-tests/integration/regtest/inscriber";
+import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
+import { HiroInscriptionAPI } from "../../../api/inscription/hiro/HiroInscriptionAPI";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 bitcoin.initEccLib(ecc);
@@ -63,7 +65,8 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
       )
         .replace(/ethers\.ethers/g, "ethers")
         .replace("exports.go = go;", "")
-        .replace("var ethers = require('ethers');", "");
+        .replace("var ethers = require('ethers');", "")
+        .replace("require('bitcoinjs-lib');", "");
       console.log("litActionCode", litActionCode);
       // grant here mf
       const IPFShash = await LitService.getIPFSHash(litActionCode);
@@ -95,11 +98,26 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
       isCancel: false,
+      isUnitTest: false,
     });
     console.log(buyerEthWallet.address);
     console.log("signatures", signatures);
     console.log("response", response);
     expect(signatures.hashForInput0).toBeDefined();
     expect(signatures.hashForInput1).toBeDefined();
+
+    const txManager = new BtcTransactionService();
+    const tx = txManager.buildLitBtcTransaction(
+      response.response!.btcTransaction!,
+      signatures.hashForInput0,
+      signatures.hashForInput1,
+      pkp.publicKey
+    );
+    const hiroAPI = new HiroInscriptionAPI();
+    await regtestUtils.broadcast(tx);
+    await regtestUtils.mine(1);
+    await sleep(4000);
+    const inscription = await hiroAPI.getInscription(inscriptionId);
+    expect(inscription.address).toEqual(btcPayoutAddress);
   }, 300000);
 });

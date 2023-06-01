@@ -52,7 +52,7 @@
         "${workspaceFolder}/node_modules/**/*.js"
       ],
       "runtimeArgs": ["-r", "ts-node/register"],
-      "args": ["${workspaceFolder}/src/lit/action/PkpBtcSwapEth.ts"],
+      "args": ["${workspaceFolder}/src/lit/action/InscriptionPkpSwap.ts"],
       "outputCapture": "std",
       "sourceMaps": true,
       "smartStep": true,

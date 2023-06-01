@@ -38,8 +38,8 @@ export class SwapDataController {
     let losingTransfers: EthTransfer[] | null = null;
     let maxPriorityFeePerGas = "";
     let maxFeePerGas = "";
-    let hashForInput0: Buffer | null = null;
-    let hashForInput1: Buffer | null = null;
+    let hashForInput0: Uint8Array;
+    let hashForInput1: Uint8Array;
     let transaction: string | null = null;
     try {
       const inscriptionResponse =
@@ -79,8 +79,12 @@ export class SwapDataController {
     return {
       ordinalUtxo,
       cardinalUtxo,
-      hashForInput0,
-      hashForInput1,
+      hashForInput0: Array.from(hashForInput0, (byte) =>
+        ("0" + (byte & 0xff).toString(16)).slice(-2)
+      ).join(""),
+      hashForInput1: Array.from(hashForInput1, (byte) =>
+        ("0" + (byte & 0xff).toString(16)).slice(-2)
+      ).join(""),
       transaction,
       winningTransfer,
       losingTransfers,

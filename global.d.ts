@@ -9,6 +9,7 @@ declare global {
   const publicKey: string;
   const btcPayoutAddress: string;
   const isCancel: boolean;
+  const isUnitTest: boolean;
 
   interface Action {
     setResponse: (options: { response: any }) => void;

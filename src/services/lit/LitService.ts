@@ -281,6 +281,7 @@ export class LitService {
     pkpBtcAddress,
     btcPayoutAddress,
     isCancel,
+    isUnitTest,
   }: {
     pkpPublicKey: string;
     ipfsCID?: string;
@@ -290,6 +291,7 @@ export class LitService {
     pkpBtcAddress: string;
     btcPayoutAddress?: string;
     isCancel?: boolean;
+    isUnitTest: boolean;
   }): Promise<LitActionResponse> {
     try {
       await this.litClient.connect();
@@ -305,6 +307,7 @@ export class LitService {
           pkpBtcAddress,
           btcPayoutAddress,
           isCancel,
+          isUnitTest,
         },
       });
       if (response?.error) {
