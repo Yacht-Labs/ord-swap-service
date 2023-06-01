@@ -10,9 +10,7 @@ import { ECPairFactory } from "ecpair";
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
 
-const APIPASS = process.env.APIPASS || "satoshi";
-const APIURL = process.env.APIURL || "http://localhost:8080/1";
-const regtestUtils = new RegtestUtils({ APIPASS, APIURL });
+const regtestUtils = new RegtestUtils();
 const regtest = bitcoin.networks.regtest;
 
 //TODO get a random secret

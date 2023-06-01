@@ -18,15 +18,6 @@ export function reverseBuffer(buffer: Buffer): Buffer {
   return buffer;
 }
 
-export function toYachtOutputScript(address: string) {
-  return bitcoin.address.toOutputScript(
-    address,
-    process.env.NODE_ENV === "test" || process.env.NODE_ENV === "dev"
-      ? bitcoin.networks.regtest
-      : bitcoin.networks.bitcoin
-  );
-}
-
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

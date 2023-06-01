@@ -1,6 +1,6 @@
 import { ApiError } from "../../../types/errors";
 import { Inscription } from "../../../types/models";
-import { isDevelopment, isTest } from "../../../utils/env";
+import { isLocal } from "../../../utils/env";
 import { InscriptionAPI } from "../InscriptionAPI";
 
 export type HiroInscriptionResponse = {
@@ -30,10 +30,7 @@ export class HiroInscriptionAPI extends InscriptionAPI {
   protected baseURL: string;
   constructor() {
     super();
-    this.baseURL =
-      isTest() || isDevelopment()
-        ? "http://localhost:3001"
-        : "https://api.hiro.so";
+    this.baseURL = isLocal() ? "http://localhost:3001" : "https://api.hiro.so";
   }
 
   public getInscription = async (

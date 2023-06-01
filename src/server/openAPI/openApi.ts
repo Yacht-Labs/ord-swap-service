@@ -1,10 +1,9 @@
 import path from "path";
 import YAML from "yamljs";
 import * as OpenApiValidator from "express-openapi-validator";
+import { isLocal } from "../../utils/env";
 
-const isDevelopment =
-  process.env.NODE_ENV === "dev" || process.env.NODE_ENV === "test";
-const relativePath = isDevelopment
+const relativePath = isLocal()
   ? "./specification.yaml"
   : "../../../../src/server/openAPI/specification.yaml";
 

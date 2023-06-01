@@ -14,11 +14,21 @@ import {
   appErrorHandler,
   unhandledErrorHandler,
 } from "./middleware/errorHandlers";
+import { read } from "fs";
+import { readServerPort } from "../utils/env";
 
 // Load environment variables from .env file
 dotenv.config();
 
-const defaultPort = process.env.PORT || 3001;
+let defaultPort: number;
+try {
+  defaultPort = readServerPort();
+} catch (e) {
+  logger.error(
+    "Invalid server port number in .env file. Using default port 3001"
+  );
+  defaultPort = 3001;
+}
 
 // Initialize express app
 const app = express();

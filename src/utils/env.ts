@@ -53,7 +53,7 @@ export function readAlchemyKey(): string {
   return readStringEnv("ALCHEMY_API_KEY");
 }
 
-export function readPortNumber(): number {
+export function readServerPort(): number {
   return readNumberEnv("PORT");
 }
 
@@ -104,6 +104,10 @@ export function isProduction(): boolean {
 
 export function isTest(): boolean {
   return readStringEnv("NODE_ENV") === "test";
+}
+
+export function isLocal(): boolean {
+  return isTest() || isDevelopment();
 }
 
 export function readBitcoinNetworkEnv(): string {

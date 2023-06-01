@@ -4,6 +4,7 @@ import { UtxoAPI } from "../../api/bitcoin/utxo/UtxoAPI";
 import { Inscription, Utxo } from "../../types/models";
 import { RegtestUtils } from "regtest-client";
 import { sleep } from "../../utils";
+import { readBitcoinNetwork } from "../../utils/env";
 type MinimalListing = Pick<Listing, "pkpBtcAddress" | "inscriptionId">;
 
 const regtestUtils = new RegtestUtils({
@@ -36,7 +37,7 @@ export class ListingService {
         };
       }
 
-      if (process.env.NODE_ENV === "test") {
+      if (readBitcoinNetwork() === "regtest") {
         await regtestUtils.mine(2);
         await sleep(5000);
       }
