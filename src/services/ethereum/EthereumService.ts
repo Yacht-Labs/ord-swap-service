@@ -23,31 +23,39 @@ export class EthereumService {
     transfers: EthTransfer[],
     price: string
   ): { winningTransfer: EthTransfer | null; losingTransfers: EthTransfer[] } {
-    const eligibleTransfers = this.filterEligibleTransfers(transfers, price);
-    let winner: EthTransfer | null = null;
+    try {
+      const eligibleTransfers = this.filterEligibleTransfers(transfers, price);
+      let winner: EthTransfer | null = null;
 
-    for (const transfer of eligibleTransfers) {
-      if (!winner) {
-        winner = transfer;
-        continue;
+      for (const transfer of eligibleTransfers) {
+        if (!winner) {
+          winner = transfer;
+          continue;
+        }
+        if (
+          parseInt(transfer.blockNum, 16) < parseInt(winner.blockNum, 16) ||
+          (transfer.blockNum === winner.blockNum && transfer.from < winner.from)
+        ) {
+          eligibleTransfers.push(winner);
+          winner = transfer;
+        }
       }
-      if (
-        parseInt(transfer.blockNum, 16) < parseInt(winner.blockNum, 16) ||
-        (transfer.blockNum === winner.blockNum && transfer.from < winner.from)
-      ) {
-        eligibleTransfers.push(winner);
-        winner = transfer;
-      }
+
+      const losingTransfers = eligibleTransfers.filter(
+        (transfer) => transfer !== winner
+      );
+
+      return {
+        winningTransfer: winner,
+        losingTransfers,
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        winningTransfer: null,
+        losingTransfers: [],
+      };
     }
-
-    const losingTransfers = eligibleTransfers.filter(
-      (transfer) => transfer !== winner
-    );
-
-    return {
-      winningTransfer: winner,
-      losingTransfers,
-    };
   }
 
   buildEthTransaction() {

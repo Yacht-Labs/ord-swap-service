@@ -21,7 +21,7 @@ export type SignatureData = {
   r: string;
   s: string;
   v?: number;
-  signature: string;
+  signature?: string;
 };
 
 export type LitResponseBody = {
@@ -40,8 +40,8 @@ export type LitActionResponse = {
     hashForInput1: SignatureData;
     ethTransactionSignature: SignatureData;
     ethWinnerSignature: SignatureData | undefined;
-    cancelHashForInput0: SignatureData | undefined;
-    cancelHashForInput1: SignatureData | undefined;
+    cancelHashForInput0?: SignatureData;
+    cancelHashForInput1?: SignatureData;
     ethLoserSignature: SignatureData | undefined;
   };
 };

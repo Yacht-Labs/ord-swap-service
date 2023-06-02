@@ -8,11 +8,16 @@ module.exports = {
     file: "src/lit/action/javascript/PKP_ORDINAL_SWAP.bundle.js", // Output bundle location
     format: "cjs", // Format of the output bundle (cjs = CommonJS, also: es, iife, etc.)
   },
+  cache: false,
+  external: ["ethers"],
   plugins: [
     //nodeResolve({ preferBuiltins: true }),
     commonjs(),
     typescript({
-      tsconfigOverride: { compilerOptions: { module: "ESNext" } },
+      tsconfigOverride: {
+        compilerOptions: { module: "ESNext" },
+        exclude: ["**/__tests__", "**/*.test.ts", "src/utils/btc.ts"],
+      },
     }),
   ],
 };

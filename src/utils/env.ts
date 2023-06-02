@@ -34,11 +34,7 @@ export function readBooleanEnv(name: string): boolean {
 }
 
 export function readEthNetwork() {
-  try {
-    return readStringEnv("ETH_NETWORK");
-  } catch (err) {
-    return "MAINNET";
-  }
+  return readStringEnv("ETH_NETWORK");
 }
 
 export function readAlchemyKey(): string {

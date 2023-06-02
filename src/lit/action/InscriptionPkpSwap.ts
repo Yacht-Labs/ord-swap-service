@@ -23,8 +23,7 @@ const ethPayoutAddress = isUnitTest
   : "{{ethPayoutAddress}}";
 const chainId = isUnitTest ? InscriptionSwapFixture.chainId : "{{chainId}}";
 
-// const API_ENDPOINT =
-//   "https://ead8-2600-1700-280-2910-adf6-1f52-bf02-213e.ngrok-free.app/swapdata";
+console.log({ chainId });
 
 function toUint8Array(hexString: string) {
   if (hexString.length % 2 !== 0) {
@@ -85,7 +84,8 @@ export async function go() {
         0,
         maxPriorityFeePerGas,
         maxFeePerGas,
-        parseInt(chainId)
+        parseInt(chainId),
+        pkpEthAddress
       );
       await Lit.Actions.signEcdsa({
         toSign: hashTransaction(unsignedTransaction),
@@ -101,7 +101,8 @@ export async function go() {
     if (
       Lit.Auth.authSigAddress.toLowerCase() ===
         ethPayoutAddress.toLowerCase() &&
-      isCancel
+      isCancel &&
+      !winningTransfer
     ) {
       if (!ordinalUtxo) {
         throw new Error("The ordinal has not been sent to the PKP address");
@@ -137,7 +138,8 @@ export async function go() {
             0,
             maxPriorityFeePerGas,
             maxFeePerGas,
-            parseInt(chainId)
+            parseInt(chainId),
+            pkpEthAddress
           );
           await Lit.Actions.signEcdsa({
             toSign: hashTransaction(unsignedTransaction),

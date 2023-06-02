@@ -7,7 +7,7 @@
 // buyer btcAddress
 // Run it with an authsig
 
-import { BigNumber, UnsignedTransaction, ethers } from "ethers";
+import { UnsignedTransaction, ethers } from "ethers";
 import { readEthNetwork } from "../../../utils/env";
 import { ETH_GOERLI } from "../../../constants";
 import { EthTransfer } from "../../../types";
@@ -226,13 +226,14 @@ export function mapTransferToTransaction(
   nonce: number,
   maxPriorityFeePerGas: string,
   maxFeePerGas: string,
-  chainId: number
+  chainId: number,
+  from: string
 ) {
-  const { from, value } = transfer;
+  const { value } = transfer;
   const unsignedTransaction = createUnsignedTransaction(
     from,
     to,
-    ethers.BigNumber.from(value),
+    ethers.BigNumber.from(value).div(2),
     nonce,
     maxPriorityFeePerGas,
     maxFeePerGas,

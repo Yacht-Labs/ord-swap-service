@@ -2,23 +2,37 @@ import { LitService } from "../../../services/lit/LitService";
 import ecc from "@bitcoinerlab/secp256k1";
 import * as bitcoin from "bitcoinjs-lib";
 import { RegtestUtils } from "regtest-client";
-import { generateRandomBtcAddress, sleep } from "../../../utils";
+import { getBtcNetwork, sleep } from "../../../utils";
 import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionService";
 import { HiroInscriptionAPI } from "../../../api/inscription/hiro/HiroInscriptionAPI";
 import request from "supertest";
 import { startServer } from "../../../server/server";
 import { sellerEthWallet, buyerEthWallet } from "../../../utils";
 import { setUpPkpIntegrationTest } from "../../../utils/lit";
-import { ethers, Signature } from "ethers";
+import { ethers } from "ethers";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { serialize, UnsignedTransaction } from "@ethersproject/transactions";
 import { readGoerliRpcUrlEnv } from "../../../utils/env";
+
+import ECPairFactory, { ECPairInterface } from "ecpair";
+
+bitcoin.initEccLib(ecc);
+const ECPair = ECPairFactory(ecc);
+
+export function generateRandomBtcAddress() {
+  const keyPair = ECPair.makeRandom({ network: getBtcNetwork() });
+  const { address } = bitcoin.payments.p2pkh({
+    pubkey: keyPair.publicKey,
+    network: getBtcNetwork(),
+  });
+  return address;
+}
 
 let server: any;
 bitcoin.initEccLib(ecc);
 const regtestUtils = new RegtestUtils();
 const btcPayoutAddress = generateRandomBtcAddress();
-const ethPrice = "0.000001";
+const ethPrice = "0.0000001";
 let inscriptionId: string;
 let pkp: any;
 let pkpBtcAddress: string;
@@ -46,7 +60,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
     await server.close();
   });
 
-  xit("should get a signature to send the ordinal to the buyer", async () => {
+  it("should get a signature to send the ordinal to the buyer", async () => {
     const res = await request(server).get(`/swapdata`).query({
       pkpBtcAddress,
       inscriptionId,
@@ -162,67 +176,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
     );
     const tx = await provider.sendTransaction(signedTx);
     const receipt = await tx.wait(1);
-    console.log("eth transaction: ", receipt.transactionHash);
+    expect(receipt.from).toEqual(pkpEthAddress);
+    expect(receipt.to).toEqual(sellerEthWallet.address);
   }, 3000000);
-
-  xit("should get a signature to send the ordinal to the seller on cancel", async () => {
-    const res = await request(server).get(`/swapdata`).query({
-      pkpBtcAddress,
-      inscriptionId,
-      pkpEthAddress,
-      ethPrice,
-      btcPayoutAddress,
-    });
-    const {
-      cardinalUtxo,
-      ordinalUtxo,
-      hashForInput0,
-      hashForInput1,
-      transaction,
-      winningTransfer,
-      losingTransfers,
-      maxPriorityFeePerGas,
-      maxFeePerGas,
-    } = res.body;
-    const { response, signatures } = await litService.runLitAction({
-      pkpPublicKey: pkp.publicKey,
-      code: litActionCode,
-      authSig: await litService.generateAuthSig(
-        1,
-        "https://localhost/login",
-        "1",
-        sellerEthWallet
-      ),
-      pkpEthAddress,
-      pkpBtcAddress,
-      btcPayoutAddress,
-      isCancel: true,
-      isUnitTest: false,
-      cardinalUtxo,
-      ordinalUtxo,
-      hashForInput0,
-      hashForInput1,
-      transaction,
-      winningTransfer,
-      losingTransfers,
-      maxPriorityFeePerGas,
-      maxFeePerGas,
-    });
-    expect(signatures.hashForInput0).toBeDefined();
-    expect(signatures.hashForInput1).toBeDefined();
-
-    const txManager = new BtcTransactionService();
-    const tx = txManager.buildLitBtcTransaction(
-      response.response!.btcTransaction!,
-      signatures.hashForInput0,
-      signatures.hashForInput1,
-      pkp.publicKey
-    );
-    const hiroAPI = new HiroInscriptionAPI();
-    await regtestUtils.broadcast(tx);
-    await regtestUtils.mine(1);
-    await sleep(4000);
-    const inscription = await hiroAPI.getInscription(inscriptionId);
-    expect(inscription.address).toEqual(btcPayoutAddress);
-  }, 300000);
 });

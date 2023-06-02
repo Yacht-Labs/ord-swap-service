@@ -1,11 +1,11 @@
 import { networks, Network } from "bitcoinjs-lib";
 import { readBtcNetwork } from "./env";
 import * as bitcoin from "bitcoinjs-lib";
-import ecc from "@bitcoinerlab/secp256k1";
-import ECPairFactory, { ECPairInterface } from "ecpair";
+// import ecc from "@bitcoinerlab/secp256k1";
+// import ECPairFactory, { ECPairInterface } from "ecpair";
 
-bitcoin.initEccLib(ecc);
-const ECPair = ECPairFactory(ecc);
+// bitcoin.initEccLib(ecc);
+// const ECPair = ECPairFactory(ecc);
 
 /* eslint-disable no-param-reassign */
 export function reverseBuffer(buffer: Buffer): Buffer {
@@ -26,12 +26,13 @@ export function sleep(ms: number) {
 }
 
 export function generateRandomBtcAddress() {
-  const keyPair = ECPair.makeRandom({ network: getBtcNetwork() });
-  const { address } = bitcoin.payments.p2pkh({
-    pubkey: keyPair.publicKey,
-    network: getBtcNetwork(),
-  });
-  return address;
+  //   const keyPair = ECPair.makeRandom({ network: getBtcNetwork() });
+  //   const { address } = bitcoin.payments.p2pkh({
+  //     pubkey: keyPair.publicKey,
+  //     network: getBtcNetwork(),
+  //   });
+  //   return address;
+  return "";
 }
 
 export function getBtcNetwork(): Network {
@@ -95,16 +96,16 @@ export enum BITCOIN_NETWORKS {
   REGTEST = "regtest",
 }
 
-export function getBitcoinLibJsNetwork() {
-  const network = readBtcNetwork();
-  switch (network) {
-    case BITCOIN_NETWORKS.TESTNET:
-      return bitcoin.networks.testnet;
-    case BITCOIN_NETWORKS.REGTEST:
-      return bitcoin.networks.regtest;
-    case BITCOIN_NETWORKS.MAINNET:
-      return bitcoin.networks.bitcoin;
-    default:
-      throw new Error(`Invalid Bitcoin network: ${network}`);
-  }
-}
+// export function getBitcoinLibJsNetwork() {
+//   const network = readBtcNetwork();
+//   switch (network) {
+//     case BITCOIN_NETWORKS.TESTNET:
+//       return bitcoin.networks.testnet;
+//     case BITCOIN_NETWORKS.REGTEST:
+//       return bitcoin.networks.regtest;
+//     case BITCOIN_NETWORKS.MAINNET:
+//       return bitcoin.networks.bitcoin;
+//     default:
+//       throw new Error(`Invalid Bitcoin network: ${network}`);
+//   }
+// }
