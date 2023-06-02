@@ -26,7 +26,7 @@ try {
   defaultPort = readServerPort();
 } catch (e) {
   logger.error(
-    "Invalid server port number in .env file. Using default port 3001"
+    "Invalid server port number in .env file. Using default port 3001 or another provided port in tests"
   );
   defaultPort = 3001;
 }

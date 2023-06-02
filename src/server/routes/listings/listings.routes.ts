@@ -11,6 +11,9 @@ import { ListingController } from "../../controllers/listings/ListingController"
 import { LitError } from "../../../types/errors";
 import { LIT_SWAP_FILE_NAME } from "../../../constants";
 import { AccountController } from "../../controllers/accounts/AccountController";
+import { SwapDataController } from "../../controllers/swapdata/SwapdataController";
+import { SwapDataControllerDependencyFactory } from "../../../factories/SwapDataControllerDependencyFactory";
+import { BITCOIN_NETWORKS } from "../../../utils";
 
 const router = Router();
 const listingService = new ListingService(
@@ -62,6 +65,15 @@ router.post("/buyer/withdraw", async (req, res, next) => {
   const listingController = new ListingController();
   const litService = new LitService();
   const btcTxManager = new BtcTransactionService();
+  const factory = new SwapDataControllerDependencyFactory();
+  const { inscriptionService, ethAPI, ethService, btcTxService } =
+    factory.getDependenciesForEnv(BITCOIN_NETWORKS.REGTEST);
+  const swapdataController = new SwapDataController(
+    inscriptionService,
+    ethAPI,
+    ethService,
+    btcTxService
+  );
   try {
     const listing = await listingController.getListingById(listingId as string);
     const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
@@ -69,6 +81,13 @@ router.post("/buyer/withdraw", async (req, res, next) => {
       ethPayoutAddress: listing.account.ethAddress,
       inscriptionId: listing.inscriptionId,
     });
+    const swapData = await swapdataController.getSwapData(
+      listing.pkpBtcAddress,
+      listing.inscriptionId,
+      ethers.utils.computeAddress(listing.pkpPublicKey),
+      listing.ethPrice,
+      taprootAddress
+    );
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: listing.pkpPublicKey,
       code: litActionCode,
@@ -77,6 +96,15 @@ router.post("/buyer/withdraw", async (req, res, next) => {
       pkpBtcAddress: listing.pkpBtcAddress,
       btcPayoutAddress: taprootAddress,
       isUnitTest: false,
+      ordinalUtxo: swapData.ordinalUtxo,
+      cardinalUtxo: swapData.cardinalUtxo,
+      hashForInput0: swapData.hashForInput0,
+      hashForInput1: swapData.hashForInput1,
+      transaction: swapData.transaction,
+      winningTransfer: swapData.winningTransfer,
+      losingTransfers: swapData.losingTransfers,
+      maxPriorityFeePerGas: swapData.maxPriorityFeePerGas,
+      maxFeePerGas: swapData.maxFeePerGas,
     });
     if (response?.error) {
       throw new LitError(response.error);

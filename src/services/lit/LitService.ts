@@ -18,10 +18,11 @@ import {
 } from "../../utils/env";
 import { PKPNFT, PKPPermissions } from "../../types/typechain-types/contracts";
 import { generateAuthSig } from "../../utils/lit";
-import { LitActionResponse } from "../../types";
+import { EthTransfer, LitActionResponse } from "../../types";
 import { LitError } from "../../types/errors";
 import { getBytesFromMultihash } from "../../utils/lit";
 import { BITCOIN_NETWORKS } from "../../utils";
+import { Utxo } from "../../types/models";
 
 export class LitService {
   private litClient: any;
@@ -251,7 +252,11 @@ export class LitService {
       });
     });
 
-    return this.replaceCodeVariables(code, variables);
+    return this.replaceCodeVariables(code, variables)
+      .replace(/ethers\.ethers/g, "ethers")
+      .replace("exports.go = go;", "")
+      .replace("var ethers = require('ethers');", "")
+      .replace("require('bitcoinjs-lib');", "");
   }
 
   /* 
@@ -282,6 +287,15 @@ export class LitService {
     btcPayoutAddress,
     isCancel,
     isUnitTest,
+    ordinalUtxo,
+    cardinalUtxo,
+    hashForInput0,
+    hashForInput1,
+    transaction,
+    winningTransfer,
+    losingTransfers,
+    maxPriorityFeePerGas,
+    maxFeePerGas,
   }: {
     pkpPublicKey: string;
     ipfsCID?: string;
@@ -292,6 +306,15 @@ export class LitService {
     btcPayoutAddress?: string;
     isCancel?: boolean;
     isUnitTest: boolean;
+    ordinalUtxo?: Utxo;
+    cardinalUtxo?: Utxo;
+    hashForInput0?: Uint8Array | string;
+    hashForInput1?: Uint8Array | string;
+    transaction?: string;
+    winningTransfer?: EthTransfer | null;
+    losingTransfers?: EthTransfer[];
+    maxPriorityFeePerGas?: string;
+    maxFeePerGas?: string;
   }): Promise<LitActionResponse> {
     try {
       await this.litClient.connect();
@@ -308,6 +331,15 @@ export class LitService {
           btcPayoutAddress,
           isCancel,
           isUnitTest,
+          ordinalUtxo,
+          cardinalUtxo,
+          hashForInput0,
+          hashForInput1,
+          transaction,
+          winningTransfer,
+          losingTransfers,
+          maxFeePerGas,
+          maxPriorityFeePerGas,
         },
       });
       if (response?.error) {

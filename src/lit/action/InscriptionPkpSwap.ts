@@ -23,8 +23,8 @@ const ethPayoutAddress = isUnitTest
   : "{{ethPayoutAddress}}";
 const chainId = isUnitTest ? InscriptionSwapFixture.chainId : "{{chainId}}";
 
-const API_ENDPOINT =
-  "https://ead8-2600-1700-280-2910-adf6-1f52-bf02-213e.ngrok-free.app/swapdata";
+// const API_ENDPOINT =
+//   "https://ead8-2600-1700-280-2910-adf6-1f52-bf02-213e.ngrok-free.app/swapdata";
 
 function toUint8Array(hexString: string) {
   if (hexString.length % 2 !== 0) {
@@ -42,33 +42,33 @@ function toUint8Array(hexString: string) {
 export async function go() {
   let response: Record<any, any> = {};
   try {
-    let ordinalUtxo;
-    let cardinalUtxo;
-    let winningTransfer;
-    let losingTransfers;
-    let maxPriorityFeePerGas: string;
-    let maxFeePerGas: string;
-    let hashForInput0: string;
-    let hashForInput1: string;
-    let transaction: string;
-    const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}&inscriptionId=${inscriptionId}&pkpEthAddress=${pkpEthAddress}&ethPrice=${ethPrice}&btcPayoutAddress=${btcPayoutAddress}`;
-    const apiResponse = await fetch(url);
-    if (apiResponse.ok) {
-      const data = await apiResponse.json();
-      ordinalUtxo = data.ordinalUtxo;
-      cardinalUtxo = data.cardinalUtxo;
-      winningTransfer = data.winningTransfer;
-      losingTransfers = data.losingTransfers;
-      maxPriorityFeePerGas = data.maxPriorityFeePerGas;
-      maxFeePerGas = data.maxFeePerGas;
-      hashForInput0 = data.hashForInput0;
-      hashForInput1 = data.hashForInput1;
-      transaction = data.transaction;
-    } else {
-      throw new Error(
-        `Swap data API call returned not ok: ${apiResponse.status}: ${apiResponse.statusText}`
-      );
-    }
+    // let ordinalUtxo;
+    // let cardinalUtxo;
+    // let winningTransfer;
+    // let losingTransfers;
+    // let maxPriorityFeePerGas: string;
+    // let maxFeePerGas: string;
+    // let hashForInput0: string;
+    // let hashForInput1: string;
+    // let transaction: string;
+    // const url = `${API_ENDPOINT}?pkpBtcAddress=${pkpBtcAddress}&inscriptionId=${inscriptionId}&pkpEthAddress=${pkpEthAddress}&ethPrice=${ethPrice}&btcPayoutAddress=${btcPayoutAddress}`;
+    // const apiResponse = await fetch(url);
+    // if (apiResponse.ok) {
+    //   const data = await apiResponse.json();
+    //   ordinalUtxo = data.ordinalUtxo;
+    //   cardinalUtxo = data.cardinalUtxo;
+    //   winningTransfer = data.winningTransfer;
+    //   losingTransfers = data.losingTransfers;
+    //   maxPriorityFeePerGas = data.maxPriorityFeePerGas;
+    //   maxFeePerGas = data.maxFeePerGas;
+    //   hashForInput0 = data.hashForInput0;
+    //   hashForInput1 = data.hashForInput1;
+    //   transaction = data.transaction;
+    // } else {
+    //   throw new Error(
+    //     `Swap data API call returned not ok: ${apiResponse.status}: ${apiResponse.statusText}`
+    //   );
+    // }
 
     // console.log("hashinput0: ", toUint8Array(hashForInput0));
     // console.log("hashinput1: ", toUint8Array(hashForInput1));

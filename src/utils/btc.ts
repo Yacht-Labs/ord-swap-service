@@ -1,6 +1,11 @@
 import { networks, Network } from "bitcoinjs-lib";
 import { readBtcNetwork } from "./env";
 import * as bitcoin from "bitcoinjs-lib";
+import ecc from "@bitcoinerlab/secp256k1";
+import ECPairFactory, { ECPairInterface } from "ecpair";
+
+bitcoin.initEccLib(ecc);
+const ECPair = ECPairFactory(ecc);
 
 /* eslint-disable no-param-reassign */
 export function reverseBuffer(buffer: Buffer): Buffer {
@@ -18,6 +23,15 @@ export function reverseBuffer(buffer: Buffer): Buffer {
 
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function generateRandomBtcAddress() {
+  const keyPair = ECPair.makeRandom({ network: getBtcNetwork() });
+  const { address } = bitcoin.payments.p2pkh({
+    pubkey: keyPair.publicKey,
+    network: getBtcNetwork(),
+  });
+  return address;
 }
 
 export function getBtcNetwork(): Network {

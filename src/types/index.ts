@@ -20,15 +20,16 @@ export type EthTransfer = {
 export type SignatureData = {
   r: string;
   s: string;
-  v?: string;
+  v?: number;
+  signature: string;
 };
 
 export type LitResponseBody = {
   response?: {
     btcTransaction?: string;
+    unsignedEthTransaction?: LitUnsignedEthTransaction;
   };
   btcTransactionHex?: string;
-  unsignedEthTransaction?: LitUnsignedEthTransaction;
   error?: string;
 };
 

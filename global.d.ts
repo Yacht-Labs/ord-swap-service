@@ -10,6 +10,15 @@ declare global {
   const btcPayoutAddress: string;
   const isCancel: boolean;
   const isUnitTest: boolean;
+  const ordinalUtxo: Utxo;
+  const cardinalUtxo: Utxo;
+  const hashForInput0: string;
+  const hashForInput1: string;
+  const transaction: string;
+  const winningTransfer: EthTransfer | null;
+  const losingTransfers: EthTransfer[];
+  const maxPriorityFeePerGas: string;
+  const maxFeePerGas: string;
 
   interface Action {
     setResponse: (options: { response: any }) => void;

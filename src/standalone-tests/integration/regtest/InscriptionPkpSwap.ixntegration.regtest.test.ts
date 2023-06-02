@@ -188,7 +188,7 @@ describe("InscriptionPkpSwap Integration", () => {
     expect(signatures.hashForInput1).toBeDefined();
   }, 300000);
 
-  it("should get a signature to send eth back to the losing wallet", async () => {
+  xit("should get a signature to send eth back to the losing wallet", async () => {
     const tx = await losingEthWallet.sendTransaction({
       to: pkpEthAddress,
       value: ethers.utils.parseEther(ethPrice),

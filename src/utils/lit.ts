@@ -1,6 +1,11 @@
 import { ethers } from "ethers";
 import bs58 from "bs58";
 import { SiweMessage } from "siwe";
+import { LitService } from "../services/lit/LitService";
+import { RegtestUtils } from "regtest-client";
+import { sleep } from "./btc";
+import { createInscription } from "../standalone-tests/integration/regtest/inscriber";
+import { LIT_SWAP_FILE_NAME } from "../constants";
 
 export type LitAuthSig = {
   sig: string;
@@ -36,4 +41,41 @@ export async function generateAuthSig(
 export function getBytesFromMultihash(multihash: string): string {
   const decoded = bs58.decode(multihash);
   return `0x${Buffer.from(decoded).toString("hex")}`;
+}
+
+export async function setUpPkpIntegrationTest(
+  ethPrice: string,
+  sellerEthWallet: ethers.Wallet,
+  buyerEthWallet: ethers.Wallet
+) {
+  const regtestUtils = new RegtestUtils();
+  const litService = new LitService();
+  const pkp = await litService.mintPkp();
+  const pkpBtcAddress = litService.generateBtcAddress(pkp.publicKey);
+  const pkpEthAddress = ethers.utils.computeAddress(pkp.publicKey);
+  await regtestUtils.faucet(pkpBtcAddress, 1e10);
+  await sleep(2000);
+  const { inscriptionId } = await createInscription(pkpBtcAddress);
+  const litActionCode = await litService.loadActionCode(LIT_SWAP_FILE_NAME, {
+    ethPrice: ethPrice,
+    ethPayoutAddress: sellerEthWallet.address,
+    inscriptionId,
+    chainId: "5",
+  });
+
+  const IPFShash = await LitService.getIPFSHash(litActionCode);
+  await litService.addPermittedAction(pkp.tokenId, IPFShash);
+
+  const tx = await buyerEthWallet.sendTransaction({
+    to: pkpEthAddress,
+    value: ethers.utils.parseEther(ethPrice),
+  });
+  await tx.wait(1);
+  return {
+    pkp,
+    pkpBtcAddress,
+    pkpEthAddress,
+    inscriptionId,
+    litActionCode,
+  };
 }
