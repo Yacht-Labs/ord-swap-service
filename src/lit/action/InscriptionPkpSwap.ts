@@ -24,7 +24,7 @@ const ethPayoutAddress = isUnitTest
 const chainId = isUnitTest ? InscriptionSwapFixture.chainId : "{{chainId}}";
 
 const API_ENDPOINT =
-  "https://758f-2603-7000-9103-8700-d05d-38cd-81ff-6456.ngrok-free.app/swapdata";
+  "https://ead8-2600-1700-280-2910-adf6-1f52-bf02-213e.ngrok-free.app/swapdata";
 
 function toUint8Array(hexString: string) {
   if (hexString.length % 2 !== 0) {

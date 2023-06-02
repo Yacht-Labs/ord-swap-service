@@ -1,4 +1,5 @@
 import express from "express";
+import apicache from "apicache";
 import dotenv from "dotenv";
 import { setupSwagger } from "./openAPI/swagger";
 
@@ -37,6 +38,9 @@ configureExpress(app);
 // Set up OpenAPI Validator middleware
 app.use(openApiMiddleware);
 setupSwagger(app);
+
+const cache = apicache.middleware;
+app.use(cache("10 minutes"));
 
 app.use("/accounts", AccountsRoutes);
 app.use("/listings", ListingsRoutes);
