@@ -83,16 +83,12 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
       losingTransfers,
       maxPriorityFeePerGas,
       maxFeePerGas,
+      accountAddress,
     } = res.body;
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
       code: litActionCode,
-      authSig: await litService.generateAuthSig(
-        1,
-        "https://localhost/login",
-        "1",
-        loserEthWallet
-      ),
+      authSig: await litService.generateAuthSig(),
       pkpEthAddress,
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
@@ -107,6 +103,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
       losingTransfers,
       maxPriorityFeePerGas,
       maxFeePerGas,
+      accountAddress: loserEthWallet.address,
     });
     // TODO: Check for empties
     const unsignedEthTransaction = response.response!

@@ -78,16 +78,12 @@ describe("InscriptionPkpSwap Seller Cancel Integration", () => {
       losingTransfers,
       maxPriorityFeePerGas,
       maxFeePerGas,
+      accountAddress,
     } = res.body;
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
       code: litActionCode,
-      authSig: await litService.generateAuthSig(
-        1,
-        "https://localhost/login",
-        "1",
-        sellerEthWallet
-      ),
+      authSig: await litService.generateAuthSig(),
       pkpEthAddress,
       pkpBtcAddress,
       btcPayoutAddress,
@@ -102,6 +98,7 @@ describe("InscriptionPkpSwap Seller Cancel Integration", () => {
       losingTransfers,
       maxPriorityFeePerGas,
       maxFeePerGas,
+      accountAddress: sellerEthWallet.address,
     });
     expect(signatures.cancelHashForInput0).toBeDefined();
     expect(signatures.cancelHashForInput1).toBeDefined();
