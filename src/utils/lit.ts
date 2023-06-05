@@ -64,8 +64,8 @@ export async function setUpPkpIntegrationTest(
     chainId: "5",
   });
 
-  const IPFShash = await LitService.getIPFSHash(litActionCode);
-  await litService.addPermittedAction(pkp.tokenId, IPFShash);
+  //const IPFShash = await LitService.getIPFSHash(litActionCode);
+  //await litService.addPermittedAction(pkp.tokenId, IPFShash);
 
   if (ethPrice !== "0") {
     const tx = await buyerEthWallet.sendTransaction({

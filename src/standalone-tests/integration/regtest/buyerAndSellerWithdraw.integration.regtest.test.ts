@@ -87,12 +87,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
       code: litActionCode,
-      authSig: await litService.generateAuthSig(
-        1,
-        "https://localhost/login",
-        "1",
-        buyerEthWallet
-      ),
+      authSig: await litService.generateAuthSig(),
       pkpEthAddress,
       pkpBtcAddress,
       btcPayoutAddress,
@@ -127,7 +122,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
     expect(inscription.address).toEqual(btcPayoutAddress);
   }, 300000);
 
-  xit("should get a signature to send the eth to the seller", async () => {
+  it("should get a signature to send the eth to the seller", async () => {
     const res = await request(server).get(`/swapdata`).query({
       pkpBtcAddress,
       inscriptionId,
@@ -149,12 +144,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
       code: litActionCode,
-      authSig: await litService.generateAuthSig(
-        1,
-        "https://localhost/login",
-        "1",
-        sellerEthWallet
-      ),
+      authSig: await litService.generateAuthSig(),
       pkpEthAddress,
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
