@@ -3,9 +3,10 @@ import YAML from "yamljs";
 import * as OpenApiValidator from "express-openapi-validator";
 import { isLocal } from "../../utils/env";
 
-const relativePath = isLocal()
-  ? "./specification.yaml"
-  : "../../../../src/server/openAPI/specification.yaml";
+const relativePath = //isLocal()
+  //?
+  "./specification.yaml";
+// : "/usr/src/app/src/server/openAPI/specification.yaml";
 
 const apiSpecPath = path.join(__dirname, relativePath);
 

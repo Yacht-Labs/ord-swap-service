@@ -1,4 +1,4 @@
-import "./polyfill.js";
+import "./polyfill";
 import { Buff } from "@cmdcode/buff-utils";
 import { SecretKey } from "@cmdcode/crypto-utils";
 import { Address, Signer, Tap, Tx } from "@cmdcode/tapscript";

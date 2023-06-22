@@ -5,9 +5,10 @@ import path from "path";
 import { isLocal } from "../../utils/env";
 
 export function setupSwagger(app: Express): void {
-  const relativePath = isLocal()
-    ? "./specification.yaml"
-    : "../../../../src/server/openAPI/specification.yaml";
+  const relativePath = //isLocal()
+    //?
+    "./specification.yaml";
+  // : "/usr/src/app/src/server/openAPI/specification.yaml";
 
   const apiSpecPath = path.join(__dirname, relativePath);
   const swaggerDocument = YAML.load(apiSpecPath);
