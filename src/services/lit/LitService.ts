@@ -296,6 +296,7 @@ export class LitService {
     losingTransfers,
     maxPriorityFeePerGas,
     maxFeePerGas,
+    accountAddress,
   }: {
     pkpPublicKey: string;
     ipfsCID?: string;
@@ -315,6 +316,7 @@ export class LitService {
     losingTransfers?: EthTransfer[];
     maxPriorityFeePerGas?: string;
     maxFeePerGas?: string;
+    accountAddress?: string;
   }): Promise<LitActionResponse> {
     try {
       await this.litClient.connect();
@@ -340,6 +342,7 @@ export class LitService {
           losingTransfers,
           maxFeePerGas,
           maxPriorityFeePerGas,
+          accountAddress,
         },
       });
       if (response?.error) {

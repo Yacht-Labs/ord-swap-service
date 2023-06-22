@@ -19,6 +19,7 @@ declare global {
   const losingTransfers: EthTransfer[];
   const maxPriorityFeePerGas: string;
   const maxFeePerGas: string;
+  const accountAddress: string;
 
   interface Action {
     setResponse: (options: { response: any }) => void;

@@ -4,6 +4,7 @@
 // pkpPublicKey
 // btcPayoutAddress
 // isCancel
+// accountAddress
 if (isUnitTest) {
   require("../../../development");
 }
@@ -22,8 +23,6 @@ const ethPayoutAddress = isUnitTest
   ? InscriptionSwapFixture.ethPayoutAddress
   : "{{ethPayoutAddress}}";
 const chainId = isUnitTest ? InscriptionSwapFixture.chainId : "{{chainId}}";
-
-console.log({ chainId });
 
 function toUint8Array(hexString: string) {
   if (hexString.length % 2 !== 0) {
@@ -76,7 +75,7 @@ export async function go() {
     if (
       winningTransfer &&
       !isCancel &&
-      Lit.Auth.authSigAddress.toLowerCase() === ethPayoutAddress.toLowerCase()
+      accountAddress.toLowerCase() === ethPayoutAddress.toLowerCase()
     ) {
       const unsignedTransaction = mapTransferToTransaction(
         winningTransfer,
@@ -99,8 +98,7 @@ export async function go() {
     }
     // Cancel listing
     if (
-      Lit.Auth.authSigAddress.toLowerCase() ===
-        ethPayoutAddress.toLowerCase() &&
+      accountAddress.toLowerCase() === ethPayoutAddress.toLowerCase() &&
       isCancel &&
       !winningTransfer
     ) {
@@ -125,13 +123,12 @@ export async function go() {
         btcTransaction: transaction,
       };
     }
+
     // Loser Refund
     if (losingTransfers.length > 0) {
       //iterate through losing transfers
-      losingTransfers.forEach(async (transfer: EthTransfer) => {
-        if (
-          Lit.Auth.authSigAddress.toLowerCase() === transfer.from.toLowerCase()
-        ) {
+      for (const transfer of losingTransfers) {
+        if (accountAddress.toLowerCase() === transfer.from.toLowerCase()) {
           const unsignedTransaction = mapTransferToTransaction(
             transfer,
             transfer.from,
@@ -151,12 +148,12 @@ export async function go() {
             unsignedEthTransaction: unsignedTransaction,
           };
         }
-      });
+      }
     }
+
     // Buyer Withdraw
     if (
-      Lit.Auth.authSigAddress.toLowerCase() ===
-        winningTransfer.from.toLowerCase() &&
+      accountAddress.toLowerCase() === winningTransfer?.from.toLowerCase() &&
       btcPayoutAddress
     ) {
       if (!ordinalUtxo) {

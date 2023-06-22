@@ -7,7 +7,11 @@ import { BtcTransactionService } from "../../../services/bitcoin/BtcTransactionS
 import { HiroInscriptionAPI } from "../../../api/inscription/hiro/HiroInscriptionAPI";
 import request from "supertest";
 import { startServer } from "../../../server/server";
-import { sellerEthWallet, buyerEthWallet } from "../../../utils";
+import {
+  sellerEthWallet,
+  buyerEthWallet,
+  loserEthWallet,
+} from "../../../utils";
 import { setUpPkpIntegrationTest } from "../../../utils/lit";
 import { ethers } from "ethers";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -32,7 +36,7 @@ let server: any;
 bitcoin.initEccLib(ecc);
 const regtestUtils = new RegtestUtils();
 const btcPayoutAddress = generateRandomBtcAddress();
-const ethPrice = "0.0000001";
+const ethPrice = "0.001";
 let inscriptionId: string;
 let pkp: any;
 let pkpBtcAddress: string;
@@ -49,7 +53,8 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
         await setUpPkpIntegrationTest(
           ethPrice,
           sellerEthWallet,
-          buyerEthWallet
+          buyerEthWallet,
+          loserEthWallet
         ));
     } catch (err) {
       console.log("error setting up integration test", err);
@@ -82,12 +87,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
       code: litActionCode,
-      authSig: await litService.generateAuthSig(
-        1,
-        "https://localhost/login",
-        "1",
-        buyerEthWallet
-      ),
+      authSig: await litService.generateAuthSig(),
       pkpEthAddress,
       pkpBtcAddress,
       btcPayoutAddress,
@@ -102,6 +102,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
       losingTransfers,
       maxPriorityFeePerGas,
       maxFeePerGas,
+      accountAddress: buyerEthWallet.address,
     });
     expect(signatures.hashForInput0).toBeDefined();
     expect(signatures.hashForInput1).toBeDefined();
@@ -143,12 +144,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
     const { response, signatures } = await litService.runLitAction({
       pkpPublicKey: pkp.publicKey,
       code: litActionCode,
-      authSig: await litService.generateAuthSig(
-        1,
-        "https://localhost/login",
-        "1",
-        sellerEthWallet
-      ),
+      authSig: await litService.generateAuthSig(),
       pkpEthAddress,
       pkpBtcAddress,
       btcPayoutAddress: "muGxhFptiSici6KE3b9fhSUm2HG8MAAjp1",
@@ -163,6 +159,7 @@ describe("InscriptionPkpSwap Buyer Withdraw Integration", () => {
       losingTransfers,
       maxPriorityFeePerGas,
       maxFeePerGas,
+      accountAddress: sellerEthWallet.address,
     });
     // TODO: Check for empties
     const unsignedEthTransaction = response.response!

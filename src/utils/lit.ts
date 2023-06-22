@@ -46,7 +46,8 @@ export function getBytesFromMultihash(multihash: string): string {
 export async function setUpPkpIntegrationTest(
   ethPrice: string,
   sellerEthWallet: ethers.Wallet,
-  buyerEthWallet: ethers.Wallet
+  buyerEthWallet: ethers.Wallet,
+  loserEthWallet: ethers.Wallet
 ) {
   const regtestUtils = new RegtestUtils();
   const litService = new LitService();
@@ -63,14 +64,22 @@ export async function setUpPkpIntegrationTest(
     chainId: "5",
   });
 
-  const IPFShash = await LitService.getIPFSHash(litActionCode);
-  await litService.addPermittedAction(pkp.tokenId, IPFShash);
+  //const IPFShash = await LitService.getIPFSHash(litActionCode);
+  //await litService.addPermittedAction(pkp.tokenId, IPFShash);
 
-  const tx = await buyerEthWallet.sendTransaction({
-    to: pkpEthAddress,
-    value: ethers.utils.parseEther(ethPrice),
-  });
-  await tx.wait(1);
+  if (ethPrice !== "0") {
+    const tx = await buyerEthWallet.sendTransaction({
+      to: pkpEthAddress,
+      value: ethers.utils.parseEther(ethPrice),
+    });
+    await tx.wait(1);
+
+    const tx2 = await loserEthWallet.sendTransaction({
+      to: pkpEthAddress,
+      value: ethers.utils.parseEther(ethPrice),
+    });
+    await tx2.wait(1);
+  }
   return {
     pkp,
     pkpBtcAddress,
